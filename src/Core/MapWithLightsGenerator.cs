@@ -11,8 +11,14 @@ namespace SectorDirector.Core
 {
     public sealed class MapWithLightsGenerator
     {
-        private const int BorderRadius = 4096;
-        private const int Bounds = 2048;
+        const int PlayableRadius = 2048;
+        const int SkyHackWidth = 1;
+        const int WaterWidth = 2048;
+        const int BorderWallWidth = 16;
+
+        const int Height = 255;
+
+        const int Bounds = 2048;
 
         public static MapData Create()
         {
@@ -25,7 +31,7 @@ namespace SectorDirector.Core
             map.Things.Add(new Thing
             {
                 X = 0,
-                Y = -BorderRadius + 256,
+                Y = -PlayableRadius + 64,
                 Angle = 90,
                 Type = 1,
                 Skill1 = true,
@@ -48,74 +54,93 @@ namespace SectorDirector.Core
                     x: radius * Cos(angle),
                     y: radius * Sin(angle));
 
-            const int numLineSegments = 64;
-            const int skyHackWidth = 2;
-            const int borderWidth = 8;
-            const int borderHeight = 48;
+            const int numLineSegments = 128;
+            const int borderHeight = 32;
+            const int waterHeight = -8;
 
             map.Sectors.AddRange(new[]{
+                // Sky hack sector - 0
                 new Sector(
                     textureFloor: "FLAT10",
                     textureCeiling: "F_SKY1",
-                    heightFloor:borderHeight,
-                    heightCeiling:borderHeight,
+                    heightFloor:waterHeight,
+                    heightCeiling:waterHeight,
                     lightLevel: 0),
+                // water border - 1
                 new Sector(
-                    textureFloor: "FLAT10",
+                    textureFloor: "FWATER1",
+                    textureCeiling: "F_SKY1",
+                    heightFloor:waterHeight,
+                    heightCeiling:Height,
+                    lightLevel: 192),
+                // border wall - 2
+                new Sector(
+                    textureFloor: "FLOOR6_2",
                     textureCeiling: "F_SKY1",
                     heightFloor:borderHeight,
-                    heightCeiling:255,
+                    heightCeiling:Height,
                     lightLevel: 192),
+                // main area - 3
                 new Sector(
-                    textureFloor: "FLAT10",
+                    textureFloor: "FLAT5_7",
                     textureCeiling: "F_SKY1",
                     heightFloor:0,
-                    heightCeiling:255,
+                    heightCeiling:Height,
                     lightLevel: 192),
             });
 
             map.SideDefs.Add(new SideDef(sector: 0, textureMiddle: "ASHWALL"));
 
-            map.SideDefs.Add(new SideDef(sector: 1));
             map.SideDefs.Add(new SideDef(sector: 0));
-
-            map.SideDefs.Add(new SideDef(sector: 2, textureBottom: "ASHWALL"));
             map.SideDefs.Add(new SideDef(sector: 1));
 
+            map.SideDefs.Add(new SideDef(sector: 1, textureBottom: "ASHWALL"));
+            map.SideDefs.Add(new SideDef(sector: 2));
+
+            map.SideDefs.Add(new SideDef(sector: 2));
+            map.SideDefs.Add(new SideDef(sector: 3, textureBottom: "ASHWALL"));
+
+            var outerRadius = PlayableRadius + BorderWallWidth + WaterWidth + SkyHackWidth;
 
             // Make the outer ring
             foreach (var segmentIndex in Enumerable.Range(0, numLineSegments))
             {
                 // reverse the angle to make sure we're generating linedefs in the correct order
                 var angle = -((2 * PI / numLineSegments) * segmentIndex);
-                map.Vertices.Add(VertexOnCircle(BorderRadius, angle));
+                map.Vertices.Add(VertexOnCircle(outerRadius, angle));
 
                 map.LineDefs.Add(new LineDef(
                     v1: segmentIndex,
                     v2: (segmentIndex + 1) % numLineSegments,
                     sideFront: 0,
-                    blocking: true));
+                    blocking: true,
+                    dontDraw:true));
             }
 
             // Make the inner rings
+            var ringOffsets = new[]
+            {
+                PlayableRadius + BorderWallWidth + WaterWidth, 
+                PlayableRadius + BorderWallWidth, 
+                PlayableRadius, 
+            };
 
-            var ringOffsets = new[] { skyHackWidth, skyHackWidth + borderWidth };
-
-            foreach (var (borderOffset, index) in ringOffsets.Select((offset, index) => (offset, index)))
+            foreach (var (radius, index) in ringOffsets.Select((radius, index) => (radius, index)))
             {
                 int vertexIndexOffset = map.Vertices.Count;
                 foreach (var segmentIndex in Enumerable.Range(0, numLineSegments))
                 {
                     // reverse the angle to make sure we're generating linedefs in the correct order
                     var angle = -((2 * PI / numLineSegments) * segmentIndex);
-                    map.Vertices.Add(VertexOnCircle(BorderRadius - borderOffset, angle));
+                    map.Vertices.Add(VertexOnCircle(radius, angle));
 
                     map.LineDefs.Add(new LineDef(
                         v1: vertexIndexOffset + segmentIndex,
                         v2: vertexIndexOffset + ((segmentIndex + 1) % numLineSegments),
-                        sideFront: 1 + (index*ringOffsets.Length),
-                        sideBack: 1 + (index*ringOffsets.Length) + 1,
-                        twoSided: true));
+                        sideFront: 1 + (index*2) + 1,
+                        sideBack: 1 + (index*2),
+                        twoSided: true,
+                        dontDraw:index==0));
                 }
             }
         }
