@@ -13,7 +13,7 @@ namespace SectorDirector.Metadata
                 properties:new []
                 {
                     new Property("id",PropertyType.Integer),
-                    new Property("v1",PropertyType.String),
+                    new Property("v1",PropertyType.Integer),
                     new Property("v2",PropertyType.Integer),
                     
                     new Property("blocking",PropertyType.Boolean, defaultValue:false),
@@ -113,7 +113,7 @@ namespace SectorDirector.Metadata
                 isSubBlock:false,
                 properties:new []
                 {
-                    new Property("nameSpace",formatName:"namespace", type:PropertyType.String),
+                    new Property("namespace", type:PropertyType.String),
                     new Property("comment", type:PropertyType.String, defaultValue:string.Empty),
 
                     new Property("lineDef",type:PropertyType.List),

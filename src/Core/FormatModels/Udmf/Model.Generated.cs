@@ -21,8 +21,8 @@ namespace SectorDirector.Core.FormatModels.Udmf
             }
         }
         private bool _v1HasBeenSet = false;
-        private string _v1;
-        public string V1
+        private int _v1;
+        public int V1
         {
             get { return _v1; }
             set
@@ -74,7 +74,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public LineDef() { }
         public LineDef(
             int id,
-            string v1,
+            int v1,
             int v2,
             int sideFront,
             bool blocking = false,
@@ -596,15 +596,15 @@ namespace SectorDirector.Core.FormatModels.Udmf
 
     public sealed partial class MapData : BaseUdmfBlock, IWriteableUdmfBlock
     {
-        private bool _nameSpaceHasBeenSet = false;
-        private string _nameSpace;
-        public string NameSpace
+        private bool _namespaceHasBeenSet = false;
+        private string _namespace;
+        public string Namespace
         {
-            get { return _nameSpace; }
+            get { return _namespace; }
             set
             {
-                _nameSpaceHasBeenSet = true;
-                _nameSpace = value;
+                _namespaceHasBeenSet = true;
+                _namespace = value;
             }
         }
         public string Comment { get; set; } = "";
@@ -617,7 +617,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public List<UnknownBlock> UnknownBlocks { get; } = new List<UnknownBlock>();
         public MapData() { }
         public MapData(
-            string nameSpace,
+            string namespace,
             IEnumerable<LineDef> lineDefs,
             IEnumerable<SideDef> sideDefs,
             IEnumerable<Vertex> vertexs,
@@ -627,7 +627,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
             IEnumerable<UnknownProperty> unknownProperties = null,
             IEnumerable<UnknownBlock> unknownBlocks = null)
         {
-            NameSpace = nameSpace;
+            Namespace = namespace;
             LineDefs.AddRange(lineDefs);
             SideDefs.AddRange(sideDefs);
             Vertexs.AddRange(vertexs);
@@ -641,7 +641,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public Stream WriteTo(Stream stream)
         {
             CheckSemanticValidity();
-            WriteProperty(stream, "namespace", _nameSpace, indent: false);
+            WriteProperty(stream, "namespace", _namespace, indent: false);
             if (Comment != "") WriteProperty(stream, "comment", Comment, indent: false);
             foreach (var property in UnknownProperties)
             {
@@ -657,7 +657,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         }
         public void CheckSemanticValidity()
         {
-            if (!_nameSpaceHasBeenSet) throw new InvalidUdmfException("Did not set NameSpace on MapData");
+            if (!_namespaceHasBeenSet) throw new InvalidUdmfException("Did not set Namespace on MapData");
             AdditionalSemanticChecks();
         }
 
@@ -666,7 +666,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public MapData Clone()
         {
             return new MapData(
-                nameSpace: NameSpace,
+                namespace: Namespace,
                 lineDefs: LineDefs.Select(item => item.Clone()),
                 sideDefs: SideDefs.Select(item => item.Clone()),
                 vertexs: Vertexs.Select(item => item.Clone()),
