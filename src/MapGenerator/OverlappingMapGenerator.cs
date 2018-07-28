@@ -20,11 +20,19 @@ namespace SectorDirector.MapGenerator
         private const int CenterMin = 200;
         private const int CenterMax = 620;
 
-        public static Map GenerateMap(int shapeCount = DefaultCount)
+        public static Map GenerateMap(int shapeCount = DefaultCount, int? seed = null)
         {
             var map = new Map();
 
             var random = new Random();
+            if (!seed.HasValue)
+            {
+                seed = random.Next(Int32.MaxValue);
+            }
+
+            Console.WriteLine("Using Seed: {0}", seed.Value);
+            random = new Random(seed.Value);
+
             var allShapes = new Polygons();
 
             for (int i = 0; i < shapeCount; i++)
@@ -61,7 +69,24 @@ namespace SectorDirector.MapGenerator
             //    shapes: outerPerimeter));
             map.OuterShapes.AddRange(outerPerimeter);
 
+            PrintLayerPoints(map);
+
             return map;
+        }
+
+        private static void PrintLayerPoints(Map map)
+        {
+            for (var layerIndex = 0; layerIndex < map.Layers.Count; layerIndex++)
+            {
+                var layer = map.Layers[layerIndex];
+                for (var shapeIndex = 0; shapeIndex < layer.Shapes.Count; shapeIndex++)
+                {
+                    var shape = layer.Shapes[shapeIndex];
+
+                    Console.WriteLine("Layer #{0}, Shape #{1}, Points: {2}", layerIndex, shapeIndex,
+                        String.Join(",", shape.Polygon.Select(point => $"({point.X},{point.Y})").ToArray()));
+                }
+            }
         }
 
         private static Polygons OuterPerimeter(Map map)
