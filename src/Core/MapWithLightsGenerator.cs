@@ -12,9 +12,6 @@ namespace SectorDirector.Core
     public sealed class MapWithLightsGenerator
     {
         const int PlayableRadius = 2048;
-        const int SkyHackWidth = 1;
-        const int WaterWidth = 2048;
-        const int BorderWallWidth = 16;
 
         const int Height = 255;
 
@@ -54,8 +51,11 @@ namespace SectorDirector.Core
                     x: radius * Cos(angle),
                     y: radius * Sin(angle));
 
-            const int numLineSegments = 128;
-            const int borderHeight = 32;
+            const int skyHackWidth = 1;
+            const int waterWidth = 2048;
+            const int borderWallWidth = 32;
+            const int waterNumLineSegments = 32;
+            const int borderWallHeight = 24;
             const int waterHeight = -8;
 
             map.Sectors.AddRange(new[]{
@@ -77,7 +77,7 @@ namespace SectorDirector.Core
                 new Sector(
                     textureFloor: "FLOOR6_2",
                     textureCeiling: "F_SKY1",
-                    heightFloor:borderHeight,
+                    heightFloor:borderWallHeight,
                     heightCeiling:Height,
                     lightLevel: 192),
                 // main area - 3
@@ -100,47 +100,70 @@ namespace SectorDirector.Core
             map.SideDefs.Add(new SideDef(sector: 2));
             map.SideDefs.Add(new SideDef(sector: 3, textureBottom: "ASHWALL"));
 
-            var outerRadius = PlayableRadius + BorderWallWidth + WaterWidth + SkyHackWidth;
+            var outerRadius = PlayableRadius + borderWallWidth + waterWidth + skyHackWidth;
 
             // Make the outer ring
-            foreach (var segmentIndex in Enumerable.Range(0, numLineSegments))
+            foreach (var segmentIndex in Enumerable.Range(0, waterNumLineSegments))
             {
                 // reverse the angle to make sure we're generating linedefs in the correct order
-                var angle = -((2 * PI / numLineSegments) * segmentIndex);
+                var angle = -((2 * PI / waterNumLineSegments) * segmentIndex);
                 map.Vertices.Add(VertexOnCircle(outerRadius, angle));
 
                 map.LineDefs.Add(new LineDef(
                     v1: segmentIndex,
-                    v2: (segmentIndex + 1) % numLineSegments,
+                    v2: (segmentIndex + 1) % waterNumLineSegments,
                     sideFront: 0,
                     blocking: true,
-                    dontDraw:true));
+                    dontDraw: true));
             }
 
             // Make the inner rings
             var ringOffsets = new[]
             {
-                PlayableRadius + BorderWallWidth + WaterWidth, 
-                PlayableRadius + BorderWallWidth, 
-                PlayableRadius, 
+                PlayableRadius + borderWallWidth + waterWidth,
+                PlayableRadius + borderWallWidth,
+                PlayableRadius,
             };
 
-            foreach (var (radius, index) in ringOffsets.Select((radius, index) => (radius, index)))
+            var random = new Random();
+            foreach (var (radius, borderIndex) in ringOffsets.Select((radius, index) => (radius, index)))
             {
-                int vertexIndexOffset = map.Vertices.Count;
-                foreach (var segmentIndex in Enumerable.Range(0, numLineSegments))
+                var numInnerLineSegments = waterNumLineSegments;
+                var startAngle = 0d;
+
+                if (borderIndex > 0)
                 {
-                    // reverse the angle to make sure we're generating linedefs in the correct order
-                    var angle = -((2 * PI / numLineSegments) * segmentIndex);
-                    map.Vertices.Add(VertexOnCircle(radius, angle));
+                    var lineSegmentVariance = 64;
+                    var baseLineSegments = 256;
+                    numInnerLineSegments = random.Next(
+                        baseLineSegments - lineSegmentVariance / 2,
+                        baseLineSegments + lineSegmentVariance / 2);
+
+                    startAngle = random.NextDouble() * (2 * PI);
+                }
+
+                int vertexIndexOffset = map.Vertices.Count;
+                foreach (var segmentIndex in Enumerable.Range(0, numInnerLineSegments))
+                {
+                    var angle = startAngle - ((2 * PI / numInnerLineSegments) * segmentIndex);
+
+                    var radiusOffset = 0;
+                    if (borderIndex > 0)
+                    {
+                        var radiusVariance = 24;
+                        radiusOffset = random.Next(-radiusVariance / 2, radiusVariance / 2);
+                    }
+
+                    map.Vertices.Add(VertexOnCircle(radius + radiusOffset, angle));
 
                     map.LineDefs.Add(new LineDef(
                         v1: vertexIndexOffset + segmentIndex,
-                        v2: vertexIndexOffset + ((segmentIndex + 1) % numLineSegments),
-                        sideFront: 1 + (index*2) + 1,
-                        sideBack: 1 + (index*2),
+                        v2: vertexIndexOffset + ((segmentIndex + 1) % numInnerLineSegments),
+                        sideFront: 1 + (borderIndex * 2) + 1,
+                        sideBack: 1 + (borderIndex * 2),
                         twoSided: true,
-                        dontDraw:index==0));
+                        blocking: true,
+                        dontDraw: borderIndex == 0));
                 }
             }
         }
