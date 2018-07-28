@@ -16,15 +16,15 @@ namespace SectorDirector.Metadata
 
 using SectorDirector.Core.FormatModels.Common;
 
-namespace SectorDirector.Core.FormatModels.Uwmf.Parsing").
+namespace SectorDirector.Core.FormatModels.Udmf.Parsing").
 OpenParen().
-Line("public static partial class UwmfParser").
+Line("public static partial class UdmfParser").
 OpenParen();
 
             WriteGlobalAssignmentParsing(output);
             WriteBlockParsing(output);
 
-            foreach (var block in UwmfDefinitions.Blocks.Where(_ => _.NormalParsing))
+            foreach (var block in UdmfDefinitions.Blocks.Where(_ => _.NormalParsing))
             {
                 output.
                     Line($"public static {block.ClassName.ToPascalCase()} Parse{block.ClassName.ToPascalCase()}(IHaveAssignments block)").
@@ -58,11 +58,11 @@ OpenParen();
         private static void WriteGlobalAssignmentParsing(IndentedWriter output)
         {
             output.
-                Line("static partial void SetGlobalAssignments(MapData map, UwmfSyntaxTree tree)").
+                Line("static partial void SetGlobalAssignments(MapData map, UdmfSyntaxTree tree)").
                 OpenParen();
 
             WritePropertyAssignments(
-                UwmfDefinitions.Blocks.Single(b => b.ClassName.ToPascalCase() == "MapData"),
+                UdmfDefinitions.Blocks.Single(b => b.ClassName.ToPascalCase() == "MapData"),
                 output, assignmentHolder: "tree", owner: "map");
 
             output.CloseParen();
@@ -71,7 +71,7 @@ OpenParen();
         private static void WriteBlockParsing(IndentedWriter output)
         {
             output.
-                Line("static partial void SetBlocks(MapData map, UwmfSyntaxTree tree)").
+                Line("static partial void SetBlocks(MapData map, UdmfSyntaxTree tree)").
                 OpenParen();
 
             output.
@@ -81,7 +81,7 @@ OpenParen();
             output.Line("switch(block.Name.ToLower())");
             output.OpenParen();
 
-            foreach (var block in UwmfDefinitions.Blocks.Where(_ => _.NormalParsing))
+            foreach (var block in UdmfDefinitions.Blocks.Where(_ => _.NormalParsing))
             {
                 output.
                     Line($"case \"{block.ClassName.ToCamelCase()}\":").

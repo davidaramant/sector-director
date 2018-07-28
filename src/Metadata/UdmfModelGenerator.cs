@@ -19,13 +19,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace SectorDirector.Core.FormatModels.Uwmf");
+namespace SectorDirector.Core.FormatModels.Udmf");
 
             output.OpenParen();
             foreach (var block in UdmfDefinitions.Blocks)
             {
-                var normalWriteInheritance = block.NormalWriting ? ", IWriteableUwmfBlock" : String.Empty;
-                output.Line($"public sealed partial class {block.ClassName.ToPascalCase()} : BaseUwmfBlock{normalWriteInheritance}");
+                var normalWriteInheritance = block.NormalWriting ? ", IWriteableUdmfBlock" : String.Empty;
+                output.Line($"public sealed partial class {block.ClassName.ToPascalCase()} : BaseUdmfBlock{normalWriteInheritance}");
                 output.OpenParen();
 
                 WriteProperties(block, output);
@@ -152,7 +152,7 @@ namespace SectorDirector.Core.FormatModels.Uwmf");
             }
 
             // WRITE SUBBLOCKS
-            foreach (var subBlock in block.Properties.Where(p => p.IsUwmfSubBlockList))
+            foreach (var subBlock in block.Properties.Where(p => p.IsUdmfSubBlockList))
             {
                 sb.Line($"WriteBlocks(stream, {subBlock.PropertyName} );");
             }
