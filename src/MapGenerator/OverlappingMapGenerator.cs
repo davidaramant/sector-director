@@ -53,7 +53,11 @@ namespace SectorDirector.MapGenerator
                 ));
             }
 
-            map.OuterShapes.AddRange(OuterPerimeter(map).Select(polygon => new Shape(polygon)));
+            var outerPerimeter = OuterPerimeter(map).Select(polygon => new Shape(polygon));
+            map.Layers.Add(new Layer(
+                depth: 0,
+                shapes: outerPerimeter));
+            map.OuterShapes.AddRange(outerPerimeter);
 
             return map;
         }
@@ -67,10 +71,10 @@ namespace SectorDirector.MapGenerator
 
             var boundingRectangle = new Polygon
             {
-                new IntPoint(minimumX, minimumY),
-                new IntPoint(minimumX, maximumY),
-                new IntPoint(maximumX, maximumY),
-                new IntPoint(maximumX, minimumY),
+                new IntPoint(minimumX - 35, minimumY - 35),
+                new IntPoint(minimumX - 35, maximumY + 35),
+                new IntPoint(maximumX + 35, maximumY + 35),
+                new IntPoint(maximumX + 35, minimumY - 35),
             };
 
             var allShapes = new Polygons();
@@ -82,7 +86,7 @@ namespace SectorDirector.MapGenerator
                 }
             }
 
-            return IntersectShape(boundingRectangle, allShapes);
+            return SubtractShape(boundingRectangle, allShapes);
         }
 
         private static Polygons SubtractShape(Polygon subject, Polygons clips)
