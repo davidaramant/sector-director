@@ -41,8 +41,19 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FormatModels\Common\Identifier.cs" />
     <Compile Include="FormatModels\Pk3\Pk3File.cs" />
+    <Compile Include="FormatModels\Udmf\BaseUdmfBlock.cs" />
+    <Compile Include="FormatModels\Udmf\InvalidUdmfException.cs" />
+    <Compile Include="FormatModels\Udmf\IWriteableUdmfBlock.cs" />
     <Compile Include="FormatModels\Udmf\MapData.cs" />
+    <Compile Include="FormatModels\Udmf\Model.Generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FormatModels\Udmf\UnknownBlock.cs" />
+    <Compile Include="FormatModels\Udmf\UnknownProperty.cs" />
     <Compile Include="FormatModels\Wad\StreamExtensions\Extensions.cs" />
     <Compile Include="FormatModels\Wad\DataLump.cs" />
     <Compile Include="FormatModels\Wad\ILump.cs" />
@@ -57,6 +68,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FormatModels\Udmf\Model.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Model.Generated.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

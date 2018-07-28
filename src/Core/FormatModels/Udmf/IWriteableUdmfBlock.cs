@@ -5,7 +5,8 @@ using System.IO;
 
 namespace SectorDirector.Core.FormatModels.Udmf
 {
-    public partial class MapData
+    public interface IWriteableUdmfBlock
     {
+        Stream WriteTo(Stream stream);
     }
 }
