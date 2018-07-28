@@ -29,21 +29,26 @@ namespace SectorDirector.TestLauncher
                 Console.ReadKey();
             }
         }
-        private static void LoadMap(MapData mapData)
+        private static void LoadMaps(params MapData[] maps)
         {
             string wadFilePath = "demo.wad";
 
             var enginePath = GetEngineExePath();
 
             var wad = new WadFile();
-            wad.Append(new Marker("E1M1"));
-            wad.Append(new UdmfLump("TEXTMAP", mapData));
-            wad.Append(new Marker("ENDMAP"));
+
+            foreach (var (map, index) in maps.Select((map, index) => (map, index)))
+            {
+                wad.Append(new Marker($"E1M{index + 1}"));
+                wad.Append(new UdmfLump("TEXTMAP", map));
+                wad.Append(new Marker("ENDMAP"));
+            }
+
             wad.SaveTo(wadFilePath);
 
             Process.Start(
                 enginePath,
-                $"-file {wadFilePath} -skill 4 -iwad doom.wad -warp 1 1");
+                $"-file {wadFilePath} -skill 4 -iwad doom.wad -warp 1 {maps.Length}");
         }
 
         private static string GetEngineExePath()
