@@ -5,6 +5,8 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using SectorDirector.Core.FormatModels.Udmf;
+using SectorDirector.Core.FormatModels.Wad;
 
 namespace SectorDirector.TestLauncher
 {
@@ -16,7 +18,7 @@ namespace SectorDirector.TestLauncher
         {
             try
             {
-                LoadMap();
+                //LoadMap(new MapData());
             }
             catch (Exception e)
             {
@@ -26,18 +28,17 @@ namespace SectorDirector.TestLauncher
                 Console.ReadKey();
             }
         }
-        private static void LoadMap()
+        private static void LoadMap(MapData mapData)
         {
-            //string wadFilePath = "demo.wad";
-            //string pathToLoad = Path.GetFullPath(wadFilePath);
+            string wadFilePath = "demo.wad";
 
             var enginePath = GetEngineExePath();
 
-            //var wad = new WadFile();
-            //wad.Append(new Marker("MAP01"));
-            //wad.Append(new UwmfLump("TEXTMAP", uwmfMap));
-            //wad.Append(new Marker("ENDMAP"));
-            //wad.SaveTo(wadFilePath);
+            var wad = new WadFile();
+            wad.Append(new Marker("E1M1"));
+            wad.Append(new UdmfLump("TEXTMAP", mapData));
+            wad.Append(new Marker("ENDMAP"));
+            wad.SaveTo(wadFilePath);
 
             Process.Start(
                 enginePath,
