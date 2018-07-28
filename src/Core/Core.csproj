@@ -30,12 +30,33 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Functional.Maybe, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Functional.Maybe.1.1.1\lib\net45\Functional.Maybe.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpCompress, Version=0.22.0.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpCompress.0.22.0\lib\net45\SharpCompress.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FormatModels\Pk3\Pk3File.cs" />
+    <Compile Include="FormatModels\Udmf\MapData.cs" />
+    <Compile Include="FormatModels\Wad\StreamExtensions\Extensions.cs" />
+    <Compile Include="FormatModels\Wad\DataLump.cs" />
+    <Compile Include="FormatModels\Wad\ILump.cs" />
+    <Compile Include="FormatModels\Wad\LumpName.cs" />
+    <Compile Include="FormatModels\Wad\Marker.cs" />
+    <Compile Include="FormatModels\Wad\UdmfLump.cs" />
+    <Compile Include="FormatModels\Wad\WadFile.cs" />
+    <Compile Include="FormatModels\CompoundResourceProvider.cs" />
+    <Compile Include="FormatModels\EntryNotFoundException.cs" />
+    <Compile Include="FormatModels\IResourceProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
