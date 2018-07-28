@@ -599,7 +599,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public string Comment { get; set; } = "";
         public List<LineDef> LineDefs { get; } = new List<LineDef>();
         public List<SideDef> SideDefs { get; } = new List<SideDef>();
-        public List<Vertex> Vertexs { get; } = new List<Vertex>();
+        public List<Vertex> Vertices { get; } = new List<Vertex>();
         public List<Sector> Sectors { get; } = new List<Sector>();
         public List<Thing> Things { get; } = new List<Thing>();
         public List<UnknownProperty> UnknownProperties { get; } = new List<UnknownProperty>();
@@ -609,7 +609,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
             string nameSpace,
             IEnumerable<LineDef> lineDefs,
             IEnumerable<SideDef> sideDefs,
-            IEnumerable<Vertex> vertexs,
+            IEnumerable<Vertex> vertices,
             IEnumerable<Sector> sectors,
             IEnumerable<Thing> things,
             string comment = "",
@@ -619,7 +619,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
             NameSpace = nameSpace;
             LineDefs.AddRange(lineDefs);
             SideDefs.AddRange(sideDefs);
-            Vertexs.AddRange(vertexs);
+            Vertices.AddRange(vertices);
             Sectors.AddRange(sectors);
             Things.AddRange(things);
             Comment = comment;
@@ -638,7 +638,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
             }
             WriteBlocks(stream, LineDefs );
             WriteBlocks(stream, SideDefs );
-            WriteBlocks(stream, Vertexs );
+            WriteBlocks(stream, Vertices );
             WriteBlocks(stream, Sectors );
             WriteBlocks(stream, Things );
             WriteBlocks(stream, UnknownBlocks );
@@ -658,7 +658,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
                 nameSpace: NameSpace,
                 lineDefs: LineDefs.Select(item => item.Clone()),
                 sideDefs: SideDefs.Select(item => item.Clone()),
-                vertexs: Vertexs.Select(item => item.Clone()),
+                vertices: Vertices.Select(item => item.Clone()),
                 sectors: Sectors.Select(item => item.Clone()),
                 things: Things.Select(item => item.Clone()),
                 comment: Comment,

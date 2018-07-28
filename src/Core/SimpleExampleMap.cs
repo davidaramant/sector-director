@@ -12,7 +12,7 @@ namespace SectorDirector.Core
             return new MapData
             {
                 NameSpace = "Doom",
-                Vertexs =
+                Vertices =
                 {
                     new Vertex(-320,-128),
                     new Vertex(-320,128),

@@ -119,7 +119,7 @@ namespace SectorDirector.Metadata
 
                     new Property("lineDef",type:PropertyType.List),
                     new Property("sideDef",type:PropertyType.List),
-                    new Property("vertex",type:PropertyType.List),
+                    new Property("vertices",singularName:"vertex",type:PropertyType.List),
                     new Property("sector",type:PropertyType.List),
                     new Property("thing",type:PropertyType.List),
 
