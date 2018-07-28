@@ -17,8 +17,8 @@ namespace SectorDirector.MapGenerator
         private const int DefaultCount = 3;
         private const int RadiusMin = 80;
         private const int RadiusMax = 140;
-        private const int CenterMin = 140;
-        private const int CenterMax = 600;
+        private const int CenterMin = 200;
+        private const int CenterMax = 620;
 
         public static Map GenerateMap(int shapeCount = DefaultCount)
         {
@@ -53,10 +53,12 @@ namespace SectorDirector.MapGenerator
                 ));
             }
 
+            map.BoundingShape = new Shape(BuildBoundingShape(map));
+
             var outerPerimeter = OuterPerimeter(map).Select(polygon => new Shape(polygon));
-            map.Layers.Add(new Layer(
-                depth: 0,
-                shapes: outerPerimeter));
+            //map.Layers.Add(new Layer(
+            //    depth: 0,
+            //    shapes: outerPerimeter));
             map.OuterShapes.AddRange(outerPerimeter);
 
             return map;
@@ -64,18 +66,7 @@ namespace SectorDirector.MapGenerator
 
         private static Polygons OuterPerimeter(Map map)
         {
-            var minimumX = map.Vertices.Select(vertex => vertex.X).Min();
-            var maximumX = map.Vertices.Select(vertex => vertex.X).Max();
-            var minimumY = map.Vertices.Select(vertex => vertex.Y).Min();
-            var maximumY = map.Vertices.Select(vertex => vertex.Y).Max();
-
-            var boundingRectangle = new Polygon
-            {
-                new IntPoint(minimumX - 35, minimumY - 35),
-                new IntPoint(minimumX - 35, maximumY + 35),
-                new IntPoint(maximumX + 35, maximumY + 35),
-                new IntPoint(maximumX + 35, minimumY - 35),
-            };
+            var boundingShape = BuildBoundingShape(map);
 
             var allShapes = new Polygons();
             foreach (var layer in map.Layers)
@@ -86,7 +77,25 @@ namespace SectorDirector.MapGenerator
                 }
             }
 
-            return SubtractShape(boundingRectangle, allShapes);
+            return SubtractShape(boundingShape, allShapes);
+        }
+
+        private static Polygon BuildBoundingShape(Map map)
+        {
+            var minimumX = map.Vertices.Select(vertex => vertex.X).Min();
+            var maximumX = map.Vertices.Select(vertex => vertex.X).Max();
+            var minimumY = map.Vertices.Select(vertex => vertex.Y).Min();
+            var maximumY = map.Vertices.Select(vertex => vertex.Y).Max();
+
+            var boundingShape = new Polygon
+            {
+                new IntPoint(minimumX - 35, minimumY - 35),
+                new IntPoint(minimumX - 35, maximumY + 35),
+                new IntPoint(maximumX + 35, maximumY + 35),
+                new IntPoint(maximumX + 35, minimumY - 35),
+            };
+
+            return boundingShape;
         }
 
         private static Polygons SubtractShape(Polygon subject, Polygons clips)

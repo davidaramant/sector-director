@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018, Aaron Alexander and Matt Moseng
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ClipperLib;
@@ -13,55 +14,120 @@ namespace SectorDirector.MapGenerator
     {
         public static MapData Convert(Map map)
         {
-            MapData data = new MapData();
+            var vertices = BuildVerticesList(map);
 
-            var allVertices = map.Vertices.ToList(); // TODO: make these unique
+            var lines = new List<LineDef>();
+            var sides = new List<SideDef>();
+            var sectors = new List<Sector>();
+            var things = new List<Thing>();
 
-            var allLines = new List<LineDef>();
-
-            foreach (var outerShape in map.OuterShapes)
-            {
-                var previous = outerShape.Polygon[outerShape.Polygon.Count - 2];
-
-                foreach (var current in outerShape.Polygon)
-                {
-                    var leftIndex = FindVertex(allVertices, previous);
-                    var rightIndex = FindVertex(allVertices, current);
-
-                    if (AlreadyHasLine(previous, current, allLines, allVertices))
-                        continue;
-
-                    allLines.Add(new LineDef(leftIndex, rightIndex, sideFront: 0 /* TODO: set this */, blocking: true));
-
-                    previous = current;
-                }
-            }
+            AddBoundingSector(sectors);
+            AddBoundingSides(sides);
+            AddBoundingLines(map, lines, vertices);
 
             foreach (var layer in map.Layers)
             {
-                foreach (var shape in layer.Shapes)
+                AddLayerSectors(sectors, layer);
+                AddLayerSides(sides, layer);
+                AddLayerLines(layer, lines, vertices);
+            }
+
+            AddPlayerStart(things, map);
+
+            return new MapData("Doom", lines, sides, vertices, sectors, things);
+        }
+
+        private static void AddLayerLines(Layer layer, List<LineDef> lines, List<Vertex> vertices)
+        {
+            foreach (var shape in layer.Shapes)
+            {
+                AddLinesForShape(lines, vertices, shape,
+                    (rightIndex, leftIndex) => new LineDef(leftIndex, rightIndex, sideFront: layer.Depth * 2 - 1,
+                        sideBack: layer.Depth * 2, twoSided: true));
+            }
+        }
+
+        private static void AddBoundingLines(Map map, List<LineDef> lines, List<Vertex> vertices)
+        {
+            AddLinesForShape(lines, vertices, map.BoundingShape,
+                (leftIndex, rightIndex) => new LineDef(leftIndex, rightIndex, sideFront: 0, blocking: true));
+        }
+
+        private static void AddPlayerStart(List<Thing> things, Map map)
+        {
+            things.Add(new Thing(
+                type: 1,
+                x: map.BoundingShape.Polygon[0].X + 20,
+                y: map.BoundingShape.Polygon[0].Y + 20));
+        }
+
+        private static void AddBoundingSides(List<SideDef> sides)
+        {
+            sides.Add(new SideDef(sector: 0, textureMiddle: "ASHWALL"));
+        }
+
+        private static void AddLayerSides(List<SideDef> sides, Layer layer)
+        {
+            sides.Add(new SideDef(sector: layer.Depth - 1, textureBottom: "STEPTOP"));
+            sides.Add(new SideDef(sector: layer.Depth));
+        }
+
+        private static void AddBoundingSector(List<Sector> sectors)
+        {
+            sectors.Add(new Sector
+            {
+                HeightFloor = 0,
+                HeightCeiling = 200,
+                TextureCeiling = "F_SKY1",
+                TextureFloor = "FLAT10",
+                LightLevel = 192,
+            });
+        }
+
+        private static void AddLayerSectors(List<Sector> sectors, Layer layer)
+        {
+            sectors.Add(new Sector
+            {
+                HeightFloor = layer.Depth * 10,
+                HeightCeiling = 200,
+                TextureCeiling = "F_SKY1",
+                TextureFloor = "FLOOR0_1",
+                LightLevel = 192,
+            });
+        }
+
+        private static void AddLinesForShape(List<LineDef> lines, List<Vertex> vertices, Shape shape, Func<int, int, LineDef> lineGenerator)
+        {
+            var previous = shape.Polygon[shape.Polygon.Count - 1];
+
+            foreach (var current in shape.Polygon)
+            {
+                var leftIndex = FindVertex(vertices, previous);
+                var rightIndex = FindVertex(vertices, current);
+
+                if (AlreadyHasLine(previous, current, lines, vertices))
+                    continue;
+
+                lines.Add(lineGenerator(leftIndex, rightIndex));
+
+                previous = current;
+            }
+        }
+
+        private static List<Vertex> BuildVerticesList(Map map)
+        {
+            var vertices = new List<Vertex>();
+            vertices.AddRange(map.BoundingShape.Vertices);
+
+            foreach (var vertex in map.Vertices)
+            {
+                if (!vertices.Any(listVertex => listVertex.X == vertex.X && listVertex.Y == vertex.Y))
                 {
-                    var previous = shape.Polygon[shape.Polygon.Count - 2];
-
-                    foreach (var current in shape.Polygon)
-                    {
-                        var leftIndex = FindVertex(allVertices, previous);
-                        var rightIndex = FindVertex(allVertices, current);
-
-                        if (AlreadyHasLine(previous, current, allLines, allVertices))
-                            continue;
-
-                        allLines.Add(new LineDef(leftIndex, rightIndex, 0));
-
-                        previous = current;
-                    }
+                    vertices.Add(vertex);
                 }
             }
 
-            var allSectors = new List<Sector>();
-
-
-            return data;
+            return vertices;
         }
 
         private static int FindVertex(List<Vertex> vertices, IntPoint point)

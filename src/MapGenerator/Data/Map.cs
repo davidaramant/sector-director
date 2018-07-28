@@ -11,6 +11,7 @@ namespace SectorDirector.MapGenerator.Data
     {
         public List<Layer> Layers { get; } = new List<Layer>();
         public List<Shape> OuterShapes { get; } = new List<Shape>();
+        public Shape BoundingShape { get; internal set; }
         public IEnumerable<Vertex> Vertices=> Layers.SelectMany(layer => layer.Vertices);
     }
 }

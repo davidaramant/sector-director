@@ -20,7 +20,7 @@ namespace SectorDirector.TestLauncher
         {
             try
             {
-                //var generatedMap = OverlappingMapGenerator.GenerateMap(10);
+                var generatedMap = OverlappingMapGenerator.GenerateMap(1);
                 //ImageExporter.CreateImage(generatedMap, "exported-boundaries.svg", true);
                 //Process.Start("exported-boundaries.svg");
                 //ImageExporter.CreateImage(generatedMap, "exported-rooms.svg");
@@ -28,7 +28,8 @@ namespace SectorDirector.TestLauncher
 
                 LoadMaps(
                     SimpleExampleMap.Create(),
-                    PyramidMap.Create()
+                    PyramidMap.Create(),
+                    MapConverter.Convert(generatedMap)
                     );
             }
             catch (Exception e)

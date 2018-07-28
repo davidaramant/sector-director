@@ -49,7 +49,7 @@ namespace SectorDirector.Core
                     mapData.SideDefs.AddRange(new[]
                     {
                         new SideDef(sector:level-1,textureBottom:"STEPTOP"),
-                        new SideDef(sector:level),
+                        new SideDef(sector:level,textureBottom:"STEPTOP"),
                     });
                 }
 
