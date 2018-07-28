@@ -18,7 +18,7 @@ namespace SectorDirector.MapGenerator
         private const int RadiusMin = 80;
         private const int RadiusMax = 140;
         private const int CenterMin = 140;
-        private const int CenterMax = 500;
+        private const int CenterMax = 600;
 
         public static Map GenerateMap(int shapeCount = DefaultCount)
         {
@@ -43,12 +43,12 @@ namespace SectorDirector.MapGenerator
                 }
                 else
                 {
-                    layerShapes.AddRange(SubtractShape(allShapes, shape));
+                    layerShapes.AddRange(SubtractShape(shape, allShapes));
                 }
 
                 allShapes.AddRange(layerShapes);
                 map.Layers.Add(new Layer(
-                    depth: shapeCount = i,
+                    depth: shapeCount - i,
                     shapes: layerShapes.Select(polygon => new Shape(polygon))
                 ));
             }
@@ -69,8 +69,8 @@ namespace SectorDirector.MapGenerator
             {
                 new IntPoint(minimumX, minimumY),
                 new IntPoint(minimumX, maximumY),
-                new IntPoint(maximumX, minimumY),
                 new IntPoint(maximumX, maximumY),
+                new IntPoint(maximumX, minimumY),
             };
 
             var allShapes = new Polygons();
@@ -82,12 +82,7 @@ namespace SectorDirector.MapGenerator
                 }
             }
 
-            return SubtractShape(boundingRectangle, allShapes);
-        }
-
-        private static Polygons SubtractShape(Polygons subjects, Polygon clip)
-        {
-            return SubtractShape(subjects, new Polygons { clip });
+            return IntersectShape(boundingRectangle, allShapes);
         }
 
         private static Polygons SubtractShape(Polygon subject, Polygons clips)
@@ -97,13 +92,23 @@ namespace SectorDirector.MapGenerator
 
         private static Polygons SubtractShape(Polygons subjects, Polygons clips)
         {
+            return ProcessShapes(subjects, clips, ClipType.ctDifference);
+        }
+
+        private static Polygons IntersectShape(Polygon subject, Polygons clips)
+        {
+            return ProcessShapes(new Polygons { subject }, clips, ClipType.ctIntersection);
+        }
+
+        private static Polygons ProcessShapes(Polygons subjects, Polygons clips, ClipType clipType)
+        {
             var clipper = new Clipper();
             clipper.AddPaths(subjects, PolyType.ptSubject, true);
             clipper.AddPaths(clips, PolyType.ptClip, true);
 
             var solution = new List<Polygon>();
 
-            clipper.Execute(ClipType.ctDifference, solution, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
+            clipper.Execute(clipType, solution, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
 
             return solution;
         }
