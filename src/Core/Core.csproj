@@ -46,7 +46,6 @@
     <Compile Include="FormatModels\Udmf\BaseUdmfBlock.cs" />
     <Compile Include="FormatModels\Udmf\InvalidUdmfException.cs" />
     <Compile Include="FormatModels\Udmf\IWriteableUdmfBlock.cs" />
-    <Compile Include="FormatModels\Udmf\MapData.cs" />
     <Compile Include="FormatModels\Udmf\Model.Generated.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
