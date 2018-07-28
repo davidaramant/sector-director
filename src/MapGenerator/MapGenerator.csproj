@@ -47,6 +47,7 @@
     <Compile Include="Data\Layer.cs" />
     <Compile Include="Data\Map.cs" />
     <Compile Include="Data\Shape.cs" />
+    <Compile Include="ImageExporter.cs" />
     <Compile Include="MapConverter.cs" />
     <Compile Include="OverlappingMapGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
