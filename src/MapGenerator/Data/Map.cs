@@ -7,18 +7,10 @@ using SectorDirector.Core.FormatModels.Udmf;
 
 namespace SectorDirector.MapGenerator.Data
 {
-    public class Map
+    public sealed class Map
     {
-        public List<Layer> Layers { get; set; } = new List<Layer>();
-
-        public List<Shape> OuterShapes { get; set; } = new List<Shape>();
-
-        public IEnumerable<Vertex> Vertices
-        {
-            get
-            {
-                return Layers.SelectMany(layer => layer.Vertices);
-            }
-        }
+        public List<Layer> Layers { get; } = new List<Layer>();
+        public List<Shape> OuterShapes { get; } = new List<Shape>();
+        public IEnumerable<Vertex> Vertices=> Layers.SelectMany(layer => layer.Vertices);
     }
 }

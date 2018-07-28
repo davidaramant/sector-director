@@ -47,11 +47,10 @@ namespace SectorDirector.MapGenerator
                 }
 
                 allShapes.AddRange(layerShapes);
-                map.Layers.Add(new Layer
-                {
-                    Depth = shapeCount = i,
-                    Shapes = layerShapes.Select(polygon => new Shape(polygon)).ToList()
-                });
+                map.Layers.Add(new Layer(
+                    depth: shapeCount = i,
+                    shapes: layerShapes.Select(polygon => new Shape(polygon))
+                ));
             }
 
             map.OuterShapes.AddRange(OuterPerimeter(map).Select(polygon => new Shape(polygon)));
