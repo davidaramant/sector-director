@@ -19,7 +19,7 @@ namespace SectorDirector.TestLauncher
         {
             try
             {
-                LoadMap(SimpleExampleMap.Create());
+                LoadMaps(SimpleExampleMap.Create());
             }
             catch (Exception e)
             {
@@ -29,6 +29,7 @@ namespace SectorDirector.TestLauncher
                 Console.ReadKey();
             }
         }
+
         private static void LoadMaps(params MapData[] maps)
         {
             string wadFilePath = "demo.wad";
