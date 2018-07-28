@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using SectorDirector.Core;
 using SectorDirector.Core.FormatModels.Udmf;
 using SectorDirector.Core.FormatModels.Wad;
 
@@ -18,7 +19,7 @@ namespace SectorDirector.TestLauncher
         {
             try
             {
-                //LoadMap(new MapData());
+                LoadMap(SimpleExampleMap.Create());
             }
             catch (Exception e)
             {
@@ -42,7 +43,7 @@ namespace SectorDirector.TestLauncher
 
             Process.Start(
                 enginePath,
-                $"-skill 4 -iwad doom.wad -warp 1 1");
+                $"-file {wadFilePath} -skill 4 -iwad doom.wad -warp 1 1");
         }
 
         private static string GetEngineExePath()

@@ -9,17 +9,6 @@ namespace SectorDirector.Core.FormatModels.Udmf
 {
     public sealed partial class LineDef : BaseUdmfBlock, IWriteableUdmfBlock
     {
-        private bool _idHasBeenSet = false;
-        private int _id;
-        public int Id
-        {
-            get { return _id; }
-            set
-            {
-                _idHasBeenSet = true;
-                _id = value;
-            }
-        }
         private bool _v1HasBeenSet = false;
         private int _v1;
         public int V1
@@ -53,6 +42,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
                 _sideFront = value;
             }
         }
+        public int Id { get; set; } = -1;
         public bool Blocking { get; set; } = false;
         public bool BlockMonsters { get; set; } = false;
         public bool TwoSided { get; set; } = false;
@@ -73,10 +63,10 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public List<UnknownProperty> UnknownProperties { get; } = new List<UnknownProperty>();
         public LineDef() { }
         public LineDef(
-            int id,
             int v1,
             int v2,
             int sideFront,
+            int id = -1,
             bool blocking = false,
             bool blockMonsters = false,
             bool twoSided = false,
@@ -96,10 +86,10 @@ namespace SectorDirector.Core.FormatModels.Udmf
             string comment = "",
             IEnumerable<UnknownProperty> unknownProperties = null)
         {
-            Id = id;
             V1 = v1;
             V2 = v2;
             SideFront = sideFront;
+            Id = id;
             Blocking = blocking;
             BlockMonsters = blockMonsters;
             TwoSided = twoSided;
@@ -125,10 +115,10 @@ namespace SectorDirector.Core.FormatModels.Udmf
             CheckSemanticValidity();
             WriteLine(stream, "lineDef");
             WriteLine(stream, "{");
-            WriteProperty(stream, "id", _id, indent: true);
             WriteProperty(stream, "v1", _v1, indent: true);
             WriteProperty(stream, "v2", _v2, indent: true);
             WriteProperty(stream, "sideFront", _sideFront, indent: true);
+            if (Id != -1) WriteProperty(stream, "id", Id, indent: true);
             if (Blocking != false) WriteProperty(stream, "blocking", Blocking, indent: true);
             if (BlockMonsters != false) WriteProperty(stream, "blockMonsters", BlockMonsters, indent: true);
             if (TwoSided != false) WriteProperty(stream, "twoSided", TwoSided, indent: true);
@@ -155,7 +145,6 @@ namespace SectorDirector.Core.FormatModels.Udmf
         }
         public void CheckSemanticValidity()
         {
-            if (!_idHasBeenSet) throw new InvalidUdmfException("Did not set Id on LineDef");
             if (!_v1HasBeenSet) throw new InvalidUdmfException("Did not set V1 on LineDef");
             if (!_v2HasBeenSet) throw new InvalidUdmfException("Did not set V2 on LineDef");
             if (!_sideFrontHasBeenSet) throw new InvalidUdmfException("Did not set SideFront on LineDef");
@@ -167,10 +156,10 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public LineDef Clone()
         {
             return new LineDef(
-                id: Id,
                 v1: V1,
                 v2: V2,
                 sideFront: SideFront,
+                id: Id,
                 blocking: Blocking,
                 blockMonsters: BlockMonsters,
                 twoSided: TwoSided,
@@ -596,15 +585,15 @@ namespace SectorDirector.Core.FormatModels.Udmf
 
     public sealed partial class MapData : BaseUdmfBlock, IWriteableUdmfBlock
     {
-        private bool _namespaceHasBeenSet = false;
-        private string _namespace;
-        public string Namespace
+        private bool _nameSpaceHasBeenSet = false;
+        private string _nameSpace;
+        public string NameSpace
         {
-            get { return _namespace; }
+            get { return _nameSpace; }
             set
             {
-                _namespaceHasBeenSet = true;
-                _namespace = value;
+                _nameSpaceHasBeenSet = true;
+                _nameSpace = value;
             }
         }
         public string Comment { get; set; } = "";
@@ -617,7 +606,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public List<UnknownBlock> UnknownBlocks { get; } = new List<UnknownBlock>();
         public MapData() { }
         public MapData(
-            string namespace,
+            string nameSpace,
             IEnumerable<LineDef> lineDefs,
             IEnumerable<SideDef> sideDefs,
             IEnumerable<Vertex> vertexs,
@@ -627,7 +616,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
             IEnumerable<UnknownProperty> unknownProperties = null,
             IEnumerable<UnknownBlock> unknownBlocks = null)
         {
-            Namespace = namespace;
+            NameSpace = nameSpace;
             LineDefs.AddRange(lineDefs);
             SideDefs.AddRange(sideDefs);
             Vertexs.AddRange(vertexs);
@@ -641,7 +630,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public Stream WriteTo(Stream stream)
         {
             CheckSemanticValidity();
-            WriteProperty(stream, "namespace", _namespace, indent: false);
+            WriteProperty(stream, "namespace", _nameSpace, indent: false);
             if (Comment != "") WriteProperty(stream, "comment", Comment, indent: false);
             foreach (var property in UnknownProperties)
             {
@@ -657,7 +646,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         }
         public void CheckSemanticValidity()
         {
-            if (!_namespaceHasBeenSet) throw new InvalidUdmfException("Did not set Namespace on MapData");
+            if (!_nameSpaceHasBeenSet) throw new InvalidUdmfException("Did not set NameSpace on MapData");
             AdditionalSemanticChecks();
         }
 
@@ -666,7 +655,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public MapData Clone()
         {
             return new MapData(
-                namespace: Namespace,
+                nameSpace: NameSpace,
                 lineDefs: LineDefs.Select(item => item.Clone()),
                 sideDefs: SideDefs.Select(item => item.Clone()),
                 vertexs: Vertexs.Select(item => item.Clone()),

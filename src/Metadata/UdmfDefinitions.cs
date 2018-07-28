@@ -12,10 +12,11 @@ namespace SectorDirector.Metadata
             new Block("lineDef",
                 properties:new []
                 {
-                    new Property("id",PropertyType.Integer),
+                    new Property("id",PropertyType.Integer, defaultValue:-1),
+                    
                     new Property("v1",PropertyType.Integer),
                     new Property("v2",PropertyType.Integer),
-                    
+
                     new Property("blocking",PropertyType.Boolean, defaultValue:false),
                     new Property("blockMonsters",PropertyType.Boolean, defaultValue:false),
                     new Property("twoSided",PropertyType.Boolean, defaultValue:false),
@@ -83,7 +84,7 @@ namespace SectorDirector.Metadata
                     new Property("comment",type:PropertyType.String, defaultValue:string.Empty),
                     new Property("unknownProperties", PropertyType.UnknownProperties),
                 }),
-           
+
             new Block("thing",
                 properties:new []
                 {
@@ -103,7 +104,7 @@ namespace SectorDirector.Metadata
                     new Property("single", PropertyType.Boolean, defaultValue:false),
                     new Property("dm", PropertyType.Boolean, defaultValue:false),
                     new Property("coop", PropertyType.Boolean, defaultValue:false),
-                   
+
                     new Property("comment",type:PropertyType.String, defaultValue:string.Empty),
                     new Property("unknownProperties", PropertyType.UnknownProperties),
                 }),
@@ -113,7 +114,7 @@ namespace SectorDirector.Metadata
                 isSubBlock:false,
                 properties:new []
                 {
-                    new Property("namespace", type:PropertyType.String),
+                    new Property("nameSpace", formatName:"namespace", type:PropertyType.String),
                     new Property("comment", type:PropertyType.String, defaultValue:string.Empty),
 
                     new Property("lineDef",type:PropertyType.List),
@@ -121,7 +122,7 @@ namespace SectorDirector.Metadata
                     new Property("vertex",type:PropertyType.List),
                     new Property("sector",type:PropertyType.List),
                     new Property("thing",type:PropertyType.List),
-                    
+
                     new Property("unknownProperties", PropertyType.UnknownProperties),
                     new Property("unknownBlocks", PropertyType.UnknownBlocks),
                 }),
