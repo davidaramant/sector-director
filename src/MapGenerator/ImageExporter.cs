@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using SectorDirector.MapGenerator.Data;
 
@@ -23,21 +24,18 @@ namespace SectorDirector.MapGenerator
             var builder = new StringBuilder();
             builder.AppendLine("<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">");
 
+            var maximumY = map.BoundingShape.Polygon.Select(polygon => polygon.Y).Max();
+
             if (boundaryMode)
             {
-                foreach (var shape in map.OuterShapes)
-                {
-                    AddPath(builder, shape, false);
-                }
+                AddPath(builder, map.BoundingShape, true, maximumY);
             }
-            else
+
+            foreach (var layer in map.Layers)
             {
-                foreach (var layer in map.Layers)
+                foreach (var shape in layer.Shapes)
                 {
-                    foreach (var shape in layer.Shapes)
-                    {
-                        AddPath(builder, shape, false);
-                    }
+                    AddPath(builder, shape, false, maximumY);
                 }
             }
 
@@ -46,7 +44,7 @@ namespace SectorDirector.MapGenerator
             return builder.ToString();
         }
 
-        private static void AddPath(StringBuilder builder, Shape shape, bool solid)
+        private static void AddPath(StringBuilder builder, Shape shape, bool useBackgroundOpacity, long maximumY)
         {
             builder.Append("<path d=\"");
 
@@ -54,14 +52,14 @@ namespace SectorDirector.MapGenerator
             {
                 var point = shape.Polygon[i];
                 builder.Append(i == 0 ? " M" : " L");
-                builder.AppendFormat(" {0}.00 {1}.00", point.X, point.Y);
+                builder.AppendFormat(" {0}.00 {1}.00", point.X, maximumY - point.Y);
             }
 
             builder.Append(" z\"");
             builder.AppendFormat(
                 " style=\"fill:{0}; fill-opacity:{1}; fill-rule:nonzero; stroke:#D3D3DA; stroke-opacity:1.00; stroke-width:0.80;\"",
                 RandomColor(),
-                solid ? "1.0" : "0.06");
+                useBackgroundOpacity ? "0.06" : "0.1");
             builder.AppendLine("/>");
 
         }
