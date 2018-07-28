@@ -19,7 +19,10 @@ namespace SectorDirector.TestLauncher
         {
             try
             {
-                LoadMaps(SimpleExampleMap.Create());
+                LoadMaps(
+                    SimpleExampleMap.Create(),
+                    PyramidMap.Create()
+                    );
             }
             catch (Exception e)
             {
