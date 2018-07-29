@@ -5,7 +5,7 @@ using System;
 
 namespace SectorDirector.Core.FormatModels.SimpleMap
 {
-    public sealed class LineDefId : IEquatable<LineDefId>
+    public struct LineDefId : IEquatable<LineDefId>
     {
         public static readonly LineDefId Invalid = new LineDefId(-1);
         public bool IsInvalid => _id < 0;
