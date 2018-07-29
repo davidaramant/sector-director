@@ -20,7 +20,12 @@ namespace SectorDirector.MapGenerator
         private const int CenterMin = 300;
         private const int CenterMax = 3000;
 
-        public static Map GenerateMap(int shapeCount = DefaultCount, int? seed = null)
+        private const int SidesInCircles = 96;
+        private const int MinimumPolygonSides = 3;
+        private const int MaximumPolygonSides = 12;
+        private const double CirclePercentage = 0.2;
+
+        public static Map GenerateMap(int shapeCount = DefaultCount, PolygonTypes types = PolygonTypes.Everything, int? seed = null, bool includeBosses = false)
         {
             var map = new Map();
 
@@ -37,7 +42,7 @@ namespace SectorDirector.MapGenerator
 
             for (int i = 0; i < shapeCount; i++)
             {
-                var sides = (random.NextDouble() > 0.8) ? 96 : random.Next(3, 12);
+                var sides = GetSidesForShape(types, random);
                 var radius = random.Next(RadiusMin, RadiusMax);
                 var centerX = random.Next(CenterMin, CenterMax);
                 var centerY = random.Next(CenterMin, CenterMax);
@@ -76,11 +81,25 @@ namespace SectorDirector.MapGenerator
             map.OuterShapes.AddRange(outerPerimeter);
 
             map.PlayerStart = RandomPosition(map, random);
-            for (var i = 0; i < random.Next(10, 100); i++)
+            if (includeBosses)
             {
-                map.MonsterPositions.Add(RandomPosition(map, random));
+                for (var i = 0; i < random.Next(6, 11); i++)
+                {
+                    map.BossPositions.Add(RandomPosition(map, random));
+                }
+                for (var i = 0; i < random.Next(10, 40); i++)
+                {
+                    map.MonsterPositions.Add(RandomPosition(map, random));
+                }
             }
-            for (var i = 0; i < random.Next(10, 100); i++)
+            else
+            {
+                for (var i = 0; i < random.Next(10, 100); i++)
+                {
+                    map.MonsterPositions.Add(RandomPosition(map, random));
+                }
+            }
+            for (var i = 0; i < random.Next(10, 40); i++)
             {
                 map.ItemPositions.Add(RandomPosition(map, random));
             }
@@ -88,6 +107,22 @@ namespace SectorDirector.MapGenerator
             // PrintLayerPoints(map);
 
             return map;
+        }
+
+        private static int GetSidesForShape(PolygonTypes types, Random random)
+        {
+            switch (types)
+            {
+                case PolygonTypes.Everything:
+                    return (random.NextDouble() <= CirclePercentage)
+                        ? SidesInCircles
+                        : random.Next(MinimumPolygonSides, MaximumPolygonSides);
+                case PolygonTypes.OnlyCircles:
+                    return SidesInCircles;
+                case PolygonTypes.OnlyPolygons:
+                    return random.Next(MinimumPolygonSides, MaximumPolygonSides);
+            }
+            throw new ArgumentException();
         }
 
         private static IntPoint RandomPosition(Map map, Random random)

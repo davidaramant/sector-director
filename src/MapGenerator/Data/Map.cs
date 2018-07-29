@@ -19,5 +19,6 @@ namespace SectorDirector.MapGenerator.Data
 
         public List<IntPoint> MonsterPositions { get; set; } = new List<IntPoint>();
         public List<IntPoint> ItemPositions { get; set; } = new List<IntPoint>();
+        public List<IntPoint> BossPositions { get; set; } = new List<IntPoint>();
     }
 }

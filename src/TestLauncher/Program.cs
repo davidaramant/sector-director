@@ -20,15 +20,24 @@ namespace SectorDirector.TestLauncher
         {
             try
             {
-                var generatedMap = OverlappingMapGenerator.GenerateMap(100);
+                var circleMap = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.OnlyCircles);
+                var polygonMap = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.OnlyPolygons);
+                var mixedMap1 = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.Everything);
+                var mixedMap2 = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.Everything);
+                var bossMap = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.Everything, includeBosses: true);
+
                 //ImageExporter.CreateImage(generatedMap, "exported-map.svg", true);
                 //Process.Start("exported-map.svg");
 
                 LoadMaps(
-                    SimpleExampleMap.Create(),
-                    PyramidMap.Create(),
-                    IslandTempleMapGenerator.Create(),
-                    MapConverter.Convert(generatedMap)
+                    SimpleExampleMap.Create(),         // M1
+                    PyramidMap.Create(),               // M2
+                    IslandTempleMapGenerator.Create(), // M3
+                    MapConverter.Convert(circleMap),   // M4
+                    MapConverter.Convert(polygonMap),  // M5
+                    MapConverter.Convert(mixedMap1),   // M6
+                    MapConverter.Convert(mixedMap2),   // M7
+                    MapConverter.Convert(bossMap)      // M8
                 );
             }
             catch (Exception e)
@@ -59,7 +68,7 @@ namespace SectorDirector.TestLauncher
 
             Process.Start(
                 enginePath,
-                $"-file {wadFilePath} -skill 4 -iwad doom.wad -warp 1 {maps.Length}");
+                $"-file {wadFilePath} -skill 4 -iwad doom.wad -warp 1 {maps.Length - 1}");
         }
 
         private static string GetEngineExePath()

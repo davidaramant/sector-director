@@ -25,9 +25,11 @@ namespace SectorDirector.MapGenerator
             AddBoundingSides(sides);
             AddBoundingLines(map, lines, vertices);
 
+            var pinnacleLayer = map.Layers.OrderByDescending(layer => layer.Height).First();
+
             foreach (var layer in map.Layers.OrderBy(layer => layer.LayerNumber))
             {
-                AddLayerSectors(sectors, layer);
+                AddLayerSectors(sectors, layer, layer == pinnacleLayer);
 
                 var side = new SideDef(sector: layer.LayerNumber, textureBottom: "STEPTOP");
                 sides.Add(side);
@@ -48,6 +50,11 @@ namespace SectorDirector.MapGenerator
                             line.SideFront = frontLayer?.LayerNumber ?? sides.Count - 1;
                             line.SideBack = layer.LayerNumber;
                             line.TwoSided = true;
+
+                            if (layer == pinnacleLayer)
+                            {
+                                line.Special = 52;
+                            }
                             line.Id = lines.IndexOf(line);
                         }
                     }
@@ -58,6 +65,7 @@ namespace SectorDirector.MapGenerator
 
             AddPlayerStart(things, map);
             AddMonsters(things, map, new Random());
+            AddBosses(things, map, new Random());
             AddItems(things, map, new Random());
 
             return new MapData("Doom", lines, sides, vertices, sectors, things);
@@ -121,6 +129,17 @@ namespace SectorDirector.MapGenerator
             AddThings(things, map.MonsterPositions, possibleMonsters, random);
         }
 
+        private static void AddBosses(List<Thing> things, Map map, Random random)
+        {
+            var possibleMonsters = new List<int>
+            {
+                3003, /* Baron of Hell */
+                16, /* Cyberdemon */
+                7 /* Spider Mastermind */
+            };
+            AddThings(things, map.BossPositions, possibleMonsters, random);
+        }
+
         private static void AddItems(List<Thing> things, Map map, Random random)
         {
             var possibleItems = new List<int>
@@ -140,7 +159,7 @@ namespace SectorDirector.MapGenerator
             foreach (var position in positions)
             {
                 things.Add(new Thing(
-                    type: possibleItems[random.Next(possibleItems.Count - 1)],
+                    type: possibleItems[random.Next(possibleItems.Count)],
                     x: position.X,
                     y: position.Y,
                     skill1: true,
@@ -169,14 +188,14 @@ namespace SectorDirector.MapGenerator
             });
         }
 
-        private static void AddLayerSectors(List<Sector> sectors, Layer layer)
+        private static void AddLayerSectors(List<Sector> sectors, Layer layer, bool isPinnacleLayer)
         {
             sectors.Add(new Sector
             {
                 HeightFloor = layer.Height * 8,
                 HeightCeiling = 200,
                 TextureCeiling = "F_SKY1",
-                TextureFloor = "FLOOR0_1",
+                TextureFloor = isPinnacleLayer ? "SFLR6_4" : "FLOOR0_1",
                 LightLevel = 192,
             });
         }
