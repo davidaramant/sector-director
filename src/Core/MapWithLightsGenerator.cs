@@ -2,6 +2,7 @@
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System;
+using System.CodeDom;
 using System.Linq;
 using SectorDirector.Core.FormatModels.Udmf;
 
@@ -12,8 +13,11 @@ namespace SectorDirector.Core
     public sealed class MapWithLightsGenerator
     {
         const int PlayableRadius = 2048;
+        const int SpiralLongestRadius = 1024;
+        const int SpiralShortestRadius = 512;
+        const int PlateauRadius = 384;
 
-        const int Height = 255;
+        const int Height = 2048;
 
         const int Bounds = 2048;
 
@@ -21,8 +25,8 @@ namespace SectorDirector.Core
         {
             MapData map = new MapData { NameSpace = "Doom" };
 
-            // build perimeter
-            AddPerimeterCircle(map);
+            AddPerimeter(map);
+            CreateSpiralCenter(map);
 
             // Put the player in a safe spot
             map.Things.Add(new Thing
@@ -44,19 +48,23 @@ namespace SectorDirector.Core
             return map;
         }
 
-        static void AddPerimeterCircle(MapData map)
-        {
-            Vertex VertexOnCircle(int radius, double angle) =>
-                new Vertex(
-                    x: radius * Cos(angle),
-                    y: radius * Sin(angle));
+        static Vertex VertexOnCircle(int radius, double angle) =>
+            new Vertex(
+                x: radius * Cos(angle),
+                y: radius * Sin(angle));
 
+        static double GetCircleAngle(int step, int stepCount) => (2 * PI / stepCount) * step;
+
+        static void AddPerimeter(MapData map)
+        {
             const int skyHackWidth = 1;
             const int waterWidth = 2048;
             const int borderWallWidth = 32;
             const int waterNumLineSegments = 32;
             const int borderWallHeight = 24;
             const int waterHeight = -8;
+
+            var random = new Random();
 
             map.Sectors.AddRange(new[]{
                 // Sky hack sector - 0
@@ -72,21 +80,21 @@ namespace SectorDirector.Core
                     textureCeiling: "F_SKY1",
                     heightFloor:waterHeight,
                     heightCeiling:Height,
-                    lightLevel: 192),
+                    lightLevel: 144),
                 // border wall - 2
                 new Sector(
                     textureFloor: "FLOOR6_2",
                     textureCeiling: "F_SKY1",
                     heightFloor:borderWallHeight,
                     heightCeiling:Height,
-                    lightLevel: 192),
+                    lightLevel: 144),
                 // main area - 3
                 new Sector(
                     textureFloor: "FLAT5_7",
                     textureCeiling: "F_SKY1",
                     heightFloor:0,
                     heightCeiling:Height,
-                    lightLevel: 192),
+                    lightLevel: 144),
             });
 
             map.SideDefs.Add(new SideDef(sector: 0, textureMiddle: "ASHWALL"));
@@ -106,8 +114,7 @@ namespace SectorDirector.Core
             foreach (var segmentIndex in Enumerable.Range(0, waterNumLineSegments))
             {
                 // reverse the angle to make sure we're generating linedefs in the correct order
-                var angle = -((2 * PI / waterNumLineSegments) * segmentIndex);
-                map.Vertices.Add(VertexOnCircle(outerRadius, angle));
+                map.Vertices.Add(VertexOnCircle(outerRadius, -GetCircleAngle(segmentIndex, waterNumLineSegments)));
 
                 map.LineDefs.Add(new LineDef(
                     v1: segmentIndex,
@@ -125,7 +132,6 @@ namespace SectorDirector.Core
                 PlayableRadius,
             };
 
-            var random = new Random();
             foreach (var (radius, borderIndex) in ringOffsets.Select((radius, index) => (radius, index)))
             {
                 var numInnerLineSegments = waterNumLineSegments;
@@ -145,7 +151,7 @@ namespace SectorDirector.Core
                 int vertexIndexOffset = map.Vertices.Count;
                 foreach (var segmentIndex in Enumerable.Range(0, numInnerLineSegments))
                 {
-                    var angle = startAngle - ((2 * PI / numInnerLineSegments) * segmentIndex);
+                    var angle = startAngle - GetCircleAngle(segmentIndex, numInnerLineSegments);
 
                     var radiusOffset = 0;
                     if (borderIndex > 0)
@@ -168,5 +174,53 @@ namespace SectorDirector.Core
             }
         }
 
+        static double GetDistance(Vertex v1, Vertex v2) => Sqrt(Pow(v1.X - v2.X, 2) + Pow(v1.Y - v2.Y, 2));
+
+        static void CreateSpiralCenter(MapData map)
+        {
+            const int numberOfSteps = 128;
+            const int plateauHeight = 1024;
+            const int textureWidth = 128;
+
+            int insideAreaSectorId = map.Sectors.Count - 1;
+            int plateauSectorId = map.Sectors.Count;
+            map.Sectors.Add(new Sector(
+                textureFloor: "FLOOR6_1",
+                textureCeiling: "F_SKY1",
+                heightFloor: plateauHeight,
+                heightCeiling: Height,
+                lightLevel: 176));
+
+            var vertexOffset = map.Vertices.Count;
+            int plateauTextureOffset = 0;
+            foreach (var segmentIndex in Enumerable.Range(0, numberOfSteps))
+            {
+                var currentVertex = VertexOnCircle(PlateauRadius, GetCircleAngle(segmentIndex, numberOfSteps));
+                map.Vertices.Add(currentVertex);
+
+                if (segmentIndex > 0)
+                {
+                    var plateauSideLength = (int)GetDistance(
+                        currentVertex,
+                        VertexOnCircle(PlateauRadius, GetCircleAngle(segmentIndex + 1, numberOfSteps)));
+                    plateauTextureOffset += plateauSideLength;
+                    plateauTextureOffset %= textureWidth;
+                }
+
+                int sideDefId = map.SideDefs.Count;
+                map.SideDefs.AddRange(new[]
+                {
+                    new SideDef(sector: insideAreaSectorId, textureBottom: "ROCKRED1", offsetX:plateauTextureOffset),
+                    new SideDef(sector:plateauSectorId),
+                });
+
+                map.LineDefs.Add(new LineDef(
+                    v1: vertexOffset + segmentIndex,
+                    v2: vertexOffset + (segmentIndex + 1) % numberOfSteps,
+                    sideFront: sideDefId,
+                    sideBack: sideDefId + 1,
+                    twoSided: true));
+            }
+        }
     }
 }
