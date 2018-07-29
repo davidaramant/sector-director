@@ -37,7 +37,7 @@ namespace SectorDirector.MapGenerator
 
             for (int i = 0; i < shapeCount; i++)
             {
-                var sides = (random.NextDouble() > 0.8) ? 200 : random.Next(3, 8);
+                var sides = (random.NextDouble() > 0.8) ? 200 : random.Next(3, 12);
                 var radius = random.Next(RadiusMin, RadiusMax);
                 var centerX = random.Next(CenterMin, CenterMax);
                 var centerY = random.Next(CenterMin, CenterMax);
