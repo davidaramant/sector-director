@@ -25,7 +25,7 @@ namespace SectorDirector.MapGenerator
         private const int MaximumPolygonSides = 12;
         private const double CirclePercentage = 0.2;
 
-        public static Map GenerateMap(int shapeCount = DefaultCount, PolygonTypes types = PolygonTypes.Everything, int? seed = null, bool includeBosses = false)
+        public static Map GenerateMap(int shapeCount = DefaultCount, PolygonTypes types = PolygonTypes.Everything, int? seed = null, ThingsTypes thingsToInclude = ThingsTypes.Monsters | ThingsTypes.Items)
         {
             var map = new Map();
 
@@ -81,27 +81,35 @@ namespace SectorDirector.MapGenerator
             map.OuterShapes.AddRange(outerPerimeter);
 
             map.PlayerStart = RandomPosition(map, random);
-            if (includeBosses)
+
+            if ((thingsToInclude & ThingsTypes.Monsters) == ThingsTypes.Monsters)
             {
-                for (var i = 0; i < random.Next(6, 11); i++)
+                if ((thingsToInclude & ThingsTypes.Bosses) == ThingsTypes.Bosses)
                 {
-                    map.BossPositions.Add(RandomPosition(map, random));
+                    for (var i = 0; i < random.Next(5, 8); i++)
+                    {
+                        map.BossPositions.Add(RandomPosition(map, random));
+                    }
+                    for (var i = 0; i < random.Next(10, 40); i++)
+                    {
+                        map.MonsterPositions.Add(RandomPosition(map, random));
+                    }
                 }
+                else
+                {
+                    for (var i = 0; i < random.Next(10, 100); i++)
+                    {
+                        map.MonsterPositions.Add(RandomPosition(map, random));
+                    }
+                }
+            }
+
+            if ((thingsToInclude & ThingsTypes.Items) == ThingsTypes.Items)
+            {
                 for (var i = 0; i < random.Next(10, 40); i++)
                 {
-                    map.MonsterPositions.Add(RandomPosition(map, random));
+                    map.ItemPositions.Add(RandomPosition(map, random));
                 }
-            }
-            else
-            {
-                for (var i = 0; i < random.Next(10, 100); i++)
-                {
-                    map.MonsterPositions.Add(RandomPosition(map, random));
-                }
-            }
-            for (var i = 0; i < random.Next(10, 40); i++)
-            {
-                map.ItemPositions.Add(RandomPosition(map, random));
             }
 
             // PrintLayerPoints(map);

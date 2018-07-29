@@ -53,6 +53,7 @@
     <Compile Include="PolygonTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShapeGenerator.cs" />
+    <Compile Include="ThingsTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

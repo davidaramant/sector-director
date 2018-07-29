@@ -20,11 +20,11 @@ namespace SectorDirector.TestLauncher
         {
             try
             {
-                var circleMap = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.OnlyCircles);
+                var circleMap = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.OnlyCircles, thingsToInclude: ThingsTypes.None);
                 var polygonMap = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.OnlyPolygons);
                 var mixedMap1 = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.Everything);
                 var mixedMap2 = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.Everything);
-                var bossMap = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.Everything, includeBosses: true);
+                var bossMap = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.Everything, thingsToInclude: ThingsTypes.Monsters | ThingsTypes.Bosses);
 
                 //ImageExporter.CreateImage(generatedMap, "exported-map.svg", true);
                 //Process.Start("exported-map.svg");

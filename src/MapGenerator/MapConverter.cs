@@ -151,7 +151,7 @@ namespace SectorDirector.MapGenerator
                 2048, /* Box of Ammo */
                 2007, /* Clip of Ammo */
             };
-            AddThings(things, map.MonsterPositions, possibleItems, random);
+            AddThings(things, map.ItemPositions, possibleItems, random);
         }
 
         private static void AddThings(List<Thing> things, List<IntPoint> positions, List<int> possibleItems, Random random)
