@@ -264,7 +264,7 @@ namespace SectorDirector.MapGenerator
         }
 
 
-        const double Epsilon = 1.1;
+        const double Epsilon = 0.1;
 
         private static bool ArePointsSame(Vertex point1, Vertex point2)
         {

@@ -37,7 +37,7 @@ namespace SectorDirector.MapGenerator
 
             for (int i = 0; i < shapeCount; i++)
             {
-                var sides = (random.NextDouble() > 0.8) ? 200 : random.Next(3, 12);
+                var sides = (random.NextDouble() > 0.8) ? 96 : random.Next(3, 12);
                 var radius = random.Next(RadiusMin, RadiusMax);
                 var centerX = random.Next(CenterMin, CenterMax);
                 var centerY = random.Next(CenterMin, CenterMax);
@@ -85,7 +85,7 @@ namespace SectorDirector.MapGenerator
                 map.ItemPositions.Add(RandomPosition(map, random));
             }
 
-            PrintLayerPoints(map);
+            // PrintLayerPoints(map);
 
             return map;
         }
