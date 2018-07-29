@@ -41,7 +41,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MapWithLightsGenerator.cs" />
+    <Compile Include="IslandTempleMapGenerator.cs" />
     <Compile Include="FormatModels\Common\Identifier.cs" />
     <Compile Include="FormatModels\Pk3\Pk3File.cs" />
     <Compile Include="FormatModels\Udmf\BaseUdmfBlock.cs" />

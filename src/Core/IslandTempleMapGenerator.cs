@@ -10,7 +10,7 @@ using static System.Math;
 
 namespace SectorDirector.Core
 {
-    public sealed class MapWithLightsGenerator
+    public sealed class IslandTempleMapGenerator
     {
         const int PlayableRadius = 2048;
         const int SpiralLongestRadius = 1024;

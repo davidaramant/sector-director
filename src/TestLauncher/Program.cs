@@ -27,8 +27,9 @@ namespace SectorDirector.TestLauncher
                 LoadMaps(
                     SimpleExampleMap.Create(),
                     PyramidMap.Create(),
+                    IslandTempleMapGenerator.Create(),
                     MapConverter.Convert(generatedMap)
-                    );
+                );
             }
             catch (Exception e)
             {
