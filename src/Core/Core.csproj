@@ -68,6 +68,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PyramidMap.cs" />
     <Compile Include="SimpleExampleMap.cs" />
+    <Compile Include="TerrainMapGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -2,7 +2,6 @@
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System;
-using System.CodeDom;
 using System.Linq;
 using SectorDirector.Core.FormatModels.Udmf;
 
