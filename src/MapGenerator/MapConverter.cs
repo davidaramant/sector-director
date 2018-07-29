@@ -175,7 +175,7 @@ namespace SectorDirector.MapGenerator
 
         private static void AddBoundingSides(List<SideDef> sides)
         {
-            sides.Add(new SideDef(sector: 0, textureMiddle: "ASHWALL"));
+            sides.Add(new SideDef(sector: 0, textureMiddle: "SP_HOT1"));
         }
 
         private static void AddBoundingSector(List<Sector> sectors)
@@ -183,7 +183,7 @@ namespace SectorDirector.MapGenerator
             sectors.Add(new Sector
             {
                 HeightFloor = 0,
-                HeightCeiling = 200,
+                HeightCeiling = 256,
                 TextureCeiling = "F_SKY1",
                 TextureFloor = "FLAT10",
                 LightLevel = 192,
@@ -195,7 +195,7 @@ namespace SectorDirector.MapGenerator
             sectors.Add(new Sector
             {
                 HeightFloor = layer.Height * 8,
-                HeightCeiling = 200,
+                HeightCeiling = 256,
                 TextureCeiling = "F_SKY1",
                 TextureFloor = isPinnacleLayer ? "SFLR6_4" : "FLOOR0_1",
                 LightLevel = 192,

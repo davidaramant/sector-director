@@ -76,11 +76,11 @@ namespace SectorDirector.Core
                     lightLevel: 0),
                 // water border - 1
                 new Sector(
-                    textureFloor: "FWATER1",
+                    textureFloor: "LAVA1",
                     textureCeiling: "F_SKY1",
                     heightFloor:waterHeight,
                     heightCeiling:Height,
-                    lightLevel: 144),
+                    lightLevel: 255),
                 // border wall - 2
                 new Sector(
                     textureFloor: "FLOOR6_2",

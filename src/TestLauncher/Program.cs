@@ -59,7 +59,7 @@ namespace SectorDirector.TestLauncher
 
             foreach (var (map, index) in maps.Select((map, index) => (map, index)))
             {
-                wad.Append(new Marker($"E1M{index + 1}"));
+                wad.Append(new Marker($"E3M{index + 1}"));
                 wad.Append(new UdmfLump("TEXTMAP", map));
                 wad.Append(new Marker("ENDMAP"));
             }
@@ -68,7 +68,7 @@ namespace SectorDirector.TestLauncher
 
             Process.Start(
                 enginePath,
-                $"-file {wadFilePath} -skill 4 -iwad doom.wad -warp 1 1");
+                $"-file {wadFilePath} -skill 4 -iwad doom.wad -warp 3 1");
         }
 
         private static string GetEngineExePath()
