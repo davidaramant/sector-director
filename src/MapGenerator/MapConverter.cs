@@ -121,10 +121,12 @@ namespace SectorDirector.MapGenerator
             var possibleMonsters = new List<int>
             {
                 3001, /* Imp */
-                9, /* Former Sergeant */
+                0009, /* Former Sergeant */
                 3004, /* Former Human */
                 3002, /* Demon */
-                3005 /* Cacodemon */
+                3005, /* Cacodemon */
+                3006, /* Lost Soul */
+                0058, /* Spectre */
             };
             AddThings(things, map.MonsterPositions, possibleMonsters, random);
         }
@@ -134,8 +136,8 @@ namespace SectorDirector.MapGenerator
             var possibleMonsters = new List<int>
             {
                 3003, /* Baron of Hell */
-                16, /* Cyberdemon */
-                7 /* Spider Mastermind */
+                0016, /* Cyberdemon */
+                0007, /* Spider Mastermind */
             };
             AddThings(things, map.BossPositions, possibleMonsters, random);
         }
