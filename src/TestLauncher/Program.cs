@@ -68,7 +68,7 @@ namespace SectorDirector.TestLauncher
 
             Process.Start(
                 enginePath,
-                $"-file {wadFilePath} -skill 4 -iwad doom.wad -warp 1 {maps.Length - 1}");
+                $"-file {wadFilePath} -skill 4 -iwad doom.wad -warp 1 1");
         }
 
         private static string GetEngineExePath()
