@@ -40,21 +40,13 @@ namespace SectorDirector.MapGenerator
             {
                 foreach (var shape in layer.Shapes)
                 {
-                    foreach (var line in BuildLinesForShape(lines, vertices, shape))
+                    foreach (var line in BuildLinesForShape(lines, vertices, shape, isFirstLayer))
                     {
                         if (line.Id == -1)
                         {
                             var frontLayer = FindOtherLayer(line, vertices, map, shape);
-                            if (isFirstLayer)
-                            {
-                                line.SideFront = frontLayer?.LayerNumber ?? sides.Count - 1;
-                                line.SideBack = layer.LayerNumber;
-                            }
-                            else
-                            {
-                                line.SideFront = layer.LayerNumber; 
-                                line.SideBack = frontLayer?.LayerNumber ?? sides.Count - 1;
-                            }
+                            line.SideFront = frontLayer?.LayerNumber ?? sides.Count - 1;
+                            line.SideBack = layer.LayerNumber;
                             line.TwoSided = true;
                             line.Id = lines.IndexOf(line);
                         }
@@ -200,8 +192,6 @@ namespace SectorDirector.MapGenerator
 
                 if (!AlreadyHasLine(previous, current, lines, vertices))
                 {
-
-
                     lines.Add(lineGenerator(leftIndex, rightIndex));
                 }
 
@@ -209,7 +199,7 @@ namespace SectorDirector.MapGenerator
             }
         }
 
-        private static IEnumerable<LineDef> BuildLinesForShape(List<LineDef> lines, List<Vertex> vertices, Shape shape)
+        private static IEnumerable<LineDef> BuildLinesForShape(List<LineDef> lines, List<Vertex> vertices, Shape shape, bool nonStandardOrder = false)
         {
             foreach (var pointPair in GetLinesPointsForShape(shape))
             {
@@ -219,7 +209,7 @@ namespace SectorDirector.MapGenerator
                     var leftIndex = FindVertex(vertices, pointPair.Item1);
                     var rightIndex = FindVertex(vertices, pointPair.Item2);
 
-                    line = new LineDef(leftIndex, rightIndex, 0);
+                    line = nonStandardOrder ? new LineDef(leftIndex, rightIndex, 0) : new LineDef(rightIndex, leftIndex, 0);
                     lines.Add(line);
                 }
 
@@ -273,19 +263,22 @@ namespace SectorDirector.MapGenerator
             return lines.SingleOrDefault(line => (line.V1 == leftIndex && line.V2 == rightIndex) || (line.V1 == rightIndex && line.V2 == leftIndex));
         }
 
+
+        const double epsilon = 0.1;
+
         private static bool ArePointsSame(Vertex x, Vertex y)
         {
-            return Math.Abs(x.X - y.X) < 0.001 && Math.Abs(x.Y - y.Y) < 0.001;
+            return Math.Abs(x.X - y.X) < epsilon && Math.Abs(x.Y - y.Y) < epsilon;
         }
 
         private static bool ArePointsSame(Vertex x, IntPoint y)
         {
-            return Math.Abs(x.X - y.X) < 0.001 && Math.Abs(x.Y - y.Y) < 0.001;
+            return Math.Abs(x.X - y.X) < epsilon && Math.Abs(x.Y - y.Y) < epsilon;
         }
 
         private static bool ArePointsSame(IntPoint x, Vertex y)
         {
-            return Math.Abs(x.X - y.X) < 0.001 && Math.Abs(x.Y - y.Y) < 0.001;
+            return Math.Abs(x.X - y.X) < epsilon && Math.Abs(x.Y - y.Y) < epsilon;
         }
     }
 }
