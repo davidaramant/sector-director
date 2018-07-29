@@ -20,7 +20,7 @@ namespace SectorDirector.TestLauncher
         {
             try
             {
-                var generatedMap = OverlappingMapGenerator.GenerateMap(100, 175017022);
+                var generatedMap = OverlappingMapGenerator.GenerateMap(100);
                 //ImageExporter.CreateImage(generatedMap, "exported-map.svg", true);
                 //Process.Start("exported-map.svg");
 
