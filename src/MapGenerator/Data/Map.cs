@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using ClipperLib;
 using SectorDirector.Core.FormatModels.Udmf;
 
 namespace SectorDirector.MapGenerator.Data
@@ -13,5 +14,10 @@ namespace SectorDirector.MapGenerator.Data
         public List<Shape> OuterShapes { get; } = new List<Shape>();
         public Shape BoundingShape { get; internal set; }
         public IEnumerable<Vertex> Vertices=> Layers.SelectMany(layer => layer.Vertices);
+
+        public IntPoint PlayerStart { get; set; }
+
+        public List<IntPoint> MonsterPositions { get; set; } = new List<IntPoint>();
+        public List<IntPoint> ItemPositions { get; set; } = new List<IntPoint>();
     }
 }

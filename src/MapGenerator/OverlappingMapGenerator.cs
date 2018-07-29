@@ -75,9 +75,33 @@ namespace SectorDirector.MapGenerator
             //    shapes: outerPerimeter));
             map.OuterShapes.AddRange(outerPerimeter);
 
+            map.PlayerStart = RandomPosition(map, random);
+            for (var i = 0; i < random.Next(10, 100); i++)
+            {
+                map.MonsterPositions.Add(RandomPosition(map, random));
+            }
+            for (var i = 0; i < random.Next(10, 100); i++)
+            {
+                map.ItemPositions.Add(RandomPosition(map, random));
+            }
+
             PrintLayerPoints(map);
 
             return map;
+        }
+
+        private static IntPoint RandomPosition(Map map, Random random)
+        {
+            var minimumX = (int) map.BoundingShape.Polygon.Select(point => point.X).Min() + 20;
+            var maximumX = (int)map.BoundingShape.Polygon.Select(point => point.X).Max() - 20;
+
+            var minimumY = (int)map.BoundingShape.Polygon.Select(point => point.Y).Min() + 20;
+            var maximumY = (int)map.BoundingShape.Polygon.Select(point => point.Y).Max() - 20;
+
+            var x = random.Next(minimumX, maximumX);
+            var y = random.Next(minimumY, maximumY);
+
+            return new IntPoint(x, y);
         }
 
         private static void ProcessCollinearity(IntPoint point, List<Layer> layers)

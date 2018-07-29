@@ -65,6 +65,8 @@ namespace SectorDirector.MapGenerator
             }
 
             AddPlayerStart(things, map);
+            AddMonsters(things, map, new Random());
+            AddItems(things, map, new Random());
 
             return new MapData("Doom", lines, sides, vertices, sectors, things);
         }
@@ -110,8 +112,52 @@ namespace SectorDirector.MapGenerator
         {
             things.Add(new Thing(
                 type: 1,
-                x: map.BoundingShape.Polygon[0].X + 20,
-                y: map.BoundingShape.Polygon[0].Y + 20));
+                x: map.PlayerStart.X,
+                y: map.PlayerStart.Y));
+        }
+
+        private static void AddMonsters(List<Thing> things, Map map, Random random)
+        {
+            var possibleMonsters = new List<int>
+            {
+                3001, /* Imp */
+                9, /* Former Sergeant */
+                3004, /* Former Human */
+                3002, /* Demon */
+                3005 /* Cacodemon */
+            };
+            AddThings(things, map.MonsterPositions, possibleMonsters, random);
+        }
+
+        private static void AddItems(List<Thing> things, Map map, Random random)
+        {
+            var possibleItems = new List<int>
+            {
+                2012, /* Medkit */
+                2015, /* Armor Bonus */
+                2018, /* Green Armor */
+                2049, /* Box of Shells */
+                2048, /* Box of Ammo */
+                2007, /* Clip of Ammo */
+            };
+            AddThings(things, map.MonsterPositions, possibleItems, random);
+        }
+
+        private static void AddThings(List<Thing> things, List<IntPoint> positions, List<int> possibleItems, Random random)
+        {
+            foreach (var position in positions)
+            {
+                things.Add(new Thing(
+                    type: possibleItems[random.Next(possibleItems.Count - 1)],
+                    x: position.X,
+                    y: position.Y,
+                    skill1: true,
+                    skill2: true,
+                    skill3: true,
+                    skill4: true,
+                    skill5: true,
+                    single: true));
+            }
         }
 
         private static void AddBoundingSides(List<SideDef> sides)
