@@ -264,21 +264,21 @@ namespace SectorDirector.MapGenerator
         }
 
 
-        const double epsilon = 0.1;
+        const double Epsilon = 1.1;
 
-        private static bool ArePointsSame(Vertex x, Vertex y)
+        private static bool ArePointsSame(Vertex point1, Vertex point2)
         {
-            return Math.Abs(x.X - y.X) < epsilon && Math.Abs(x.Y - y.Y) < epsilon;
+            return Math.Abs(point1.X - point2.X) < Epsilon && Math.Abs(point1.Y - point2.Y) < Epsilon;
         }
 
-        private static bool ArePointsSame(Vertex x, IntPoint y)
+        private static bool ArePointsSame(Vertex point1, IntPoint point2)
         {
-            return Math.Abs(x.X - y.X) < epsilon && Math.Abs(x.Y - y.Y) < epsilon;
+            return Math.Abs(point1.X - point2.X) < Epsilon && Math.Abs(point1.Y - point2.Y) < Epsilon;
         }
 
-        private static bool ArePointsSame(IntPoint x, Vertex y)
+        private static bool ArePointsSame(IntPoint x, Vertex point2)
         {
-            return Math.Abs(x.X - y.X) < epsilon && Math.Abs(x.Y - y.Y) < epsilon;
+            return Math.Abs(x.X - point2.X) < Epsilon && Math.Abs(x.Y - point2.Y) < Epsilon;
         }
     }
 }
