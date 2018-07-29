@@ -11,14 +11,14 @@ namespace SectorDirector.MapGenerator.Data
     {
         public List<Shape> Shapes { get; } = new List<Shape>();
 
-        public int Depth { get; }
+        public int Height { get; }
 
         public IEnumerable<Vertex> Vertices=> Shapes.SelectMany(shape => shape.Vertices);
 
-        public Layer(IEnumerable<Shape> shapes, int depth)
+        public Layer(IEnumerable<Shape> shapes, int height)
         {
             Shapes.AddRange(shapes);
-            Depth = depth;
+            Height = height;
         }
     }
 }

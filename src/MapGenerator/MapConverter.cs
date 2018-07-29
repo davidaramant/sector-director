@@ -25,13 +25,43 @@ namespace SectorDirector.MapGenerator
             AddBoundingSides(sides);
             AddBoundingLines(map, lines, vertices);
 
-            // TODO: Generate a side between each possible sector pairing and hold in a map
-
-            foreach (var layer in map.Layers)
+            foreach (var layer in map.Layers.OrderBy(layer => layer.Height))
             {
                 AddLayerSectors(sectors, layer);
-                AddLayerSides(sides, layer); // TODO: remove this
-                AddLayerLines(layer, lines, vertices);
+
+                var side = new SideDef(sector: layer.Height, textureBottom: "STEPTOP");
+                sides.Add(side);
+            }
+
+            sides.Add(new SideDef(sector: 0, textureBottom: "STEPTOP"));
+
+            var isFirstLayer = true;
+            foreach (var layer in map.Layers.OrderByDescending(layer => layer.Height))
+            {
+                foreach (var shape in layer.Shapes)
+                {
+                    foreach (var line in BuildLinesForShape(lines, vertices, shape))
+                    {
+                        if (line.Id == -1)
+                        {
+                            var frontLayer = FindOtherLayer(line, vertices, map, shape);
+                            if (isFirstLayer)
+                            {
+                                line.SideFront = frontLayer?.Height ?? sides.Count - 1;
+                                line.SideBack = layer.Height;
+                            }
+                            else
+                            {
+                                line.SideFront = layer.Height; 
+                                line.SideBack = frontLayer?.Height ?? sides.Count - 1;
+                            }
+                            line.TwoSided = true;
+                            line.Id = lines.IndexOf(line);
+                        }
+                    }
+                }
+
+                isFirstLayer = false;
             }
 
             AddPlayerStart(things, map);
@@ -39,15 +69,35 @@ namespace SectorDirector.MapGenerator
             return new MapData("Doom", lines, sides, vertices, sectors, things);
         }
 
-        private static void AddLayerLines(Layer layer, List<LineDef> lines, List<Vertex> vertices)
+        private static Layer FindOtherLayer(LineDef line, List<Vertex> vertices, Map map, Shape currentShape)
         {
-            foreach (var shape in layer.Shapes)
+            var point1 = vertices[line.V1];
+            var point2 = vertices[line.V2];
+
+            foreach (var otherLayer in map.Layers)
             {
-                AddLinesForShape(lines, vertices, shape,
-                    (rightIndex, leftIndex) => new LineDef(leftIndex, rightIndex, sideFront: layer.Depth * 2 - 1,
-                        // TODO: determine the front and back side based on the two sectors/shapes that share the indices of this line
-                        sideBack: layer.Depth * 2, twoSided: true));
+                foreach (var otherShape in otherLayer.Shapes)
+                {
+                    if (otherShape == currentShape)
+                        continue;
+
+                    var otherPoints = GetLinesPointsForShape(otherShape);
+
+                    foreach (var otherPointPair in otherPoints)
+                    {
+                        if (ArePointsSame(otherPointPair.Item1, point1) && ArePointsSame(otherPointPair.Item2, point2))
+                        {
+                            return otherLayer;
+                        }
+                        if (ArePointsSame(otherPointPair.Item1, point2) && ArePointsSame(otherPointPair.Item2, point1))
+                        {
+                            return otherLayer;
+                        }
+                    }
+                }
             }
+
+            return null;
         }
 
         private static void AddBoundingLines(Map map, List<LineDef> lines, List<Vertex> vertices)
@@ -69,12 +119,6 @@ namespace SectorDirector.MapGenerator
             sides.Add(new SideDef(sector: 0, textureMiddle: "ASHWALL"));
         }
 
-        private static void AddLayerSides(List<SideDef> sides, Layer layer)
-        {
-            sides.Add(new SideDef(sector: layer.Depth - 1, textureBottom: "STEPTOP"));
-            sides.Add(new SideDef(sector: layer.Depth));
-        }
-
         private static void AddBoundingSector(List<Sector> sectors)
         {
             sectors.Add(new Sector
@@ -91,7 +135,7 @@ namespace SectorDirector.MapGenerator
         {
             sectors.Add(new Sector
             {
-                HeightFloor = layer.Depth * 10,
+                HeightFloor = layer.Height * 10,
                 HeightCeiling = 200,
                 TextureCeiling = "F_SKY1",
                 TextureFloor = "FLOOR0_1",
@@ -110,8 +154,40 @@ namespace SectorDirector.MapGenerator
 
                 if (!AlreadyHasLine(previous, current, lines, vertices))
                 {
+
+
                     lines.Add(lineGenerator(leftIndex, rightIndex));
                 }
+
+                previous = current;
+            }
+        }
+
+        private static IEnumerable<LineDef> BuildLinesForShape(List<LineDef> lines, List<Vertex> vertices, Shape shape)
+        {
+            foreach (var pointPair in GetLinesPointsForShape(shape))
+            {
+                var line = GetLineForPoint(pointPair.Item1, pointPair.Item2, lines, vertices);
+                if (line == null)
+                {
+                    var leftIndex = FindVertex(vertices, pointPair.Item1);
+                    var rightIndex = FindVertex(vertices, pointPair.Item2);
+
+                    line = new LineDef(leftIndex, rightIndex, 0);
+                    lines.Add(line);
+                }
+
+                yield return line;
+            }
+        }
+
+        private static IEnumerable<Tuple<IntPoint, IntPoint>> GetLinesPointsForShape(Shape shape)
+        {
+            var previous = shape.Polygon[shape.Polygon.Count - 1];
+
+            foreach (var current in shape.Polygon)
+            { 
+                yield return Tuple.Create(current, previous);
 
                 previous = current;
             }
@@ -140,10 +216,15 @@ namespace SectorDirector.MapGenerator
 
         private static bool AlreadyHasLine(IntPoint left, IntPoint right, List<LineDef> lines, List<Vertex> vertices)
         {
+            return GetLineForPoint(left, right, lines, vertices) != null;
+        }
+
+        private static LineDef GetLineForPoint(IntPoint left, IntPoint right, List<LineDef> lines, List<Vertex> vertices)
+        {
             var leftIndex = FindVertex(vertices, left);
             var rightIndex = FindVertex(vertices, right);
 
-            return lines.Any(line => (line.V1 == leftIndex && line.V2 == rightIndex) || (line.V1 == rightIndex && line.V2 == leftIndex));
+            return lines.SingleOrDefault(line => (line.V1 == leftIndex && line.V2 == rightIndex) || (line.V1 == rightIndex && line.V2 == leftIndex));
         }
 
         private static bool ArePointsSame(Vertex x, Vertex y)
@@ -152,6 +233,11 @@ namespace SectorDirector.MapGenerator
         }
 
         private static bool ArePointsSame(Vertex x, IntPoint y)
+        {
+            return Math.Abs(x.X - y.X) < 0.001 && Math.Abs(x.Y - y.Y) < 0.001;
+        }
+
+        private static bool ArePointsSame(IntPoint x, Vertex y)
         {
             return Math.Abs(x.X - y.X) < 0.001 && Math.Abs(x.Y - y.Y) < 0.001;
         }
