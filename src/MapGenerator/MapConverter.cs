@@ -105,10 +105,10 @@ namespace SectorDirector.MapGenerator
                 var leftIndex = FindVertex(vertices, previous);
                 var rightIndex = FindVertex(vertices, current);
 
-                if (AlreadyHasLine(previous, current, lines, vertices))
-                    continue;
-
-                lines.Add(lineGenerator(leftIndex, rightIndex));
+                if (!AlreadyHasLine(previous, current, lines, vertices))
+                {
+                    lines.Add(lineGenerator(leftIndex, rightIndex));
+                }
 
                 previous = current;
             }
@@ -132,7 +132,7 @@ namespace SectorDirector.MapGenerator
 
         private static int FindVertex(List<Vertex> vertices, IntPoint point)
         {
-            return vertices.IndexOf(vertices.First(vertex => vertex.X == point.X && vertex.Y == point.Y));
+            return vertices.IndexOf(vertices.First(vertex => (int)vertex.X == point.X && (int)vertex.Y == point.Y));
         }
 
         private static bool AlreadyHasLine(IntPoint left, IntPoint right, List<LineDef> lines, List<Vertex> vertices)

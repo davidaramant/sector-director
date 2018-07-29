@@ -52,6 +52,10 @@ namespace SectorDirector.MapGenerator
                 else
                 {
                     layerShapes.AddRange(SubtractShape(shape, allShapes));
+
+                    foreach (var polygon in layerShapes)
+                        foreach (var point in polygon)
+                            ProcessCollinearity(point, map.Layers);
                 }
 
                 allShapes.AddRange(layerShapes);
@@ -72,6 +76,42 @@ namespace SectorDirector.MapGenerator
             PrintLayerPoints(map);
 
             return map;
+        }
+
+        private static void ProcessCollinearity(IntPoint point, List<Layer> layers)
+        {
+            foreach (var layer in layers)
+            {
+                foreach (var shape in layer.Shapes)
+                {
+                    var previous = shape.Polygon[shape.Polygon.Count - 1];
+
+                    foreach (var current in shape.Polygon)
+                    {
+                        if (IsColinear(point, previous, current))
+                        {
+                            shape.Polygon.Insert(shape.Polygon.IndexOf(current), point);
+                            break;
+                        }
+
+                        previous = current;
+                    }
+                }
+            }
+        }
+
+        private static bool IsColinear(IntPoint toBeChecked, IntPoint p1, IntPoint p2)
+        {
+            if (toBeChecked.Equals(p1) || toBeChecked.Equals(p2))
+                return false;
+
+            var dist12 = Math.Sqrt(Math.Pow((p2.X - p1.X), 2) + Math.Pow((p2.Y - p1.Y), 2));
+            var distT1 = Math.Sqrt(Math.Pow((toBeChecked.X - p1.X), 2) + Math.Pow((toBeChecked.Y - p1.Y), 2));
+            var distT2 = Math.Sqrt(Math.Pow((p2.X - toBeChecked.X), 2) + Math.Pow((p2.Y - toBeChecked.Y), 2));
+
+            double epsilon = .1;
+
+            return Math.Abs(dist12 - (distT1 + distT2)) <= epsilon;
         }
 
         private static void PrintLayerPoints(Map map)
