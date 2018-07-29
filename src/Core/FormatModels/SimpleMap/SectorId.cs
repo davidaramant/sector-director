@@ -7,6 +7,9 @@ namespace SectorDirector.Core.FormatModels.SimpleMap
 {
     public sealed class SectorId : IEquatable<SectorId>
     {
+        public static readonly SectorId Invalid = new SectorId(-1);
+        public bool IsInvalid => _id < 0;
+
         private readonly int _id;
 
         public SectorId(int id)

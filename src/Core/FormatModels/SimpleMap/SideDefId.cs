@@ -7,6 +7,9 @@ namespace SectorDirector.Core.FormatModels.SimpleMap
 {
     public struct SideDefId : IEquatable<SideDefId>
     {
+        public static readonly SideDefId Invalid = new SideDefId(-1);
+        public bool IsInvalid => _id < 0;
+
         private readonly int _id;
 
         public SideDefId(int id)

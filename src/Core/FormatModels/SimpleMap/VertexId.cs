@@ -6,7 +6,10 @@ using System;
 namespace SectorDirector.Core.FormatModels.SimpleMap
 {
     public struct VertexId : IEquatable<VertexId>
-    {
+    {    
+        public static readonly VertexId Invalid = new VertexId(-1);
+        public bool IsInvalid => _id < 0;
+
         private readonly int _id;
 
         public VertexId(int id)

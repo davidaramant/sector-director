@@ -5,12 +5,12 @@ using System.Collections.Generic;
 
 namespace SectorDirector.Core.FormatModels.SimpleMap
 {
-    public sealed class EntityDatabase<TId, T> where TId : struct where T : class
+    public sealed class EntityDatabase<TId, TEntities> where TId : struct where TEntities : class
     {
         private readonly IdSequence<TId> _idSequence = new IdSequence<TId>();
-        private readonly Dictionary<TId, T> _entityMap = new Dictionary<TId, T>();
+        private readonly Dictionary<TId, TEntities> _entityMap = new Dictionary<TId, TEntities>();
 
-        public TId Add(T vertex)
+        public TId Add(TEntities vertex)
         {
             var id = _idSequence.GetNext();
             _entityMap.Add(id, vertex);
@@ -22,9 +22,9 @@ namespace SectorDirector.Core.FormatModels.SimpleMap
             _entityMap.Remove(id);
         }
 
-        public (List<T> entities, Dictionary<TId, int> idLookup) GetVertexListAndIdLookup()
+        public CompiledEntities<TId,TEntities> CompileEntities()
         {
-            var entities = new List<T>();
+            var entities = new List<TEntities>();
             var idLookup = new Dictionary<TId, int>();
 
             foreach (var pair in _entityMap)
@@ -33,7 +33,7 @@ namespace SectorDirector.Core.FormatModels.SimpleMap
                 entities.Add(pair.Value);
             }
 
-            return (entities, idLookup);
+            return new CompiledEntities<TId, TEntities>(entities, idLookup);
         }
     }
 }

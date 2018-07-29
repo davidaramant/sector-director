@@ -41,8 +41,12 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FormatModels\SimpleMap\CompiledEntities.cs" />
+    <Compile Include="FormatModels\SimpleMap\ScaledVertex.cs" />
+    <Compile Include="FormatModels\SimpleMap\LineDefEntity.cs" />
     <Compile Include="FormatModels\SimpleMap\LineDefId.cs" />
     <Compile Include="FormatModels\SimpleMap\SectorId.cs" />
+    <Compile Include="FormatModels\SimpleMap\SideDefEntity.cs" />
     <Compile Include="FormatModels\SimpleMap\SideDefId.cs" />
     <Compile Include="FormatModels\SimpleMap\VertexId.cs" />
     <Compile Include="FormatModels\SimpleMap\IdSequence.cs" />
