@@ -25,10 +25,12 @@ namespace SectorDirector.MapGenerator
             AddBoundingSides(sides);
             AddBoundingLines(map, lines, vertices);
 
+            // TODO: Generate a side between each possible sector pairing and hold in a map
+
             foreach (var layer in map.Layers)
             {
                 AddLayerSectors(sectors, layer);
-                AddLayerSides(sides, layer);
+                AddLayerSides(sides, layer); // TODO: remove this
                 AddLayerLines(layer, lines, vertices);
             }
 
@@ -43,6 +45,7 @@ namespace SectorDirector.MapGenerator
             {
                 AddLinesForShape(lines, vertices, shape,
                     (rightIndex, leftIndex) => new LineDef(leftIndex, rightIndex, sideFront: layer.Depth * 2 - 1,
+                        // TODO: determine the front and back side based on the two sectors/shapes that share the indices of this line
                         sideBack: layer.Depth * 2, twoSided: true));
             }
         }
@@ -121,7 +124,7 @@ namespace SectorDirector.MapGenerator
 
             foreach (var vertex in map.Vertices)
             {
-                if (!vertices.Any(listVertex => listVertex.X == vertex.X && listVertex.Y == vertex.Y))
+                if (!vertices.Any(listVertex => ArePointsSame(listVertex, vertex)))
                 {
                     vertices.Add(vertex);
                 }
@@ -132,7 +135,7 @@ namespace SectorDirector.MapGenerator
 
         private static int FindVertex(List<Vertex> vertices, IntPoint point)
         {
-            return vertices.IndexOf(vertices.First(vertex => (int)vertex.X == point.X && (int)vertex.Y == point.Y));
+            return vertices.IndexOf(vertices.First(vertex => ArePointsSame(vertex, point)));
         }
 
         private static bool AlreadyHasLine(IntPoint left, IntPoint right, List<LineDef> lines, List<Vertex> vertices)
@@ -141,6 +144,16 @@ namespace SectorDirector.MapGenerator
             var rightIndex = FindVertex(vertices, right);
 
             return lines.Any(line => (line.V1 == leftIndex && line.V2 == rightIndex) || (line.V1 == rightIndex && line.V2 == leftIndex));
+        }
+
+        private static bool ArePointsSame(Vertex x, Vertex y)
+        {
+            return Math.Abs(x.X - y.X) < 0.001 && Math.Abs(x.Y - y.Y) < 0.001;
+        }
+
+        private static bool ArePointsSame(Vertex x, IntPoint y)
+        {
+            return Math.Abs(x.X - y.X) < 0.001 && Math.Abs(x.Y - y.Y) < 0.001;
         }
     }
 }
