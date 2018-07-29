@@ -173,7 +173,7 @@ namespace SectorDirector.MapGenerator
         {
             sectors.Add(new Sector
             {
-                HeightFloor = layer.Height * 10,
+                HeightFloor = layer.Height * 8,
                 HeightCeiling = 200,
                 TextureCeiling = "F_SKY1",
                 TextureFloor = "FLOOR0_1",
