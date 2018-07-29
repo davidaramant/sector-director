@@ -25,18 +25,18 @@ namespace SectorDirector.MapGenerator
             AddBoundingSides(sides);
             AddBoundingLines(map, lines, vertices);
 
-            foreach (var layer in map.Layers.OrderBy(layer => layer.Height))
+            foreach (var layer in map.Layers.OrderBy(layer => layer.LayerNumber))
             {
                 AddLayerSectors(sectors, layer);
 
-                var side = new SideDef(sector: layer.Height, textureBottom: "STEPTOP");
+                var side = new SideDef(sector: layer.LayerNumber, textureBottom: "STEPTOP");
                 sides.Add(side);
             }
 
             sides.Add(new SideDef(sector: 0, textureBottom: "STEPTOP"));
 
             var isFirstLayer = true;
-            foreach (var layer in map.Layers.OrderByDescending(layer => layer.Height))
+            foreach (var layer in map.Layers.OrderByDescending(layer => layer.LayerNumber))
             {
                 foreach (var shape in layer.Shapes)
                 {
@@ -47,13 +47,13 @@ namespace SectorDirector.MapGenerator
                             var frontLayer = FindOtherLayer(line, vertices, map, shape);
                             if (isFirstLayer)
                             {
-                                line.SideFront = frontLayer?.Height ?? sides.Count - 1;
-                                line.SideBack = layer.Height;
+                                line.SideFront = frontLayer?.LayerNumber ?? sides.Count - 1;
+                                line.SideBack = layer.LayerNumber;
                             }
                             else
                             {
-                                line.SideFront = layer.Height; 
-                                line.SideBack = frontLayer?.Height ?? sides.Count - 1;
+                                line.SideFront = layer.LayerNumber; 
+                                line.SideBack = frontLayer?.LayerNumber ?? sides.Count - 1;
                             }
                             line.TwoSided = true;
                             line.Id = lines.IndexOf(line);

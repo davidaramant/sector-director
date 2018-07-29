@@ -13,12 +13,15 @@ namespace SectorDirector.MapGenerator.Data
 
         public int Height { get; }
 
+        public int LayerNumber { get; }
+
         public IEnumerable<Vertex> Vertices=> Shapes.SelectMany(shape => shape.Vertices);
 
-        public Layer(IEnumerable<Shape> shapes, int height)
+        public Layer(IEnumerable<Shape> shapes, int height, int layerNumber)
         {
             Shapes.AddRange(shapes);
             Height = height;
+            LayerNumber = layerNumber;
         }
     }
 }

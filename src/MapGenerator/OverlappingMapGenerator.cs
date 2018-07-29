@@ -16,9 +16,9 @@ namespace SectorDirector.MapGenerator
     {
         private const int DefaultCount = 3;
         private const int RadiusMin = 80;
-        private const int RadiusMax = 140;
-        private const int CenterMin = 200;
-        private const int CenterMax = 620;
+        private const int RadiusMax = 250;
+        private const int CenterMin = 300;
+        private const int CenterMax = 3000;
 
         public static Map GenerateMap(int shapeCount = DefaultCount, int? seed = null)
         {
@@ -37,10 +37,11 @@ namespace SectorDirector.MapGenerator
 
             for (int i = 0; i < shapeCount; i++)
             {
-                var sides = 6;//(random.NextDouble() > 1) ? 200 : random.Next(3, 8);
+                var sides = (random.NextDouble() > 0.8) ? 200 : random.Next(3, 8);
                 var radius = random.Next(RadiusMin, RadiusMax);
                 var centerX = random.Next(CenterMin, CenterMax);
                 var centerY = random.Next(CenterMin, CenterMax);
+                var height = random.Next(1, 8);
 
                 var shape = ShapeGenerator.GenerateRegularShape(sides, radius, new IntPoint(centerX, centerY));
                 var layerShapes = new Polygons();
@@ -60,7 +61,8 @@ namespace SectorDirector.MapGenerator
 
                 allShapes.AddRange(layerShapes);
                 map.Layers.Add(new Layer(
-                    height: shapeCount - i,
+                    height: height,
+                    layerNumber: shapeCount - i,
                     shapes: layerShapes.Select(polygon => new Shape(polygon))
                 ));
             }
