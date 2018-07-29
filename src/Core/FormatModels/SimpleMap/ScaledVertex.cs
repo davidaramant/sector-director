@@ -11,7 +11,7 @@ namespace SectorDirector.Core.FormatModels.SimpleMap
         public const int Scale = 100;
 
         public int ScaledX { get; set; }
-        public int ScaledY { get; set; }
+        public int ScaledY { get; set; } 
 
         public double X
         {

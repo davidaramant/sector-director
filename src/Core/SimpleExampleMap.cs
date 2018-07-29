@@ -14,21 +14,74 @@ namespace SectorDirector.Core
                 NameSpace = "Doom",
                 Vertices =
                 {
-                    new Vertex(-320,-128),
-                    new Vertex(-320,128),
-                    new Vertex(-320,384),
-                    new Vertex(-64,384),
-                    new Vertex(-64,128),
-                    new Vertex(-64,-128),
+                    new Vertex // 0
+                    {
+                        X = 0,
+                        Y = 0,
+                    },
+
+                    new Vertex // 1
+                    {
+                        X = 0,
+                        Y = 256,
+                    },
+
+                    new Vertex // 2
+                    {
+                        X = 0,
+                        Y = 512,
+                    },
+
+                    new Vertex // 3
+                    {
+                        X = 96,
+                        Y = 512,
+                    },
+
+                    new Vertex // 4
+                    {
+                        X = 256,
+                        Y = 256,
+                    },
+
+                    new Vertex // 5
+                    {
+                        X = 256,
+                        Y = 0,
+                    },
+
+                    new Vertex // 6
+                    {
+                        X = 256,
+                        Y = 512,
+                    },
+
+                    new Vertex // 7
+                    {
+                        X = 160,
+                        Y = 512,
+                    },
+
+                    new Vertex // 8
+                    {
+                        X = 96,
+                        Y = 528,
+                    },
+
+                    new Vertex // 9
+                    {
+                        X = 160,
+                        Y = 528,
+                    },
                 },
                 LineDefs =
                 {
                     new LineDef // 0
                     {
-                    V1 = 0,
-                    V2 = 1,
-                    SideFront = 0,
-                    Blocking = true,
+                        V1 = 0,
+                        V2 = 1,
+                        SideFront = 0,
+                        Blocking = true,
                     },
 
                     new LineDef // 1
@@ -74,9 +127,53 @@ namespace SectorDirector.Core
 
                     new LineDef // 6
                     {
-                        V1 = 3,
+                        V1 = 6,
                         V2 = 4,
                         SideFront = 7,
+                        Blocking = true,
+                    },
+
+                    new LineDef // 7
+                    {
+                        V1 = 7,
+                        V2 = 6,
+                        SideFront = 8,
+                        Blocking = true,
+                    },
+
+                    new LineDef // 8
+                    {
+                        V1 = 8,
+                        V2 = 9,
+                        SideFront = 9,
+                        Special = 11,
+                        Blocking = true,
+                    },
+
+                    new LineDef // 9
+                    {
+                        V1 = 9,
+                        V2 = 7,
+                        SideFront = 10,
+                        Blocking = true,
+                    },
+
+                    new LineDef // 10
+                    {
+                        V1 = 3,
+                        V2 = 7,
+                        SideFront = 11,
+                        SideBack = 12,
+                        TwoSided = true,
+                        DontPegTop = true,
+                        DontPegBottom = true,
+                    },
+
+                    new LineDef // 11
+                    {
+                        V1 = 3,
+                        V2 = 8,
+                        SideFront = 13,
                         Blocking = true,
                     },
                 },
@@ -84,8 +181,8 @@ namespace SectorDirector.Core
                 {
                     new SideDef // 0
                     {
-                        Sector = 0,
-                        TextureMiddle = "STARTAN1",
+                    Sector = 0,
+                    TextureMiddle = "STARTAN1",
                     },
 
                     new SideDef // 1
@@ -129,6 +226,44 @@ namespace SectorDirector.Core
                         Sector = 1,
                         TextureMiddle = "STARTAN1",
                     },
+
+                    new SideDef // 8
+                    {
+                        Sector = 1,
+                        OffsetX = 160,
+                        TextureMiddle = "STARTAN1",
+                    },
+
+                    new SideDef // 9
+                    {
+                        Sector = 2,
+                        TextureMiddle = "SW1COMM",
+                    },
+
+                    new SideDef // 10
+                    {
+                        Sector = 2,
+                        TextureMiddle = "SHAWN2",
+                    },
+
+                    new SideDef // 11
+                    {
+                        Sector = 1,
+                        OffsetX = 96,
+                        TextureTop = "STARTAN1",
+                        TextureBottom = "STARTAN1",
+                    },
+
+                    new SideDef // 12
+                    {
+                        Sector = 2,
+                    },
+
+                    new SideDef // 13
+                    {
+                        Sector = 2,
+                        TextureMiddle = "SHAWN2",
+                    },
                 },
                 Sectors =
                 {
@@ -148,13 +283,21 @@ namespace SectorDirector.Core
                         TextureCeiling = "CEIL1_1",
                         LightLevel = 160,
                     },
+                    new Sector
+                    {
+                        HeightFloor = 32,
+                        HeightCeiling = 96,
+                        TextureFloor = "FLAT23",
+                        TextureCeiling = "FLAT23",
+                        LightLevel = 255,
+                    },
                 },
                 Things =
                 {
                     new Thing
                     {
-                        X = -192,
-                        Y = 0,
+                        X = 128,
+                        Y = 64,
                         Angle = 90,
                         Type = 1,
                         Skill1 = true,
