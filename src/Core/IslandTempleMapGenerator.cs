@@ -25,6 +25,7 @@ namespace SectorDirector.Core
             MapData map = new MapData { NameSpace = "Doom" };
 
             AddPerimeter(map);
+            AddExitSwitch(map);
             CreateSpiralCenter(map);
 
             // Put the player in a safe spot
@@ -173,6 +174,48 @@ namespace SectorDirector.Core
             }
         }
 
+        static void AddExitSwitch(MapData mapData)
+        {
+            var lastSectorId = mapData.Sectors.Count;
+            mapData.Sectors.Add(new Sector(
+                textureCeiling: "F_SKY1",
+                textureFloor: "FLAT23",
+                lightLevel: 192,
+                heightCeiling: Height,
+                heightFloor: 72));
+
+            var yOffset = -PlayableRadius + 128;
+
+            var switchVertexStart = mapData.Vertices.Count;
+            mapData.Vertices.AddRange(new[]
+            {
+                new Vertex(-32,yOffset-8),
+                new Vertex(+32,yOffset-8),
+                new Vertex(+32,yOffset+8),
+                new Vertex(-32,yOffset+8),
+            });
+
+            var switchFrontSD = mapData.SideDefs.Count;
+            var switchSideSD = switchFrontSD + 1;
+            var switchInsideSD = switchSideSD + 1;
+            mapData.SideDefs.AddRange(new[]
+            {
+                new SideDef(sector:lastSectorId-1,textureBottom:"SW1COMM"),
+                new SideDef(sector:lastSectorId-1, textureBottom:"SHAWN2"),
+                new SideDef(sector:lastSectorId),
+
+            });
+
+            mapData.LineDefs.AddRange(new[]
+            {
+                new LineDef(v1:switchVertexStart,  v2:switchVertexStart+1, sideFront:switchFrontSD,sideBack:switchInsideSD,twoSided:true,special:11),
+                new LineDef(v1:switchVertexStart+1,v2:switchVertexStart+2, sideFront:switchSideSD, sideBack:switchInsideSD,twoSided:true),
+                new LineDef(v1:switchVertexStart+2,v2:switchVertexStart+3, sideFront:switchSideSD, sideBack:switchInsideSD,twoSided:true),
+                new LineDef(v1:switchVertexStart+3,v2:switchVertexStart,   sideFront:switchSideSD, sideBack:switchInsideSD,twoSided:true),
+            });
+
+        }
+        
         static double GetDistance(Vertex v1, Vertex v2) => Sqrt(Pow(v1.X - v2.X, 2) + Pow(v1.Y - v2.Y, 2));
 
         static void CreateSpiralCenter(MapData map)
@@ -181,7 +224,7 @@ namespace SectorDirector.Core
             const int plateauHeight = 1024;
             const int textureWidth = 128;
 
-            int insideAreaSectorId = map.Sectors.Count - 1;
+            int insideAreaSectorId = map.Sectors.Count - 2; // HACK: Take into account exit switch
             int plateauSectorId = map.Sectors.Count;
             map.Sectors.Add(new Sector(
                 textureFloor: "FLOOR6_1",
