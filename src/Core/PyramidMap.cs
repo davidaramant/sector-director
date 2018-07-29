@@ -53,7 +53,7 @@ namespace SectorDirector.Core
                     });
                 }
 
-                                int vertexOffset = level * 4;
+                int vertexOffset = level * 4;
 
                 if (level == 0)
                 {
@@ -86,11 +86,49 @@ namespace SectorDirector.Core
                 }
             }
 
+            var lastSectorId = mapData.Sectors.Count;
+            mapData.Sectors.Add(new Sector(
+                textureCeiling: "F_SKY1",
+                textureFloor: "FLAT23",
+                lightLevel: 192,
+                heightCeiling: startingHeight,
+                heightFloor: ((pyramidLevels - 1) * stepHeight) + 72));
+
+            var halfWidth = startingWidth / 2d;
+
+            var switchVertexStart = mapData.Vertices.Count;
+            mapData.Vertices.AddRange(new[]
+            {
+                new Vertex(halfWidth-32,halfWidth-8),
+                new Vertex(halfWidth+32,halfWidth-8),
+                new Vertex(halfWidth+32,halfWidth+8),
+                new Vertex(halfWidth-32,halfWidth+8),
+            });
+
+            var switchFrontSD = mapData.SideDefs.Count;
+            var switchSideSD = switchFrontSD + 1;
+            var switchInsideSD = switchSideSD + 1;
+            mapData.SideDefs.AddRange(new[]
+            {
+                new SideDef(sector:lastSectorId-1,textureBottom:"SW1COMM"),
+                new SideDef(sector:lastSectorId-1, textureBottom:"SHAWN2"),
+                new SideDef(sector:lastSectorId),
+
+            });
+
+            mapData.LineDefs.AddRange(new[]
+            {
+                new LineDef(v1:switchVertexStart,  v2:switchVertexStart+1, sideFront:switchFrontSD,sideBack:switchInsideSD,twoSided:true,special:11),
+                new LineDef(v1:switchVertexStart+1,v2:switchVertexStart+2, sideFront:switchSideSD, sideBack:switchInsideSD,twoSided:true),
+                new LineDef(v1:switchVertexStart+2,v2:switchVertexStart+3, sideFront:switchSideSD, sideBack:switchInsideSD,twoSided:true),
+                new LineDef(v1:switchVertexStart+3,v2:switchVertexStart,   sideFront:switchSideSD, sideBack:switchInsideSD,twoSided:true),
+            });
+
             mapData.Things.Add(new Thing(
-                type:1,
-                x:startingWidth/2,
-                y:startingWidth/2));
-            
+                type: 1,
+                x: startingWidth / 2d,
+                y: startingWidth / 2d));
+
             return mapData;
         }
     }
