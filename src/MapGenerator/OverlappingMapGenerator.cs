@@ -46,7 +46,7 @@ namespace SectorDirector.MapGenerator
                 var radius = random.Next(RadiusMin, RadiusMax);
                 var centerX = random.Next(CenterMin, CenterMax);
                 var centerY = random.Next(CenterMin, CenterMax);
-                var height = random.Next(1, 8);
+                var height = random.Next(1, 4);
 
                 var shape = ShapeGenerator.GenerateRegularShape(sides, radius, new IntPoint(centerX, centerY));
                 var layerShapes = new Polygons();
@@ -223,10 +223,10 @@ namespace SectorDirector.MapGenerator
 
             var boundingShape = new Polygon
             {
-                new IntPoint(minimumX - 35, minimumY - 35),
-                new IntPoint(minimumX - 35, maximumY + 35),
-                new IntPoint(maximumX + 35, maximumY + 35),
-                new IntPoint(maximumX + 35, minimumY - 35),
+                new IntPoint(minimumX - 48, minimumY - 48),
+                new IntPoint(minimumX - 48, maximumY + 48),
+                new IntPoint(maximumX + 48, maximumY + 48),
+                new IntPoint(maximumX + 48, minimumY - 48),
             };
 
             return boundingShape;

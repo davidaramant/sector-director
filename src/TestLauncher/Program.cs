@@ -20,7 +20,7 @@ namespace SectorDirector.TestLauncher
         {
             try
             {
-                var circleMap = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.OnlyCircles, thingsToInclude: ThingsTypes.None);
+                var circleMap = OverlappingMapGenerator.GenerateMap(200, PolygonTypes.OnlyCircles, thingsToInclude: ThingsTypes.None);
                 var polygonMap = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.OnlyPolygons);
                 var mixedMap1 = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.Everything);
                 var mixedMap2 = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.Everything);

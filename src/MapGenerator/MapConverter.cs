@@ -12,6 +12,8 @@ namespace SectorDirector.MapGenerator
 {
     public static class MapConverter
     {
+        static readonly Random rand = new Random();
+
         public static MapData Convert(Map map)
         {
             var vertices = BuildVerticesList(map);
@@ -113,7 +115,8 @@ namespace SectorDirector.MapGenerator
             things.Add(new Thing(
                 type: 1,
                 x: map.PlayerStart.X,
-                y: map.PlayerStart.Y));
+                y: map.PlayerStart.Y,
+                angle:rand.Next(360)));
         }
 
         private static void AddMonsters(List<Thing> things, Map map, Random random)
@@ -121,12 +124,14 @@ namespace SectorDirector.MapGenerator
             var possibleMonsters = new List<int>
             {
                 3001, /* Imp */
+                3001, /* Imp */
+                3001, /* Imp */
                 0009, /* Former Sergeant */
                 3004, /* Former Human */
-                3002, /* Demon */
-                3005, /* Cacodemon */
                 3006, /* Lost Soul */
+                3002, /* Demon */
                 0058, /* Spectre */
+                3005, /* Cacodemon */
             };
             AddThings(things, map.MonsterPositions, possibleMonsters, random);
         }
@@ -136,23 +141,48 @@ namespace SectorDirector.MapGenerator
             var possibleMonsters = new List<int>
             {
                 3003, /* Baron of Hell */
+                3003, /* Baron of Hell */
+                3003, /* Baron of Hell */
+                0016, /* Cyberdemon */
                 0016, /* Cyberdemon */
                 0007, /* Spider Mastermind */
             };
             AddThings(things, map.BossPositions, possibleMonsters, random);
         }
 
+        enum ThingType
+        {
+            BerserkPack = 2023,
+            BlueArmor = 2019,
+            MediKit = 2012,
+            GreenArmor = 2018,
+            StimPack = 2011,
+            HealthBonus = 2014,
+            ArmorBonus = 2015,
+            BoxOfShells = 2049,
+            BoxOfAmmo = 2048,
+            AmmoClip = 2007,
+            ShotgunShells = 2008,
+            Chaingun = 2002,
+        }
+
         private static void AddItems(List<Thing> things, Map map, Random random)
         {
-            var possibleItems = new List<int>
-            {
-                2012, /* Medkit */
-                2015, /* Armor Bonus */
-                2018, /* Green Armor */
-                2049, /* Box of Shells */
-                2048, /* Box of Ammo */
-                2007, /* Clip of Ammo */
-            };
+            // Duplicate things to increase thier likelihood of spawning
+            var possibleItems = new[] { ThingType.BlueArmor }
+                .Concat(Enumerable.Repeat(ThingType.BerserkPack, 1))
+                .Concat(Enumerable.Repeat(ThingType.GreenArmor, 2))
+                .Concat(Enumerable.Repeat(ThingType.MediKit, 3))
+                .Concat(Enumerable.Repeat(ThingType.Chaingun, 3))
+                .Concat(Enumerable.Repeat(ThingType.StimPack, 4))
+                .Concat(Enumerable.Repeat(ThingType.BoxOfShells, 4))
+                .Concat(Enumerable.Repeat(ThingType.BoxOfAmmo, 4))
+                .Concat(Enumerable.Repeat(ThingType.HealthBonus, 6))
+                .Concat(Enumerable.Repeat(ThingType.ArmorBonus, 6))
+                .Concat(Enumerable.Repeat(ThingType.AmmoClip, 6))
+                .Concat(Enumerable.Repeat(ThingType.ShotgunShells, 6))
+                .Cast<int>().ToList();
+
             AddThings(things, map.ItemPositions, possibleItems, random);
         }
 
@@ -169,7 +199,8 @@ namespace SectorDirector.MapGenerator
                     skill3: true,
                     skill4: true,
                     skill5: true,
-                    single: true));
+                    single: true,
+                    angle:rand.Next(360)));
             }
         }
 
@@ -185,8 +216,8 @@ namespace SectorDirector.MapGenerator
                 HeightFloor = 0,
                 HeightCeiling = 256,
                 TextureCeiling = "F_SKY1",
-                TextureFloor = "FLAT10",
-                LightLevel = 192,
+                TextureFloor = "FLOOR6_1",
+                LightLevel = 176,
             });
         }
 
@@ -194,11 +225,12 @@ namespace SectorDirector.MapGenerator
         {
             sectors.Add(new Sector
             {
-                HeightFloor = layer.Height * 8,
+                HeightFloor = layer.Height * 16,
                 HeightCeiling = 256,
                 TextureCeiling = "F_SKY1",
-                TextureFloor = isPinnacleLayer ? "SFLR6_4" : "FLOOR0_1",
-                LightLevel = 192,
+                TextureFloor = isPinnacleLayer ? "SFLR6_4" : "FLAT5",
+                LightLevel = 192 + rand.Next(0, 5) * 16,
+                Special = isPinnacleLayer ? 8 : 0,
             });
         }
 
@@ -243,7 +275,7 @@ namespace SectorDirector.MapGenerator
             var previous = shape.Polygon[shape.Polygon.Count - 1];
 
             foreach (var current in shape.Polygon)
-            { 
+            {
                 yield return Tuple.Create(current, previous);
 
                 previous = current;

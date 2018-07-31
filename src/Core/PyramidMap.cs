@@ -12,32 +12,31 @@ namespace SectorDirector.Core
         {
             var mapData = new MapData { NameSpace = "Doom" };
 
-            const int pyramidLevels = 20;
+            const int pyramidLevels = 128;
             const int stepHeight = 16;
-            const int stepWidth = 32;
+            const int stepWidth = 48;
 
-            const int startingWidth = 2048;
-            const int startingHeight = 512;
+            const int innerWidth = 256;
+            const int innerHeight = 256;
 
             foreach (var level in Enumerable.Range(0, pyramidLevels))
             {
                 mapData.Sectors.Add(new Sector
                 {
-                    HeightFloor = level * stepHeight,
-                    HeightCeiling = startingHeight,
+                    HeightFloor = -(pyramidLevels - level - 1) * stepHeight,
+                    HeightCeiling = innerHeight,
                     TextureCeiling = "F_SKY1",
                     TextureFloor = "FLAT10",
                     LightLevel = 192,
                 });
 
-                int posOffset = stepWidth * level;
-
+                int pos = (innerWidth / 2) + (pyramidLevels - level - 1) * stepWidth;
                 mapData.Vertices.AddRange(new[]
                 {
-                    new Vertex(posOffset, posOffset),
-                    new Vertex(startingWidth-posOffset, posOffset),
-                    new Vertex(startingWidth-posOffset, startingWidth-posOffset),
-                    new Vertex(posOffset, startingWidth-posOffset),
+                    new Vertex(-pos, -pos),
+                    new Vertex(pos, -pos),
+                    new Vertex(pos, pos),
+                    new Vertex(-pos, pos),
                 });
 
                 if (level == 0)
@@ -86,23 +85,22 @@ namespace SectorDirector.Core
                 }
             }
 
+            // Add switch
             var lastSectorId = mapData.Sectors.Count;
             mapData.Sectors.Add(new Sector(
                 textureCeiling: "F_SKY1",
                 textureFloor: "FLAT23",
                 lightLevel: 192,
-                heightCeiling: startingHeight,
-                heightFloor: ((pyramidLevels - 1) * stepHeight) + 72));
-
-            var halfWidth = startingWidth / 2d;
+                heightCeiling: innerHeight,
+                heightFloor: 64));
 
             var switchVertexStart = mapData.Vertices.Count;
             mapData.Vertices.AddRange(new[]
             {
-                new Vertex(halfWidth-32,halfWidth-8),
-                new Vertex(halfWidth+32,halfWidth-8),
-                new Vertex(halfWidth+32,halfWidth+8),
-                new Vertex(halfWidth-32,halfWidth+8),
+                new Vertex(-32,-8),
+                new Vertex(+32,-8),
+                new Vertex(+32,+8),
+                new Vertex(-32,+8),
             });
 
             var switchFrontSD = mapData.SideDefs.Count;
@@ -126,8 +124,8 @@ namespace SectorDirector.Core
 
             mapData.Things.Add(new Thing(
                 type: 1,
-                x: startingWidth / 2d,
-                y: startingWidth / 2d));
+                x: 0,
+                y: 0));
 
             return mapData;
         }
