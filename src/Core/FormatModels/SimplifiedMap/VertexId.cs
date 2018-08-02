@@ -3,22 +3,22 @@
 
 using System;
 
-namespace SectorDirector.Core.FormatModels.SimpleMap
+namespace SectorDirector.Core.FormatModels.SimplifiedMap
 {
-    public struct SideDefId : IEquatable<SideDefId>
-    {
-        public static readonly SideDefId Invalid = new SideDefId(-1);
+    public struct VertexId : IEquatable<VertexId>
+    {    
+        public static readonly VertexId Invalid = new VertexId(-1);
         public bool IsInvalid => _id < 0;
 
         private readonly int _id;
 
-        public SideDefId(int id)
+        public VertexId(int id)
         {
             _id = id;
         }
 
         #region Equality
-        public bool Equals(SideDefId other)
+        public bool Equals(VertexId other)
         {
             return _id == other._id;
         }
@@ -26,7 +26,7 @@ namespace SectorDirector.Core.FormatModels.SimpleMap
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is SideDefId && Equals((SideDefId) obj);
+            return obj is VertexId && Equals((VertexId) obj);
         }
 
         public override int GetHashCode()
@@ -34,12 +34,12 @@ namespace SectorDirector.Core.FormatModels.SimpleMap
             return _id;
         }
 
-        public static bool operator ==(SideDefId left, SideDefId right)
+        public static bool operator ==(VertexId left, VertexId right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(SideDefId left, SideDefId right)
+        public static bool operator !=(VertexId left, VertexId right)
         {
             return !left.Equals(right);
         }

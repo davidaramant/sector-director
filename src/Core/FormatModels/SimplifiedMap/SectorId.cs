@@ -3,7 +3,7 @@
 
 using System;
 
-namespace SectorDirector.Core.FormatModels.SimpleMap
+namespace SectorDirector.Core.FormatModels.SimplifiedMap
 {
     public struct SectorId : IEquatable<SectorId>
     {

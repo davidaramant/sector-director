@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 
-namespace SectorDirector.Core.FormatModels.SimpleMap
+namespace SectorDirector.Core.FormatModels.SimplifiedMap
 {
     public sealed class EntityDatabase<TId, TEntities> where TId : struct where TEntities : class
     {

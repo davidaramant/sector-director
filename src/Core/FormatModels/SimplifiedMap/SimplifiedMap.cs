@@ -3,9 +3,9 @@
 
 using SectorDirector.Core.FormatModels.Udmf;
 
-namespace SectorDirector.Core.FormatModels.SimpleMap
+namespace SectorDirector.Core.FormatModels.SimplifiedMap
 {
-    public sealed class Map
+    public sealed class SimpleMap
     {
         public EntityDatabase<VertexId, ScaledVertex> Vertices { get; } = new EntityDatabase<VertexId, ScaledVertex>();
         public EntityDatabase<SideDefId, SideDefEntity> SideDefs { get; } = new EntityDatabase<SideDefId, SideDefEntity>();

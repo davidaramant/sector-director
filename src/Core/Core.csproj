@@ -41,18 +41,18 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FormatModels\SimpleMap\CompiledEntities.cs" />
-    <Compile Include="FormatModels\SimpleMap\Map.cs" />
-    <Compile Include="FormatModels\SimpleMap\ScaledVertex.cs" />
-    <Compile Include="FormatModels\SimpleMap\LineDefEntity.cs" />
-    <Compile Include="FormatModels\SimpleMap\LineDefId.cs" />
-    <Compile Include="FormatModels\SimpleMap\SectorId.cs" />
-    <Compile Include="FormatModels\SimpleMap\SideDefEntity.cs" />
-    <Compile Include="FormatModels\SimpleMap\SideDefId.cs" />
-    <Compile Include="FormatModels\SimpleMap\VertexDatabase.cs" />
-    <Compile Include="FormatModels\SimpleMap\VertexId.cs" />
-    <Compile Include="FormatModels\SimpleMap\IdSequence.cs" />
-    <Compile Include="FormatModels\SimpleMap\EntityDatabase.cs" />
+    <Compile Include="FormatModels\SimplifiedMap\CompiledEntities.cs" />
+    <Compile Include="FormatModels\SimplifiedMap\Map.cs" />
+    <Compile Include="FormatModels\SimplifiedMap\ScaledVertex.cs" />
+    <Compile Include="FormatModels\SimplifiedMap\LineDefEntity.cs" />
+    <Compile Include="FormatModels\SimplifiedMap\LineDefId.cs" />
+    <Compile Include="FormatModels\SimplifiedMap\SectorId.cs" />
+    <Compile Include="FormatModels\SimplifiedMap\SideDefEntity.cs" />
+    <Compile Include="FormatModels\SimplifiedMap\SideDefId.cs" />
+    <Compile Include="FormatModels\SimplifiedMap\VertexDatabase.cs" />
+    <Compile Include="FormatModels\SimplifiedMap\VertexId.cs" />
+    <Compile Include="FormatModels\SimplifiedMap\IdSequence.cs" />
+    <Compile Include="FormatModels\SimplifiedMap\EntityDatabase.cs" />
     <Compile Include="IslandTempleMapGenerator.cs" />
     <Compile Include="FormatModels\Common\Identifier.cs" />
     <Compile Include="FormatModels\Pk3\Pk3File.cs" />

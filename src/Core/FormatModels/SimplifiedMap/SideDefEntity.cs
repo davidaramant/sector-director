@@ -3,7 +3,7 @@
 
 using SectorDirector.Core.FormatModels.Udmf;
 
-namespace SectorDirector.Core.FormatModels.SimpleMap
+namespace SectorDirector.Core.FormatModels.SimplifiedMap
 {
     public sealed class SideDefEntity
     {
