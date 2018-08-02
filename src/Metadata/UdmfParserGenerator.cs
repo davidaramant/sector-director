@@ -81,12 +81,13 @@ OpenParen();
             output.Line("switch(block.Name.ToLower())");
             output.OpenParen();
 
-            foreach (var block in UdmfDefinitions.Blocks.Where(_ => _.NormalParsing))
+            // HACK: Get around the vertex/vertices problem
+            foreach (var block in UdmfDefinitions.Blocks.Single(_ => !_.IsSubBlock).Properties.Where(p => p.IsUdmfSubBlockList && p.Type != PropertyType.UnknownBlocks))
             {
                 output.
-                    Line($"case \"{block.ClassName.ToCamelCase()}\":").
+                    Line($"case \"{block.SingularName.ToCamelCase()}\":").
                     IncreaseIndent().
-                    Line($"map.{block.ClassName.ToPluralPascalCase()}.Add(Parse{block.ClassName.ToPascalCase()}(block));").
+                    Line($"map.{block.PropertyName}.Add(Parse{block.CollectionType}(block));").
                     Line("break;").
                     DecreaseIndent();
             }

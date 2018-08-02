@@ -33,6 +33,9 @@
     <Reference Include="Functional.Maybe, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Functional.Maybe.1.1.1\lib\net45\Functional.Maybe.dll</HintPath>
     </Reference>
+    <Reference Include="Piglet, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Piglet.1.4.0\lib\net40\Piglet.dll</HintPath>
+    </Reference>
     <Reference Include="SharpCompress, Version=0.22.0.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpCompress.0.22.0\lib\net45\SharpCompress.dll</HintPath>
     </Reference>
@@ -44,6 +47,13 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FormatModels\Common\Assignment.cs" />
+    <Compile Include="FormatModels\Common\BaseLexer.cs" />
+    <Compile Include="FormatModels\Common\IHaveAssignments.cs" />
+    <Compile Include="FormatModels\Common\ILexer.cs" />
+    <Compile Include="FormatModels\Common\ParsingExtension.cs" />
+    <Compile Include="FormatModels\Common\SyntaxExtensions.cs" />
+    <Compile Include="FormatModels\Common\Token.cs" />
     <Compile Include="FormatModels\SimplifiedMap\CompiledEntities.cs" />
     <Compile Include="FormatModels\SimplifiedMap\LineDefDatabase.cs" />
     <Compile Include="FormatModels\SimplifiedMap\SectorDatabase.cs" />
@@ -59,6 +69,17 @@
     <Compile Include="FormatModels\SimplifiedMap\VertexId.cs" />
     <Compile Include="FormatModels\SimplifiedMap\IdSequence.cs" />
     <Compile Include="FormatModels\SimplifiedMap\EntityDatabase.cs" />
+    <Compile Include="FormatModels\Udmf\Parsing\ArrayBlock.cs" />
+    <Compile Include="FormatModels\Udmf\Parsing\Block.cs" />
+    <Compile Include="FormatModels\Udmf\Parsing\UdmfLexer.cs" />
+    <Compile Include="FormatModels\Udmf\Parsing\UdmfParser.cs" />
+    <Compile Include="FormatModels\Udmf\Parsing\UdmfSyntaxAnalyzer.cs" />
+    <Compile Include="FormatModels\Udmf\Parsing\UdmfSyntaxTree.cs" />
+    <Compile Include="FormatModels\Udmf\Parsing\UdmfParser.Generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UdmfParser.tt</DependentUpon>
+    </Compile>
     <Compile Include="IslandTempleMapGenerator.cs" />
     <Compile Include="FormatModels\Common\Identifier.cs" />
     <Compile Include="FormatModels\Pk3\Pk3File.cs" />
@@ -95,6 +116,10 @@
     <Content Include="FormatModels\Udmf\Model.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Model.Generated.cs</LastGenOutput>
+    </Content>
+    <Content Include="FormatModels\Udmf\Parsing\UdmfParser.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>UdmfParser.Generated.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <ItemGroup>
