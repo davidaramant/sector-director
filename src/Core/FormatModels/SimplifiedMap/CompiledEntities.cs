@@ -2,19 +2,19 @@
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
  
 namespace SectorDirector.Core.FormatModels.SimplifiedMap
 {
-    public sealed class CompiledEntities<TId, T> where TId : struct where T : class
+    public sealed class CompiledEntities<TId, T> where TId : struct
     {
         public IEnumerable<T> Entities { get; }
-        public ReadOnlyDictionary<TId,int> IdTranslation { get; }
+        public ImmutableDictionary<TId,int> IdTranslation { get; }
 
         public CompiledEntities(List<T> entities, Dictionary<TId, int> idLookup)
         {
             Entities = entities;
-            IdTranslation = new ReadOnlyDictionary<TId, int>(idLookup);
+            IdTranslation = idLookup.ToImmutableDictionary();
         }
     }
 }

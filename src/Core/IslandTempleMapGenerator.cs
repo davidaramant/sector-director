@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using SectorDirector.Core.FormatModels.Udmf;
+using SectorDirector.Core.FormatModels.SimplifiedMap;
 
 using static System.Math;
 
@@ -23,13 +24,14 @@ namespace SectorDirector.Core
         public static MapData Create()
         {
             MapData map = new MapData { NameSpace = "Doom" };
+            var map2 = new SimpleMap();
 
             AddPerimeter(map);
             AddExitSwitch(map);
             CreateSpiralCenter(map);
 
             // Put the player in a safe spot
-            map.Things.Add(new Thing
+            map2.Things.Add(new Thing
             {
                 X = 0,
                 Y = -PlayableRadius + 64,
@@ -45,7 +47,7 @@ namespace SectorDirector.Core
                 Coop = true,
             });
 
-            return map;
+            return map2.Compile();
         }
 
         static Vertex VertexOnCircle(int radius, double angle) =>

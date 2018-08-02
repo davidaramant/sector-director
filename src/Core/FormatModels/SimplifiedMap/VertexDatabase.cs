@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using Functional.Maybe;
+using SectorDirector.Core.FormatModels.Udmf;
 
 namespace SectorDirector.Core.FormatModels.SimplifiedMap
 {
@@ -43,18 +44,18 @@ namespace SectorDirector.Core.FormatModels.SimplifiedMap
             }
         }
 
-        public CompiledEntities<VertexId,ScaledVertex> CompileEntities()
+        public CompiledEntities<VertexId,Vertex> CompileEntities()
         {
-            var entities = new List<ScaledVertex>();
+            var entities = new List<Vertex>();
             var idLookup = new Dictionary<VertexId, int>();
 
             foreach (var pair in _idToVertex)
             {
                 idLookup[pair.Key] = entities.Count;
-                entities.Add(pair.Value);
+                entities.Add(pair.Value.ToVertex());
             }
 
-            return new CompiledEntities<VertexId, ScaledVertex>(entities, idLookup);
+            return new CompiledEntities<VertexId, Vertex>(entities, idLookup);
         }
     }
 }

@@ -37,12 +37,18 @@
       <HintPath>..\packages\SharpCompress.0.22.0\lib\net45\SharpCompress.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.2.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.5.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FormatModels\SimplifiedMap\CompiledEntities.cs" />
-    <Compile Include="FormatModels\SimplifiedMap\Map.cs" />
+    <Compile Include="FormatModels\SimplifiedMap\LineDefDatabase.cs" />
+    <Compile Include="FormatModels\SimplifiedMap\SectorDatabase.cs" />
+    <Compile Include="FormatModels\SimplifiedMap\SideDefDatabase.cs" />
+    <Compile Include="FormatModels\SimplifiedMap\SimplifiedMap.cs" />
     <Compile Include="FormatModels\SimplifiedMap\ScaledVertex.cs" />
     <Compile Include="FormatModels\SimplifiedMap\LineDefEntity.cs" />
     <Compile Include="FormatModels\SimplifiedMap\LineDefId.cs" />

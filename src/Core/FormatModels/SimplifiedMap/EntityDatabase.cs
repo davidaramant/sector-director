@@ -1,39 +1,42 @@
 ﻿// Copyright (c) 2018, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
+using System;
 using System.Collections.Generic;
 
 namespace SectorDirector.Core.FormatModels.SimplifiedMap
 {
-    public sealed class EntityDatabase<TId, TEntities> where TId : struct where TEntities : class
+    public abstract class EntityDatabase<TId, TEntities> 
+        where TId : struct where TEntities : class
     {
-        private readonly IdSequence<TId> _idSequence = new IdSequence<TId>();
-        private readonly Dictionary<TId, TEntities> _entityMap = new Dictionary<TId, TEntities>();
+        protected readonly IdSequence<TId> IdSequence = new IdSequence<TId>();
+        protected readonly Dictionary<TId, TEntities> EntityMap = new Dictionary<TId, TEntities>();
 
         public TId Add(TEntities vertex)
         {
-            var id = _idSequence.GetNext();
-            _entityMap.Add(id, vertex);
+            var id = IdSequence.GetNext();
+            EntityMap.Add(id, vertex);
             return id;
         }
 
         public void Remove(TId id)
         {
-            _entityMap.Remove(id);
+            EntityMap.Remove(id);
         }
 
-        public CompiledEntities<TId,TEntities> CompileEntities()
+        protected CompiledEntities<TId,TResult> CompileEntities<TResult>(
+            Func<TEntities,TResult> transform)
         {
-            var entities = new List<TEntities>();
+            var entities = new List<TResult>();
             var idLookup = new Dictionary<TId, int>();
 
-            foreach (var pair in _entityMap)
+            foreach (var pair in EntityMap)
             {
                 idLookup[pair.Key] = entities.Count;
-                entities.Add(pair.Value);
+                entities.Add(transform(pair.Value));
             }
 
-            return new CompiledEntities<TId, TEntities>(entities, idLookup);
+            return new CompiledEntities<TId, TResult>(entities, idLookup);
         }
     }
 }
