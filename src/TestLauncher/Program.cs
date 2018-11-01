@@ -20,24 +20,24 @@ namespace SectorDirector.TestLauncher
         {
             try
             {
-                var circleMap = OverlappingMapGenerator.GenerateMap(200, PolygonTypes.OnlyCircles, thingsToInclude: ThingsTypes.None);
-                var polygonMap = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.OnlyPolygons);
-                var mixedMap1 = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.Everything);
-                var mixedMap2 = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.Everything);
-                var bossMap = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.Everything, thingsToInclude: ThingsTypes.Monsters | ThingsTypes.Bosses);
+                //var circleMap = OverlappingMapGenerator.GenerateMap(200, PolygonTypes.OnlyCircles, thingsToInclude: ThingsTypes.None);
+                //var polygonMap = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.OnlyPolygons);
+                //var mixedMap1 = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.Everything);
+                //var mixedMap2 = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.Everything);
+                //var bossMap = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.Everything, thingsToInclude: ThingsTypes.Monsters | ThingsTypes.Bosses);
 
                 //ImageExporter.CreateImage(generatedMap, "exported-map.svg", true);
                 //Process.Start("exported-map.svg");
 
                 LoadMaps(
-                    SimpleExampleMap.Create(),         // M1
-                    PyramidMap.Create(),               // M2
-                    IslandTempleMapGenerator.Create(), // M3
-                    MapConverter.Convert(circleMap),   // M4
-                    MapConverter.Convert(polygonMap),  // M5
-                    MapConverter.Convert(mixedMap1),   // M6
-                    MapConverter.Convert(mixedMap2),   // M7
-                    MapConverter.Convert(bossMap)      // M8
+                    //SimpleExampleMap.Create(),         // M1
+                    //PyramidMap.Create(),               // M2
+                    IslandTempleMapGenerator.Create() // M3
+                    //MapConverter.Convert(circleMap),   // M4
+                    //MapConverter.Convert(polygonMap),  // M5
+                    //MapConverter.Convert(mixedMap1),   // M6
+                    //MapConverter.Convert(mixedMap2),   // M7
+                    //MapConverter.Convert(bossMap)      // M8
                 );
             }
             catch (Exception e)
