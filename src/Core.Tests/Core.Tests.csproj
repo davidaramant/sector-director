@@ -53,6 +53,7 @@
       <DependentUpon>UdmfComparison.Generated.tt</DependentUpon>
     </Compile>
     <Compile Include="FormatModels\Udmf\Parsing\UdmfLexerTests.cs" />
+    <Compile Include="FormatModels\Udmf\Parsing\UdmfSyntaxAnalyzerTests.cs" />
     <Compile Include="FormatModels\Wad\LumpNameTests.cs" />
     <Compile Include="FormatModels\Wad\WadFileTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
