@@ -9,7 +9,8 @@ namespace SectorDirector.Metadata
     {
         public static readonly IEnumerable<Block> Blocks = new Block[]
         {
-            new Block("lineDef",
+            new Block("linedef",
+                className:"LineDef",
                 properties:new []
                 {
                     new Property("id",PropertyType.Integer, defaultValue:-1),
@@ -41,7 +42,8 @@ namespace SectorDirector.Metadata
                     new Property("unknownProperties", PropertyType.UnknownProperties),
                 }),
 
-            new Block("sideDef",
+            new Block("sidedef",
+                className:"SideDef",
                 properties:new []
                 {
                     new Property("offsetX",PropertyType.Integer, defaultValue:0),

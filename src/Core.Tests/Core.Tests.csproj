@@ -76,6 +76,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="FormatModels\Udmf\Parsing\TEXTMAP.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="FormatModels\Udmf\Parsing\UdmfComparison.Generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>UdmfComparison.Generated.cs</LastGenOutput>

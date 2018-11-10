@@ -113,7 +113,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public Stream WriteTo(Stream stream)
         {
             CheckSemanticValidity();
-            WriteLine(stream, "lineDef");
+            WriteLine(stream, "linedef");
             WriteLine(stream, "{");
             WriteProperty(stream, "v1", _v1, indent: true);
             WriteProperty(stream, "v2", _v2, indent: true);
@@ -225,7 +225,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public Stream WriteTo(Stream stream)
         {
             CheckSemanticValidity();
-            WriteLine(stream, "sideDef");
+            WriteLine(stream, "sidedef");
             WriteLine(stream, "{");
             WriteProperty(stream, "sector", _sector, indent: true);
             if (OffsetX != 0) WriteProperty(stream, "offsetX", OffsetX, indent: true);

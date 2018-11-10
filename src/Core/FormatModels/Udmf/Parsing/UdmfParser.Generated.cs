@@ -18,10 +18,10 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
             {
                 switch(block.Name.ToLower())
                 {
-                    case "lineDef":
+                    case "linedef":
                         map.LineDefs.Add(ParseLineDef(block));
                         break;
-                    case "sideDef":
+                    case "sidedef":
                         map.SideDefs.Add(ParseSideDef(block));
                         break;
                     case "vertex":

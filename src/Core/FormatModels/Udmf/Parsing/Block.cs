@@ -36,7 +36,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 
         public IEnumerator<Assignment> GetEnumerator()
         {
-            return Enumerable.Select(_properties, pair => new Assignment(pair.Key, pair.Value)).GetEnumerator();
+            return _properties.Select(pair => new Assignment(pair.Key, pair.Value)).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

@@ -85,7 +85,7 @@ OpenParen();
             foreach (var block in UdmfDefinitions.Blocks.Single(_ => !_.IsSubBlock).Properties.Where(p => p.IsUdmfSubBlockList && p.Type != PropertyType.UnknownBlocks))
             {
                 output.
-                    Line($"case \"{block.SingularName.ToCamelCase()}\":").
+                    Line($"case \"{block.SingularName.ToLower()}\":").
                     IncreaseIndent().
                     Line($"map.{block.PropertyName}.Add(Parse{block.CollectionType}(block));").
                     Line("break;").
