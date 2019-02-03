@@ -12,7 +12,7 @@ namespace SectorDirector.Core.FormatModels.SimplifiedMap
         private readonly IdSequence<SideDefId> _idSequence = new IdSequence<SideDefId>();
         private readonly Dictionary<SideDefId, SideDefEntity> _entityMap = new Dictionary<SideDefId, SideDefEntity>();
 
-        public SideDefId Add(SideDefEntity vertex)
+        public new SideDefId Add(SideDefEntity vertex)
         {
             var id = _idSequence.GetNext();
             _entityMap.Add(id, vertex);
