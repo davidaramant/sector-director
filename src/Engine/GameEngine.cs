@@ -93,12 +93,12 @@ namespace SectorDirector.Engine
                 width: GraphicsDevice.PresentationParameters.BackBufferWidth,
                 height: GraphicsDevice.PresentationParameters.BackBufferHeight);
 
-            if(ScreenSize != currentScreenSize)
+            if (ScreenSize != currentScreenSize)
             {
                 _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: RenderSize.Width, height: RenderSize.Height);
                 _screenBuffer = new ScreenBuffer(RenderSize);
             }
-                        
+
             _spriteBatch.Begin(
                 sortMode: SpriteSortMode.Immediate,
                 blendState: BlendState.Opaque,
@@ -106,7 +106,8 @@ namespace SectorDirector.Engine
                 depthStencilState: DepthStencilState.None,
                 rasterizerState: RasterizerState.CullNone);
 
-            _screenBuffer[0,0] = Color.AliceBlue;
+            _screenBuffer.PlotLine(0, 0, RenderSize.Width - 1, RenderSize.Height - 1, Color.AliceBlue);
+            _screenBuffer.PlotLine(RenderSize.Width - 1, 0, 0, RenderSize.Height - 1, Color.Red);
 
             _screenBuffer.CopyToTexture(_outputTexture);
 
@@ -120,7 +121,7 @@ namespace SectorDirector.Engine
                 color: Color.White);
 
             _spriteBatch.End();
-                                 
+
             base.Draw(gameTime);
         }
     }
