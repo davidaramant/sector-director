@@ -1,4 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using SectorDirector.Core;
+using SectorDirector.Core.FormatModels.Udmf;
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -14,8 +17,10 @@ namespace SectorDirector.Engine
         Texture2D _outputTexture;
         ScreenBuffer _screenBuffer;
 
-        private Size ScreenSize { get; set; } = new Size(640, 480);
-        private Size RenderSize => ScreenSize.Quarter().Quarter();
+        MapData _map;
+
+        private Size ScreenSize { get; set; } = new Size(800, 600);
+        private Size RenderSize => ScreenSize;
 
         public GameEngine()
         {
@@ -57,6 +62,7 @@ namespace SectorDirector.Engine
             _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: RenderSize.Width, height: RenderSize.Height);
             _screenBuffer = new ScreenBuffer(RenderSize);
 
+            _map = SimpleExampleMap.Create();
         }
 
         /// <summary>
@@ -106,8 +112,7 @@ namespace SectorDirector.Engine
                 depthStencilState: DepthStencilState.None,
                 rasterizerState: RasterizerState.CullNone);
 
-            _screenBuffer.PlotLine(0, 0, RenderSize.Width - 1, RenderSize.Height - 1, Color.AliceBlue);
-            _screenBuffer.PlotLine(RenderSize.Width - 1, 0, 0, RenderSize.Height - 1, Color.Red);
+            Render();
 
             _screenBuffer.CopyToTexture(_outputTexture);
 
@@ -123,6 +128,19 @@ namespace SectorDirector.Engine
             _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        void Render()
+        {
+            foreach (var lineDef in _map.LineDefs)
+            {
+                var vertex1 = _map.Vertices[lineDef.V1].ToPoint();
+                var vertex2 = _map.Vertices[lineDef.V2].ToPoint();
+
+                var color = lineDef.TwoSided ? Color.Gray : Color.White;
+
+                _screenBuffer.PlotLine(vertex1, vertex2, color);
+            }
         }
     }
 }

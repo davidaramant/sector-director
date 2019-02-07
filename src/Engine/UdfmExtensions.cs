@@ -1,0 +1,13 @@
+﻿// Copyright (c) 2019, David Aramant
+// Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
+
+using Microsoft.Xna.Framework;
+using SectorDirector.Core.FormatModels.Udmf;
+
+namespace SectorDirector.Engine
+{
+    public static class UdfmExtensions
+    {
+        public static Point ToPoint(this Vertex v) => new Point((int)v.X, (int)v.Y);
+    }
+}
