@@ -11,10 +11,21 @@ namespace SectorDirector.Engine
     {
         readonly GraphicsDeviceManager _graphics;
         SpriteBatch _spriteBatch;
+        Texture2D _outputTexture;
+
+        private Size ScreenSize { get; set; } = new Size(640, 480);
+        private Size RenderSize => ScreenSize.Quarter();
 
         public GameEngine()
         {
-            _graphics = new GraphicsDeviceManager(this);
+            _graphics = new GraphicsDeviceManager(this)
+            {
+                PreferredBackBufferWidth = ScreenSize.Width,
+                PreferredBackBufferHeight = ScreenSize.Height,
+                IsFullScreen = false,
+                //                IsFullScreen = true,
+                SynchronizeWithVerticalRetrace = true,
+            };
             Content.RootDirectory = "Content";
         }
 
@@ -26,8 +37,7 @@ namespace SectorDirector.Engine
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
+            TargetElapsedTime = System.TimeSpan.FromSeconds(1 / 60.0);
             base.Initialize();
         }
 
@@ -37,10 +47,14 @@ namespace SectorDirector.Engine
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
+            ScreenSize = new Size(
+                width: GraphicsDevice.PresentationParameters.BackBufferWidth,
+                height: GraphicsDevice.PresentationParameters.BackBufferHeight);
+
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: RenderSize.Width, height: RenderSize.Height);
+
         }
 
         /// <summary>
@@ -73,10 +87,38 @@ namespace SectorDirector.Engine
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            var currentScreenSize = new Size(
+                width: GraphicsDevice.PresentationParameters.BackBufferWidth,
+                height: GraphicsDevice.PresentationParameters.BackBufferHeight);
 
-            // TODO: Add your drawing code here
+            if(ScreenSize != currentScreenSize)
+            {
+                _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: RenderSize.Width, height: RenderSize.Height);
+            }
+            
+            
+            _spriteBatch.Begin(
+                sortMode: SpriteSortMode.Immediate,
+                blendState: BlendState.Opaque,
+                samplerState: SamplerState.PointWrap,
+                depthStencilState: DepthStencilState.None,
+                rasterizerState: RasterizerState.CullNone);
 
+
+            _spriteBatch.Draw(
+                texture: _outputTexture,
+                destinationRectangle: new Rectangle(
+                    x: 0,
+                    y: 0,
+                    width: ScreenSize.Width,
+                    height: ScreenSize.Height),
+                color: Color.White);
+
+            _spriteBatch.End();
+            
+            
+
+            
             base.Draw(gameTime);
         }
     }
