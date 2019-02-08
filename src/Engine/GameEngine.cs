@@ -1,4 +1,5 @@
-﻿using SectorDirector.Core;
+﻿using System.Linq;
+using SectorDirector.Core;
 using SectorDirector.Core.FormatModels.Udmf;
 
 using Microsoft.Xna.Framework;
@@ -132,14 +133,27 @@ namespace SectorDirector.Engine
 
         void Render()
         {
+            var verticesAsPoints = _map.Vertices.Select(v => v.ToPoint()).ToArray();
+
+            var minX = verticesAsPoints.Min(p => p.X);
+            var maxX = verticesAsPoints.Max(p => p.X);
+            var minY = verticesAsPoints.Min(p => p.Y);
+            var maxY = verticesAsPoints.Max(p => p.Y);
+
+            var mapBounds = new Rectangle(x: minX, y: minY, width: maxX - minY, height: maxY - minY);
+
+            var offset = new Point(
+                x: (RenderSize.Width - mapBounds.Width) / 2,
+                y: (RenderSize.Height - mapBounds.Height) / 2);
+
             foreach (var lineDef in _map.LineDefs)
             {
-                var vertex1 = _map.Vertices[lineDef.V1].ToPoint();
-                var vertex2 = _map.Vertices[lineDef.V2].ToPoint();
+                var vertex1 = verticesAsPoints[lineDef.V1];
+                var vertex2 = verticesAsPoints[lineDef.V2];
 
                 var color = lineDef.TwoSided ? Color.Gray : Color.White;
 
-                _screenBuffer.PlotLine(vertex1, vertex2, color);
+                _screenBuffer.PlotLine(vertex1 + offset, vertex2 + offset, color);
             }
         }
     }

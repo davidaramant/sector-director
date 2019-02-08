@@ -30,9 +30,9 @@ namespace SectorDirector.TestLauncher
                 //Process.Start("exported-map.svg");
 
                 LoadMaps(
-                    //SimpleExampleMap.Create(),         // M1
+                    SimpleExampleMap.Create()         // M1
                     //PyramidMap.Create(),               // M2
-                    IslandTempleMapGenerator.Create() // M3
+                    //IslandTempleMapGenerator.Create() // M3
                     //MapConverter.Convert(circleMap),   // M4
                     //MapConverter.Convert(polygonMap),  // M5
                     //MapConverter.Convert(mixedMap1),   // M6
