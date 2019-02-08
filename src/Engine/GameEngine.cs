@@ -133,6 +133,8 @@ namespace SectorDirector.Engine
 
         void Render()
         {
+            Point InvertY(Point p) => new Point(p.X, RenderSize.Height - 1 - p.Y);
+
             var verticesAsPoints = _map.Vertices.Select(v => v.ToPoint()).ToArray();
 
             var minX = verticesAsPoints.Min(p => p.X);
@@ -153,7 +155,7 @@ namespace SectorDirector.Engine
 
                 var color = lineDef.TwoSided ? Color.Gray : Color.White;
 
-                _screenBuffer.PlotLine(vertex1 + offset, vertex2 + offset, color);
+                _screenBuffer.PlotLine(InvertY(vertex1 + offset), InvertY(vertex2 + offset), color);
             }
         }
     }
