@@ -63,7 +63,7 @@ namespace SectorDirector.Engine
             _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: RenderSize.Width, height: RenderSize.Height);
             _screenBuffer = new ScreenBuffer(RenderSize);
 
-            _map = SimpleExampleMap.Create();
+            _map = PyramidMap.Create();
         }
 
         /// <summary>
@@ -133,8 +133,6 @@ namespace SectorDirector.Engine
 
         void Render()
         {
-            Point InvertY(Point p) => new Point(p.X, RenderSize.Height - 1 - p.Y);
-
             var verticesAsPoints = _map.Vertices.Select(v => v.ToPoint()).ToArray();
 
             var minX = verticesAsPoints.Min(p => p.X);
@@ -144,9 +142,24 @@ namespace SectorDirector.Engine
 
             var mapBounds = new Rectangle(x: minX, y: minY, width: maxX - minY, height: maxY - minY);
 
+            const float desiredFit = 0.9f;
+
+            var xScale = (float)mapBounds.Width / RenderSize.Width;
+            var yScale = (float)mapBounds.Height / RenderSize.Height;
+
+            var largestScale = MathHelper.Max(xScale, yScale);
+
+            var scaleFactor = desiredFit / largestScale;
+
+            var scaledMapWidth = (int)(scaleFactor * mapBounds.Width);
+            var scaledMapHeight = (int)(scaleFactor * mapBounds.Height);
+
             var offset = new Point(
-                x: (RenderSize.Width - mapBounds.Width) / 2,
-                y: (RenderSize.Height - mapBounds.Height) / 2);
+                x: (RenderSize.Width - scaledMapWidth) / 2,
+                y: (RenderSize.Height - scaledMapHeight) / 2);
+
+            Point ConvertToScreenCoords(Point gameCoordinate) =>
+                (offset + gameCoordinate.Scale(scaleFactor)).InvertY(RenderSize);
 
             foreach (var lineDef in _map.LineDefs)
             {
@@ -155,7 +168,9 @@ namespace SectorDirector.Engine
 
                 var color = lineDef.TwoSided ? Color.Gray : Color.White;
 
-                _screenBuffer.PlotLine(InvertY(vertex1 + offset), InvertY(vertex2 + offset), color);
+                var p1 = ConvertToScreenCoords(vertex1);
+                var p2 = ConvertToScreenCoords(vertex2);
+                _screenBuffer.PlotLine(p1, p2, color);
             }
         }
     }
