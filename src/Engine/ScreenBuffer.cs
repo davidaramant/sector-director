@@ -24,6 +24,15 @@ namespace SectorDirector.Engine
             set => _buffer[y * Width + x] = value;
         }
 
+        public void SafeSet(Point p, Color c) => SafeSet(p.X, p.Y, c);
+        public void SafeSet(int x, int y, Color c)
+        {
+            if (x >= 0 && x < Width && y >= 0 && y < Height)
+            {
+                this[x, y] = c;
+            }
+        }
+
         public ScreenBuffer(Size size) : this(size.Width, size.Height)
         {
         }
