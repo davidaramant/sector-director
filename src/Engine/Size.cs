@@ -1,8 +1,10 @@
 ﻿// Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
+using System.Diagnostics;
 
 namespace SectorDirector.Engine
 {
+    [DebuggerDisplay("{Width}x{Height}")]
     public struct Size
     {
         public readonly int Width;
@@ -14,7 +16,7 @@ namespace SectorDirector.Engine
             Height = height;
         }
 
-        public Size Quarter() => new Size(Width / 2, Height / 2);
+        public Size DivideBy(int denominator) => new Size(Width / denominator, Height / denominator);
 
         #region Equality
 

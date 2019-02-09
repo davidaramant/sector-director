@@ -9,8 +9,9 @@ namespace SectorDirector.Engine
     {
         readonly Color[] _buffer;
 
-        public int Width { get; }
-        public int Height { get; }
+        public Size Dimensions { get; }
+        public int Width => Dimensions.Width;
+        public int Height => Dimensions.Height;
 
         public Color this[Point p]
         {
@@ -33,15 +34,10 @@ namespace SectorDirector.Engine
             }
         }
 
-        public ScreenBuffer(Size size) : this(size.Width, size.Height)
+        public ScreenBuffer(Size size)
         {
-        }
-
-        public ScreenBuffer(int width, int height)
-        {
-            Width = width;
-            Height = height;
-            _buffer = new Color[width * height];
+            Dimensions = size;
+            _buffer = new Color[Width * Height];
         }
 
         public void CopyToTexture(Texture2D texture) => texture.SetData(_buffer);

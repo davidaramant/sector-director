@@ -13,12 +13,13 @@ namespace SectorDirector.Engine
         readonly GraphicsDeviceManager _graphics;
         SpriteBatch _spriteBatch;
         Texture2D _outputTexture;
+        RenderScale _renderScale = RenderScale.OneToOne;
         ScreenBuffer _screenBuffer;
-
+        bool _increasingRenderFidelity = false;
+        bool _decreasingRenderFidelity = false;
         OverheadRenderer _renderer;
 
         private Size ScreenSize { get; set; } = new Size(800, 600);
-        private Size RenderSize => ScreenSize;
 
         public GameEngine()
         {
@@ -57,8 +58,8 @@ namespace SectorDirector.Engine
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: RenderSize.Width, height: RenderSize.Height);
-            _screenBuffer = new ScreenBuffer(RenderSize);
+            _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: ScreenSize.Width, height: ScreenSize.Height);
+            _screenBuffer = new ScreenBuffer(ScreenSize);
 
             _renderer = new OverheadRenderer(SimpleExampleMap.Create());
         }
@@ -79,12 +80,51 @@ namespace SectorDirector.Engine
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            var keyboardState = Keyboard.GetState();
+
+            if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            if (keyboardState.IsKeyDown(Keys.OemOpenBrackets))
+            {
+                if (!_decreasingRenderFidelity)
+                {
+                    _decreasingRenderFidelity = true;
+                    _renderScale = _renderScale.DecreaseFidelity();
+                    var newSize = ScreenSize.DivideBy((int)_renderScale);
+                    UpdateScreenBuffer(newSize);
+                }
+            }
+            else
+            {
+                _decreasingRenderFidelity = false;
+            }
+
+            if (keyboardState.IsKeyDown(Keys.OemCloseBrackets))
+            {
+                if (!_increasingRenderFidelity)
+                {
+                    _increasingRenderFidelity = true;
+                    _renderScale = _renderScale.IncreaseFidelity();
+                    var newSize = ScreenSize.DivideBy((int)_renderScale);
+                    UpdateScreenBuffer(newSize);
+                }
+            }
+            else
+            {
+                _increasingRenderFidelity = false;
+            }
 
             base.Update(gameTime);
+        }
+
+        void UpdateScreenBuffer(Size renderSize)
+        {
+            if (_screenBuffer.Dimensions != renderSize)
+            {
+                _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: renderSize.Width, height: renderSize.Height);
+                _screenBuffer = new ScreenBuffer(renderSize);
+            }
         }
 
         /// <summary>
@@ -93,16 +133,6 @@ namespace SectorDirector.Engine
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            var currentScreenSize = new Size(
-                width: GraphicsDevice.PresentationParameters.BackBufferWidth,
-                height: GraphicsDevice.PresentationParameters.BackBufferHeight);
-
-            if (ScreenSize != currentScreenSize)
-            {
-                _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: RenderSize.Width, height: RenderSize.Height);
-                _screenBuffer = new ScreenBuffer(RenderSize);
-            }
-
             _spriteBatch.Begin(
                 sortMode: SpriteSortMode.Immediate,
                 blendState: BlendState.Opaque,
