@@ -20,7 +20,7 @@ namespace SectorDirector.Engine
         bool _togglingFullScreen = false;
         OverheadRenderer _renderer;
 
-        private Size CurrentScreenSize =>new Size(
+        private Size CurrentScreenSize => new Size(
                 width: _graphics.PreferredBackBufferWidth,
                 height: _graphics.PreferredBackBufferHeight);
 
@@ -34,6 +34,8 @@ namespace SectorDirector.Engine
                 SynchronizeWithVerticalRetrace = true,
             };
             Content.RootDirectory = "Content";
+            Window.AllowUserResizing = true;
+            Window.ClientSizeChanged += (s, e) => UpdateScreenBuffer(CurrentScreenSize);
         }
 
         /// <summary>
@@ -113,24 +115,23 @@ namespace SectorDirector.Engine
                 _increasingRenderFidelity = false;
             }
 
-            if((keyboardState.IsKeyDown(Keys.LeftAlt)||keyboardState.IsKeyDown(Keys.RightAlt))&&keyboardState.IsKeyDown(Keys.Enter))
+            if ((keyboardState.IsKeyDown(Keys.LeftAlt) || keyboardState.IsKeyDown(Keys.RightAlt)) && keyboardState.IsKeyDown(Keys.Enter))
             {
-                if(!_togglingFullScreen)
+                if (!_togglingFullScreen)
                 {
                     _togglingFullScreen = true;
                     _graphics.IsFullScreen = !_graphics.IsFullScreen;
-                    if(_graphics.IsFullScreen)
+                    if (_graphics.IsFullScreen)
                     {
-                        _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width; 
+                        _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
                         _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
                     }
                     else
                     {
-                        _graphics.PreferredBackBufferWidth = 800; 
+                        _graphics.PreferredBackBufferWidth = 800;
                         _graphics.PreferredBackBufferHeight = 600;
                     }
                     _renderScale = RenderScale.OneToOne;
-                    UpdateScreenBuffer(CurrentScreenSize);
                     _graphics.ApplyChanges();
                 }
             }
