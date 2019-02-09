@@ -17,18 +17,20 @@ namespace SectorDirector.Engine
         ScreenBuffer _screenBuffer;
         bool _increasingRenderFidelity = false;
         bool _decreasingRenderFidelity = false;
+        bool _togglingFullScreen = false;
         OverheadRenderer _renderer;
 
-        private Size ScreenSize { get; set; } = new Size(800, 600);
+        private Size CurrentScreenSize =>new Size(
+                width: _graphics.PreferredBackBufferWidth,
+                height: _graphics.PreferredBackBufferHeight);
 
         public GameEngine()
         {
             _graphics = new GraphicsDeviceManager(this)
             {
-                PreferredBackBufferWidth = ScreenSize.Width,
-                PreferredBackBufferHeight = ScreenSize.Height,
+                PreferredBackBufferWidth = 800,
+                PreferredBackBufferHeight = 600,
                 IsFullScreen = false,
-                //                IsFullScreen = true,
                 SynchronizeWithVerticalRetrace = true,
             };
             Content.RootDirectory = "Content";
@@ -52,14 +54,10 @@ namespace SectorDirector.Engine
         /// </summary>
         protected override void LoadContent()
         {
-            ScreenSize = new Size(
-                width: GraphicsDevice.PresentationParameters.BackBufferWidth,
-                height: GraphicsDevice.PresentationParameters.BackBufferHeight);
-
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: ScreenSize.Width, height: ScreenSize.Height);
-            _screenBuffer = new ScreenBuffer(ScreenSize);
+            _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: CurrentScreenSize.Width, height: CurrentScreenSize.Height);
+            _screenBuffer = new ScreenBuffer(CurrentScreenSize);
 
             _renderer = new OverheadRenderer(SimpleExampleMap.Create());
         }
@@ -91,7 +89,7 @@ namespace SectorDirector.Engine
                 {
                     _decreasingRenderFidelity = true;
                     _renderScale = _renderScale.DecreaseFidelity();
-                    var newSize = ScreenSize.DivideBy((int)_renderScale);
+                    var newSize = CurrentScreenSize.DivideBy((int)_renderScale);
                     UpdateScreenBuffer(newSize);
                 }
             }
@@ -106,13 +104,39 @@ namespace SectorDirector.Engine
                 {
                     _increasingRenderFidelity = true;
                     _renderScale = _renderScale.IncreaseFidelity();
-                    var newSize = ScreenSize.DivideBy((int)_renderScale);
+                    var newSize = CurrentScreenSize.DivideBy((int)_renderScale);
                     UpdateScreenBuffer(newSize);
                 }
             }
             else
             {
                 _increasingRenderFidelity = false;
+            }
+
+            if((keyboardState.IsKeyDown(Keys.LeftAlt)||keyboardState.IsKeyDown(Keys.RightAlt))&&keyboardState.IsKeyDown(Keys.Enter))
+            {
+                if(!_togglingFullScreen)
+                {
+                    _togglingFullScreen = true;
+                    _graphics.IsFullScreen = !_graphics.IsFullScreen;
+                    if(_graphics.IsFullScreen)
+                    {
+                        _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width; 
+                        _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                    }
+                    else
+                    {
+                        _graphics.PreferredBackBufferWidth = 800; 
+                        _graphics.PreferredBackBufferHeight = 600;
+                    }
+                    _renderScale = RenderScale.OneToOne;
+                    UpdateScreenBuffer(CurrentScreenSize);
+                    _graphics.ApplyChanges();
+                }
+            }
+            else
+            {
+                _togglingFullScreen = false;
             }
 
             base.Update(gameTime);
@@ -149,8 +173,8 @@ namespace SectorDirector.Engine
                 destinationRectangle: new Rectangle(
                     x: 0,
                     y: 0,
-                    width: ScreenSize.Width,
-                    height: ScreenSize.Height),
+                    width: CurrentScreenSize.Width,
+                    height: CurrentScreenSize.Height),
                 color: Color.White);
 
             _spriteBatch.End();
