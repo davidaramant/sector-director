@@ -7,6 +7,6 @@ namespace SectorDirector.Engine
     public static class MonoGameExtensions
     {
         public static Point Scale(this Point p, float factor) => new Point((int)(p.X * factor), (int)(p.Y * factor));
-        public static Point InvertY(this Point p, Size bounds) => new Point(p.X, bounds.Height - 1 - p.Y);
+        public static Point InvertY(this Point p, int height) => new Point(p.X, height - 1 - p.Y);
     }
 }
