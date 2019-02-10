@@ -127,7 +127,7 @@ namespace SectorDirector.Engine
             }
             else if (_loadMap3.IsTriggered(keyboardState))
             {
-                _renderer = new OverheadRenderer(TerrainMapGenerator.Create());
+                _renderer = new OverheadRenderer(IslandTempleMapGenerator.Create());
             }
 
             base.Update(gameTime);

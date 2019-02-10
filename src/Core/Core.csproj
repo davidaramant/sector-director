@@ -192,21 +192,6 @@
     <Compile Include="FormatModels\Common\ParsingExtension.cs" />
     <Compile Include="FormatModels\Common\SyntaxExtensions.cs" />
     <Compile Include="FormatModels\Common\Token.cs" />
-    <Compile Include="FormatModels\SimplifiedMap\CompiledEntities.cs" />
-    <Compile Include="FormatModels\SimplifiedMap\LineDefDatabase.cs" />
-    <Compile Include="FormatModels\SimplifiedMap\SectorDatabase.cs" />
-    <Compile Include="FormatModels\SimplifiedMap\SideDefDatabase.cs" />
-    <Compile Include="FormatModels\SimplifiedMap\SimplifiedMap.cs" />
-    <Compile Include="FormatModels\SimplifiedMap\ScaledVertex.cs" />
-    <Compile Include="FormatModels\SimplifiedMap\LineDefEntity.cs" />
-    <Compile Include="FormatModels\SimplifiedMap\LineDefId.cs" />
-    <Compile Include="FormatModels\SimplifiedMap\SectorId.cs" />
-    <Compile Include="FormatModels\SimplifiedMap\SideDefEntity.cs" />
-    <Compile Include="FormatModels\SimplifiedMap\SideDefId.cs" />
-    <Compile Include="FormatModels\SimplifiedMap\VertexDatabase.cs" />
-    <Compile Include="FormatModels\SimplifiedMap\VertexId.cs" />
-    <Compile Include="FormatModels\SimplifiedMap\IdSequence.cs" />
-    <Compile Include="FormatModels\SimplifiedMap\EntityDatabase.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\ArrayBlock.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\Block.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\UdmfLexer.cs" />
@@ -245,7 +230,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PyramidMap.cs" />
     <Compile Include="SimpleExampleMap.cs" />
-    <Compile Include="TerrainMapGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
