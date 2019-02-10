@@ -18,6 +18,10 @@ namespace SectorDirector.Engine
         readonly KeyboardLatch _decreaseRenderFidelityLatch = new KeyboardLatch(kb => kb.IsKeyDown(Keys.OemOpenBrackets));
         readonly KeyboardLatch _increaseRenderFidelityLatch = new KeyboardLatch(kb => kb.IsKeyDown(Keys.OemCloseBrackets));
         readonly KeyboardLatch _toggleFullscreenLatch = new KeyboardLatch(kb => (kb.IsKeyDown(Keys.LeftAlt) || kb.IsKeyDown(Keys.RightAlt)) && kb.IsKeyDown(Keys.Enter));
+        readonly KeyboardLatch _loadMap1 = new KeyboardLatch(kb => kb.IsKeyDown(Keys.D1));
+        readonly KeyboardLatch _loadMap2 = new KeyboardLatch(kb => kb.IsKeyDown(Keys.D2));
+        readonly KeyboardLatch _loadMap3 = new KeyboardLatch(kb => kb.IsKeyDown(Keys.D3));
+
         OverheadRenderer _renderer;
 
         private Point CurrentScreenSize => new Point(
@@ -61,7 +65,7 @@ namespace SectorDirector.Engine
             _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: CurrentScreenSize.X, height: CurrentScreenSize.Y);
             _screenBuffer = new ScreenBuffer(CurrentScreenSize);
 
-            _renderer = new OverheadRenderer(PyramidMap.Create());
+            _renderer = new OverheadRenderer(SimpleExampleMap.Create());
         }
 
         /// <summary>
@@ -91,15 +95,13 @@ namespace SectorDirector.Engine
                 var newSize = CurrentScreenSize.DivideBy((int)_renderScale);
                 UpdateScreenBuffer(newSize);
             }
-
-            if (_increaseRenderFidelityLatch.IsTriggered(keyboardState))
+            else if (_increaseRenderFidelityLatch.IsTriggered(keyboardState))
             {
                 _renderScale = _renderScale.IncreaseFidelity();
                 var newSize = CurrentScreenSize.DivideBy((int)_renderScale);
                 UpdateScreenBuffer(newSize);
             }
-
-            if (_toggleFullscreenLatch.IsTriggered(keyboardState))
+            else if (_toggleFullscreenLatch.IsTriggered(keyboardState))
             {
                 _graphics.IsFullScreen = !_graphics.IsFullScreen;
                 if (_graphics.IsFullScreen)
@@ -114,6 +116,18 @@ namespace SectorDirector.Engine
                 }
                 _renderScale = RenderScale.Normal;
                 _graphics.ApplyChanges();
+            }
+            else if (_loadMap1.IsTriggered(keyboardState))
+            {
+                _renderer = new OverheadRenderer(SimpleExampleMap.Create());
+            }
+            else if (_loadMap2.IsTriggered(keyboardState))
+            {
+                _renderer = new OverheadRenderer(PyramidMap.Create());
+            }
+            else if (_loadMap3.IsTriggered(keyboardState))
+            {
+                _renderer = new OverheadRenderer(TerrainMapGenerator.Create());
             }
 
             base.Update(gameTime);
