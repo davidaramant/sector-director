@@ -15,9 +15,9 @@ namespace SectorDirector.Engine
         Texture2D _outputTexture;
         RenderScale _renderScale = RenderScale.Normal;
         ScreenBuffer _screenBuffer;
-        bool _increasingRenderFidelity = false;
-        bool _decreasingRenderFidelity = false;
-        bool _togglingFullScreen = false;
+        readonly KeyboardLatch _decreaseRenderFidelityLatch = new KeyboardLatch(kb => kb.IsKeyDown(Keys.OemOpenBrackets));
+        readonly KeyboardLatch _increaseRenderFidelityLatch = new KeyboardLatch(kb => kb.IsKeyDown(Keys.OemCloseBrackets));
+        readonly KeyboardLatch _toggleFullscreenLatch = new KeyboardLatch(kb => (kb.IsKeyDown(Keys.LeftAlt) || kb.IsKeyDown(Keys.RightAlt)) && kb.IsKeyDown(Keys.Enter));
         OverheadRenderer _renderer;
 
         private Point CurrentScreenSize => new Point(
@@ -85,59 +85,35 @@ namespace SectorDirector.Engine
             if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
 
-            if (keyboardState.IsKeyDown(Keys.OemOpenBrackets))
+            if (_decreaseRenderFidelityLatch.IsTriggered(keyboardState))
             {
-                if (!_decreasingRenderFidelity)
-                {
-                    _decreasingRenderFidelity = true;
-                    _renderScale = _renderScale.DecreaseFidelity();
-                    var newSize = CurrentScreenSize.DivideBy((int)_renderScale);
-                    UpdateScreenBuffer(newSize);
-                }
-            }
-            else
-            {
-                _decreasingRenderFidelity = false;
+                _renderScale = _renderScale.DecreaseFidelity();
+                var newSize = CurrentScreenSize.DivideBy((int)_renderScale);
+                UpdateScreenBuffer(newSize);
             }
 
-            if (keyboardState.IsKeyDown(Keys.OemCloseBrackets))
+            if (_increaseRenderFidelityLatch.IsTriggered(keyboardState))
             {
-                if (!_increasingRenderFidelity)
-                {
-                    _increasingRenderFidelity = true;
-                    _renderScale = _renderScale.IncreaseFidelity();
-                    var newSize = CurrentScreenSize.DivideBy((int)_renderScale);
-                    UpdateScreenBuffer(newSize);
-                }
-            }
-            else
-            {
-                _increasingRenderFidelity = false;
+                _renderScale = _renderScale.IncreaseFidelity();
+                var newSize = CurrentScreenSize.DivideBy((int)_renderScale);
+                UpdateScreenBuffer(newSize);
             }
 
-            if ((keyboardState.IsKeyDown(Keys.LeftAlt) || keyboardState.IsKeyDown(Keys.RightAlt)) && keyboardState.IsKeyDown(Keys.Enter))
+            if (_toggleFullscreenLatch.IsTriggered(keyboardState))
             {
-                if (!_togglingFullScreen)
+                _graphics.IsFullScreen = !_graphics.IsFullScreen;
+                if (_graphics.IsFullScreen)
                 {
-                    _togglingFullScreen = true;
-                    _graphics.IsFullScreen = !_graphics.IsFullScreen;
-                    if (_graphics.IsFullScreen)
-                    {
-                        _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-                        _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-                    }
-                    else
-                    {
-                        _graphics.PreferredBackBufferWidth = 800;
-                        _graphics.PreferredBackBufferHeight = 600;
-                    }
-                    _renderScale = RenderScale.Normal;
-                    _graphics.ApplyChanges();
+                    _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                    _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
                 }
-            }
-            else
-            {
-                _togglingFullScreen = false;
+                else
+                {
+                    _graphics.PreferredBackBufferWidth = 800;
+                    _graphics.PreferredBackBufferHeight = 600;
+                }
+                _renderScale = RenderScale.Normal;
+                _graphics.ApplyChanges();
             }
 
             base.Update(gameTime);
