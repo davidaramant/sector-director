@@ -51,9 +51,9 @@
       <Project>{a724c349-d0d5-469c-a8d6-e42a8f7bc32f}</Project>
       <Name>Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MapGenerator\MapGenerator.csproj">
+    <ProjectReference Include="..\MapGeneration\MapGeneration.csproj">
       <Project>{54069491-F7C5-456B-897E-8DA66A0AF8D3}</Project>
-      <Name>MapGenerator</Name>
+      <Name>MapGeneration</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

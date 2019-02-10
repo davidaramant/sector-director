@@ -3,9 +3,9 @@
 
 using SectorDirector.Core.FormatModels.Udmf;
 
-namespace SectorDirector.Core
+namespace SectorDirector.MapGeneration
 {
-    public static class SimpleExampleMap
+    public static class SimpleExampleMapGenerator
     {
         public static MapData Create()
         {

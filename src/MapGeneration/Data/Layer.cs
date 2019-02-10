@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SectorDirector.Core.FormatModels.Udmf;
 
-namespace SectorDirector.MapGenerator.Data
+namespace SectorDirector.MapGeneration.Data
 {
     public sealed class Layer
     {

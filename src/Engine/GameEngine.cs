@@ -1,4 +1,4 @@
-﻿using SectorDirector.Core;
+﻿using SectorDirector.MapGeneration;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -65,7 +65,7 @@ namespace SectorDirector.Engine
             _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: CurrentScreenSize.X, height: CurrentScreenSize.Y);
             _screenBuffer = new ScreenBuffer(CurrentScreenSize);
 
-            _renderer = new OverheadRenderer(SimpleExampleMap.Create());
+            _renderer = new OverheadRenderer(SimpleExampleMapGenerator.Create());
         }
 
         /// <summary>
@@ -119,15 +119,15 @@ namespace SectorDirector.Engine
             }
             else if (_loadMap1.IsTriggered(keyboardState))
             {
-                _renderer = new OverheadRenderer(SimpleExampleMap.Create());
+                _renderer = new OverheadRenderer(SimpleExampleMapGenerator.Create());
             }
             else if (_loadMap2.IsTriggered(keyboardState))
             {
-                _renderer = new OverheadRenderer(PyramidMap.Create());
+                _renderer = new OverheadRenderer(PyramidMapGenerator.Create());
             }
             else if (_loadMap3.IsTriggered(keyboardState))
             {
-                _renderer = new OverheadRenderer(IslandTempleMapGenerator.Create());
+                _renderer = new OverheadRenderer(IslandTempleMapGeneration.Create());
             }
 
             base.Update(gameTime);

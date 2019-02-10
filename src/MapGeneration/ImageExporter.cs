@@ -5,9 +5,9 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using SectorDirector.MapGenerator.Data;
+using SectorDirector.MapGeneration.Data;
 
-namespace SectorDirector.MapGenerator
+namespace SectorDirector.MapGeneration
 {
     public static class ImageExporter
     {

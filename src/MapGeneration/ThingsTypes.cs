@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SectorDirector.MapGenerator
+namespace SectorDirector.MapGeneration
 {
     [Flags]
     public enum ThingsTypes

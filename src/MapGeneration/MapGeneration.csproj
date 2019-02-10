@@ -7,8 +7,8 @@
     <ProjectGuid>{54069491-F7C5-456B-897E-8DA66A0AF8D3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SectorDirector.MapGenerator</RootNamespace>
-    <AssemblyName>SectorDirector.MapGenerator</AssemblyName>
+    <RootNamespace>SectorDirector.MapGeneration</RootNamespace>
+    <AssemblyName>SectorDirector.MapGeneration</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -50,11 +50,14 @@
     <Compile Include="Data\Map.cs" />
     <Compile Include="Data\Shape.cs" />
     <Compile Include="ImageExporter.cs" />
+    <Compile Include="IslandTempleMapGenerator.cs" />
     <Compile Include="MapConverter.cs" />
     <Compile Include="OverlappingMapGenerator.cs" />
     <Compile Include="PolygonTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PyramidMapGenerator.cs" />
     <Compile Include="ShapeGenerator.cs" />
+    <Compile Include="SimpleExampleMapGenerator.cs" />
     <Compile Include="ThingsTypes.cs" />
   </ItemGroup>
   <ItemGroup>

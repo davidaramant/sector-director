@@ -203,7 +203,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UdmfParser.tt</DependentUpon>
     </Compile>
-    <Compile Include="IslandTempleMapGenerator.cs" />
     <Compile Include="FormatModels\Common\Identifier.cs" />
     <Compile Include="FormatModels\Pk3\Pk3File.cs" />
     <Compile Include="FormatModels\Udmf\BaseUdmfBlock.cs" />
@@ -228,8 +227,6 @@
     <Compile Include="FormatModels\EntryNotFoundException.cs" />
     <Compile Include="FormatModels\IResourceProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PyramidMap.cs" />
-    <Compile Include="SimpleExampleMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

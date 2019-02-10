@@ -1,4 +1,4 @@
-﻿namespace SectorDirector.MapGenerator
+﻿namespace SectorDirector.MapGeneration
 {
     public enum PolygonTypes
     {

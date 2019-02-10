@@ -7,7 +7,7 @@ using SectorDirector.Core.FormatModels.Udmf;
 
 using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
 
-namespace SectorDirector.MapGenerator.Data
+namespace SectorDirector.MapGeneration.Data
 {
     public sealed class Shape
     {

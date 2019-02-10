@@ -6,7 +6,7 @@ using System.Linq;
 using ClipperLib;
 using SectorDirector.Core.FormatModels.Udmf;
 
-namespace SectorDirector.MapGenerator.Data
+namespace SectorDirector.MapGeneration.Data
 {
     public sealed class Map
     {

@@ -7,9 +7,9 @@ using SectorDirector.Core.FormatModels.Udmf;
 
 using static System.Math;
 
-namespace SectorDirector.Core
+namespace SectorDirector.MapGeneration
 {
-    public sealed class IslandTempleMapGenerator
+    public sealed class IslandTempleMapGeneration
     {
         const int PlayableRadius = 2048;
         const int SpiralLongestRadius = 1024;

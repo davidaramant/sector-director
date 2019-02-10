@@ -8,7 +8,7 @@ using System.Linq;
 using SectorDirector.Core;
 using SectorDirector.Core.FormatModels.Udmf;
 using SectorDirector.Core.FormatModels.Wad;
-using SectorDirector.MapGenerator;
+using SectorDirector.MapGeneration;
 
 namespace SectorDirector.TestLauncher
 {
@@ -20,19 +20,19 @@ namespace SectorDirector.TestLauncher
         {
             try
             {
-                //var circleMap = OverlappingMapGenerator.GenerateMap(200, PolygonTypes.OnlyCircles, thingsToInclude: ThingsTypes.None);
-                //var polygonMap = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.OnlyPolygons);
-                //var mixedMap1 = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.Everything);
-                //var mixedMap2 = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.Everything);
-                //var bossMap = OverlappingMapGenerator.GenerateMap(100, PolygonTypes.Everything, thingsToInclude: ThingsTypes.Monsters | ThingsTypes.Bosses);
+                //var circleMap = OverlappingMapGeneration.GenerateMap(200, PolygonTypes.OnlyCircles, thingsToInclude: ThingsTypes.None);
+                //var polygonMap = OverlappingMapGeneration.GenerateMap(100, PolygonTypes.OnlyPolygons);
+                //var mixedMap1 = OverlappingMapGeneration.GenerateMap(100, PolygonTypes.Everything);
+                //var mixedMap2 = OverlappingMapGeneration.GenerateMap(100, PolygonTypes.Everything);
+                //var bossMap = OverlappingMapGeneration.GenerateMap(100, PolygonTypes.Everything, thingsToInclude: ThingsTypes.Monsters | ThingsTypes.Bosses);
 
                 //ImageExporter.CreateImage(generatedMap, "exported-map.svg", true);
                 //Process.Start("exported-map.svg");
 
                 LoadMaps(
-                    SimpleExampleMap.Create()         // M1
+                    SimpleExampleMapGenerator.Create()         // M1
                     //PyramidMap.Create(),               // M2
-                    //IslandTempleMapGenerator.Create() // M3
+                    //IslandTempleMapGeneration.Create() // M3
                     //MapConverter.Convert(circleMap),   // M4
                     //MapConverter.Convert(polygonMap),  // M5
                     //MapConverter.Convert(mixedMap1),   // M6

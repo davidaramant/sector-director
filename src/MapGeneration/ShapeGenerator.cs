@@ -6,7 +6,7 @@ using ClipperLib;
 
 using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
 
-namespace SectorDirector.MapGenerator
+namespace SectorDirector.MapGeneration
 {
     public static class ShapeGenerator
     {

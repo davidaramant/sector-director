@@ -4,9 +4,9 @@
 using System.Linq;
 using SectorDirector.Core.FormatModels.Udmf;
 
-namespace SectorDirector.Core
+namespace SectorDirector.MapGeneration
 {
-    public static class PyramidMap
+    public static class PyramidMapGenerator
     {
         public static MapData Create()
         {
