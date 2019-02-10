@@ -5,17 +5,17 @@ namespace SectorDirector.Engine
 {
     public enum RenderScale
     {
-        OneToOne = 1,
-        Half = 2,
-        Quarter = 4
+        Normal = 1,
+        Quarter = 2,
+        Eighth = 4
     }
 
     public static class RenderScaleExtensions
     {
         public static RenderScale DecreaseFidelity(this RenderScale scale) =>
-            scale == RenderScale.OneToOne ? RenderScale.Half : RenderScale.Quarter;
+            scale == RenderScale.Normal ? RenderScale.Quarter : RenderScale.Eighth;
 
         public static RenderScale IncreaseFidelity(this RenderScale scale) =>
-            scale == RenderScale.Quarter ? RenderScale.Half : RenderScale.OneToOne;
+            scale == RenderScale.Eighth ? RenderScale.Quarter : RenderScale.Normal;
     }
 }

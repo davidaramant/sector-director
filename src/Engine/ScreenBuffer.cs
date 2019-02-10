@@ -9,9 +9,9 @@ namespace SectorDirector.Engine
     {
         readonly Color[] _buffer;
 
-        public Size Dimensions { get; }
-        public int Width => Dimensions.Width;
-        public int Height => Dimensions.Height;
+        public Point Dimensions { get; }
+        public int Width => Dimensions.X;
+        public int Height => Dimensions.Y;
 
         public Color this[Point p]
         {
@@ -34,7 +34,7 @@ namespace SectorDirector.Engine
             }
         }
 
-        public ScreenBuffer(Size size)
+        public ScreenBuffer(Point size)
         {
             Dimensions = size;
             _buffer = new Color[Width * Height];

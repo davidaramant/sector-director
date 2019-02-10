@@ -13,16 +13,16 @@ namespace SectorDirector.Engine
         readonly GraphicsDeviceManager _graphics;
         SpriteBatch _spriteBatch;
         Texture2D _outputTexture;
-        RenderScale _renderScale = RenderScale.OneToOne;
+        RenderScale _renderScale = RenderScale.Normal;
         ScreenBuffer _screenBuffer;
         bool _increasingRenderFidelity = false;
         bool _decreasingRenderFidelity = false;
         bool _togglingFullScreen = false;
         OverheadRenderer _renderer;
 
-        private Size CurrentScreenSize => new Size(
-                width: _graphics.PreferredBackBufferWidth,
-                height: _graphics.PreferredBackBufferHeight);
+        private Point CurrentScreenSize => new Point(
+                x: _graphics.PreferredBackBufferWidth,
+                y: _graphics.PreferredBackBufferHeight);
 
         public GameEngine()
         {
@@ -58,10 +58,10 @@ namespace SectorDirector.Engine
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: CurrentScreenSize.Width, height: CurrentScreenSize.Height);
+            _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: CurrentScreenSize.X, height: CurrentScreenSize.Y);
             _screenBuffer = new ScreenBuffer(CurrentScreenSize);
 
-            _renderer = new OverheadRenderer(SimpleExampleMap.Create());
+            _renderer = new OverheadRenderer(PyramidMap.Create());
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace SectorDirector.Engine
                         _graphics.PreferredBackBufferWidth = 800;
                         _graphics.PreferredBackBufferHeight = 600;
                     }
-                    _renderScale = RenderScale.OneToOne;
+                    _renderScale = RenderScale.Normal;
                     _graphics.ApplyChanges();
                 }
             }
@@ -143,11 +143,11 @@ namespace SectorDirector.Engine
             base.Update(gameTime);
         }
 
-        void UpdateScreenBuffer(Size renderSize)
+        void UpdateScreenBuffer(Point renderSize)
         {
             if (_screenBuffer.Dimensions != renderSize)
             {
-                _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: renderSize.Width, height: renderSize.Height);
+                _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: renderSize.X, height: renderSize.Y);
                 _screenBuffer = new ScreenBuffer(renderSize);
             }
         }
@@ -174,8 +174,8 @@ namespace SectorDirector.Engine
                 destinationRectangle: new Rectangle(
                     x: 0,
                     y: 0,
-                    width: CurrentScreenSize.Width,
-                    height: CurrentScreenSize.Height),
+                    width: CurrentScreenSize.X,
+                    height: CurrentScreenSize.Y),
                 color: Color.White);
 
             _spriteBatch.End();

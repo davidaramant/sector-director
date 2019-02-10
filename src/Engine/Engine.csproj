@@ -47,14 +47,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="GameEngine.cs" />
-    <Compile Include="MonoGameExtensions.cs" />
+    <Compile Include="GeometryExtensions.cs" />
     <Compile Include="OverheadRenderer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderScale.cs" />
     <Compile Include="ScreenBuffer.cs" />
     <Compile Include="ScreenBufferExtensions.cs" />
-    <Compile Include="Size.cs" />
     <Compile Include="UdfmExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
