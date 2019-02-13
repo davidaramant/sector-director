@@ -4,7 +4,6 @@
 - [ ] Player position
 - [ ] Player clipping
 
-
 # 2D Renderer
 
 - [ ] Player rendering
