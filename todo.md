@@ -1,12 +1,16 @@
 # Renderer Independent
 
 - [ ] Load UDMF from disk
-- [ ] Player position
+- [ ] Make test maps
+- [ ] Move player position
 - [ ] Player clipping
+- [ ] Text rendering (MonoGame)
 
 # 2D Renderer
 
 - [ ] Player rendering
+- [ ] Zoom in/out
+- [ ] Move view around
 - [ ] Show front side of linedef
 - [ ] Rotate view around player
 
@@ -14,6 +18,6 @@
 
 - [ ] Render a sector
 - [ ] Render linked sectors (portal)
+- [ ] Portal special effects
 - [ ] Texture mapping
 - [ ] Lighting
-- [ ] Portal special effects
