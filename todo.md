@@ -13,7 +13,7 @@
 - [x] Render player direction
 - [ ] Zoom in/out
 - [ ] Move view around
-- [ ] Show front side of linedef
+- [x] Show front side of linedef
 - [ ] Rotate view around player
 
 # 3D Renderer

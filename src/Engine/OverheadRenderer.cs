@@ -1,5 +1,7 @@
 ﻿// Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
+
+using System.Linq;
 using Microsoft.Xna.Framework;
 
 namespace SectorDirector.Engine
@@ -7,7 +9,9 @@ namespace SectorDirector.Engine
     public sealed class OverheadRenderer
     {
         readonly MapGeometry _map;
-        const float _mapToScreenFactor = 0.9f;
+        const float MapToScreenFactor = 0.9f;
+        const float VertexSize = 3f;
+        const float FrontSideMarkerLength = 5f;
 
         public OverheadRenderer(MapGeometry map)
         {
@@ -24,7 +28,7 @@ namespace SectorDirector.Engine
 
             var screenDimensionsV = screen.Dimensions.ToVector2();
 
-            var desiredMapScreenLength = screen.Dimensions.SmallestSide() * _mapToScreenFactor;
+            var desiredMapScreenLength = screen.Dimensions.SmallestSide() * MapToScreenFactor;
             var largestMapSide = _map.Area.LargestSide();
 
             var gameToScreenFactor = desiredMapScreenLength / largestMapSide;
@@ -40,11 +44,28 @@ namespace SectorDirector.Engine
                 var vertex1 = _map.Vertices[lineDef.V1];
                 var vertex2 = _map.Vertices[lineDef.V2];
 
-                var color = lineDef.TwoSided ? Color.Gray : Color.Red;
+                var lineColor = lineDef.TwoSided ? Color.DarkGray : Color.White;
 
                 var p1 = ConvertToScreenCoords(vertex1);
                 var p2 = ConvertToScreenCoords(vertex2);
-                screen.PlotLineSafe(p1, p2, color);
+                screen.PlotLineSafe(p1, p2, lineColor);
+
+                // Draw front side indication
+                var lineDirection = vertex2 - vertex1;
+                var lineMidPoint = vertex1 + lineDirection / 2;
+
+                var perpendicularDirection = lineDirection.PerpendicularClockwise();
+                perpendicularDirection.Normalize();
+
+                var frontMarkerlineEnd = lineMidPoint + perpendicularDirection * FrontSideMarkerLength;
+
+                screen.PlotLineSafe(ConvertToScreenCoords(lineMidPoint),ConvertToScreenCoords(frontMarkerlineEnd), lineColor);
+            }
+
+            // Circle every vertex
+            foreach (var vertexInScreenCoords in _map.Vertices.Select(ConvertToScreenCoords))
+            {
+                screen.PlotCircleSafe(vertexInScreenCoords, (int)(gameToScreenFactor * VertexSize), Color.Aqua);
             }
 
             // Draw player position

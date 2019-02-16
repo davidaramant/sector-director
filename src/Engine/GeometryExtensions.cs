@@ -7,9 +7,11 @@ namespace SectorDirector.Engine
 {
     public static class GeometryExtensions
     {
-        public static Point Scale(this Point p, float factor) => new Point((int)(p.X * factor), (int)(p.Y * factor));
         public static Point DivideBy(this Point p, int denominator) => new Point(p.X / denominator, p.Y / denominator);
         public static Point InvertY(this Point p, int height) => new Point(p.X, height - 1 - p.Y);
+
+        public static Vector2 PerpendicularClockwise(this Vector2 v) => new Vector2(v.Y, -v.X);
+        public static Vector2 PerpendicularCounterClockwise(this Vector2 v) => new Vector2(-v.Y, v.X);
 
         public static float LargestSide(this Vector2 p) => Max(p.X, p.Y);
 
