@@ -1,4 +1,5 @@
-﻿using SectorDirector.MapGeneration;
+﻿using System.Collections.Generic;
+using SectorDirector.Core.FormatModels.Udmf;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -15,6 +16,7 @@ namespace SectorDirector.Engine
         Texture2D _outputTexture;
         RenderScale _renderScale = RenderScale.Normal;
         ScreenBuffer _screenBuffer;
+        List<MapData> _maps;
         readonly KeyboardLatch _decreaseRenderFidelityLatch = new KeyboardLatch(kb => kb.IsKeyDown(Keys.OemOpenBrackets));
         readonly KeyboardLatch _increaseRenderFidelityLatch = new KeyboardLatch(kb => kb.IsKeyDown(Keys.OemCloseBrackets));
         readonly KeyboardLatch _toggleFullscreenLatch = new KeyboardLatch(kb => (kb.IsKeyDown(Keys.LeftAlt) || kb.IsKeyDown(Keys.RightAlt)) && kb.IsKeyDown(Keys.Enter));
@@ -65,7 +67,8 @@ namespace SectorDirector.Engine
             _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: CurrentScreenSize.X, height: CurrentScreenSize.Y);
             _screenBuffer = new ScreenBuffer(CurrentScreenSize);
 
-            _renderer = new OverheadRenderer(SimpleExampleMapGenerator.Create());
+            _maps = WadLoader.Load("testmaps.wad");
+            _renderer = new OverheadRenderer(_maps[0]);
         }
 
         /// <summary>
@@ -119,15 +122,15 @@ namespace SectorDirector.Engine
             }
             else if (_loadMap1.IsTriggered(keyboardState))
             {
-                _renderer = new OverheadRenderer(SimpleExampleMapGenerator.Create());
+                _renderer = new OverheadRenderer(_maps[0]);
             }
-            else if (_loadMap2.IsTriggered(keyboardState))
+            else if (_loadMap2.IsTriggered(keyboardState) && _maps.Count >= 2)
             {
-                _renderer = new OverheadRenderer(PyramidMapGenerator.Create());
+                _renderer = new OverheadRenderer(_maps[1]);
             }
-            else if (_loadMap3.IsTriggered(keyboardState))
+            else if (_loadMap3.IsTriggered(keyboardState) && _maps.Count >= 3)
             {
-                _renderer = new OverheadRenderer(IslandTempleMapGeneration.Create());
+                _renderer = new OverheadRenderer(_maps[2]);
             }
 
             base.Update(gameTime);

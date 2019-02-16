@@ -1,7 +1,7 @@
 # Renderer Independent
 
-- [ ] Load UDMF from disk
-- [ ] Make test maps
+- [x] Load UDMF from disk
+- [x] Make test maps
 - [ ] Move player position
 - [ ] Player clipping
 - [ ] Text rendering (MonoGame)
@@ -18,6 +18,9 @@
 
 - [ ] Render a sector
 - [ ] Render linked sectors (portal)
-- [ ] Portal special effects
-- [ ] Texture mapping
+- [ ] Non-Euclidean horizontal portals
 - [ ] Lighting
+- [ ] Texture mapping
+- [ ] Transparent walls
+- [ ] Vertical portals
+- [ ] Sprites
