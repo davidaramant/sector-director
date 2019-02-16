@@ -5,7 +5,7 @@
 - [x] Move player
 - [x] Rotate player
 - [ ] Player clipping
-- [ ] Text rendering (MonoGame)
+- [x] Text rendering (MonoGame)
 
 # 2D Renderer
 

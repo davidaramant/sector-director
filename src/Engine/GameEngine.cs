@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using SectorDirector.Core.FormatModels.Udmf;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,6 +21,8 @@ namespace SectorDirector.Engine
         PlayerInfo _playerInfo;
         List<MapData> _maps;
         MapGeometry _currentMap;
+        private SpriteFont _messageFont;
+        readonly ScreenMessage _screenMessage = new ScreenMessage();
         readonly KeyboardLatch _decreaseRenderFidelityLatch = new KeyboardLatch(kb => kb.IsKeyDown(Keys.OemOpenBrackets));
         readonly KeyboardLatch _increaseRenderFidelityLatch = new KeyboardLatch(kb => kb.IsKeyDown(Keys.OemCloseBrackets));
         readonly KeyboardLatch _toggleFullscreenLatch = new KeyboardLatch(kb => (kb.IsKeyDown(Keys.LeftAlt) || kb.IsKeyDown(Keys.RightAlt)) && kb.IsKeyDown(Keys.Enter));
@@ -70,6 +73,7 @@ namespace SectorDirector.Engine
             _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: CurrentScreenSize.X, height: CurrentScreenSize.Y);
             _screenBuffer = new ScreenBuffer(CurrentScreenSize);
 
+            _messageFont = Content.Load<SpriteFont>("Fonts/ScreenMessage");
             _maps = WadLoader.Load("testmaps.wad");
             SwitchToMap(0);
         }
@@ -185,6 +189,7 @@ namespace SectorDirector.Engine
         {
             if (_screenBuffer.Dimensions != renderSize)
             {
+                _screenMessage.ShowMessage($"Changing screen buffer to {renderSize.X}x{renderSize.Y}");
                 _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: renderSize.X, height: renderSize.Y);
                 _screenBuffer = new ScreenBuffer(renderSize);
             }
@@ -216,9 +221,22 @@ namespace SectorDirector.Engine
                     height: CurrentScreenSize.Y),
                 color: Color.White);
 
+            var message = _screenMessage.MaybeGetTextToShow(gameTime);
+            if (message != null)
+            {
+                DrawShadowedString(_messageFont, message, new Vector2(0, 0), Color.White);
+            }
+
             _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+
+        private void DrawShadowedString(SpriteFont font, string value, Vector2 position, Color color)
+        {
+            _spriteBatch.DrawString(font, value, position + new Vector2(1.0f, 1.0f), Color.Black);
+            _spriteBatch.DrawString(font, value, position, color);
         }
     }
 }
