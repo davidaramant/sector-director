@@ -22,16 +22,18 @@ namespace SectorDirector.Engine
 
             // Maps have an origin in the bottom left.  Positive Y is UP
 
+            var screenDimensionsV = screen.Dimensions.ToVector2();
+
             var desiredMapScreenLength = screen.Dimensions.SmallestSide() * _mapToScreenFactor;
             var largestMapSide = _map.Area.LargestSide();
 
             var gameToScreenFactor = desiredMapScreenLength / largestMapSide;
 
-            var mapSizeInScreenCoords = _map.Area.Scale(gameToScreenFactor);
-            var centeringOffset = (screen.Dimensions - mapSizeInScreenCoords).DivideBy(2);
+            var mapSizeInScreenCoords = _map.Area * gameToScreenFactor;
+            var centeringOffset = (screenDimensionsV - mapSizeInScreenCoords) / 2;
 
-            Point ConvertToScreenCoords(Point gameCoordinate) =>
-                (centeringOffset + (gameCoordinate - _map.BottomLeftCorner).Scale(gameToScreenFactor)).InvertY(screen.Height);
+            Point ConvertToScreenCoords(Vector2 gameCoordinate) =>
+                (centeringOffset + (gameCoordinate - _map.BottomLeftCorner) * gameToScreenFactor).ToPoint().InvertY(screen.Height);
 
             foreach (var lineDef in _map.Map.LineDefs)
             {
@@ -46,12 +48,12 @@ namespace SectorDirector.Engine
             }
 
             // Draw player position
-            var playerPositionInScreenCoords = ConvertToScreenCoords(player.Position.ToPoint());
+            var playerPositionInScreenCoords = ConvertToScreenCoords(player.Position);
             var playerRadiusInScreenSize = (int)(player.Radius * gameToScreenFactor);
             screen.PlotCircleSafe(playerPositionInScreenCoords, playerRadiusInScreenSize, Color.Green);
 
             // Draw player direction
-            var playerLineEnd = ConvertToScreenCoords((player.Position + player.Radius * player.Direction).ToPoint());
+            var playerLineEnd = ConvertToScreenCoords(player.Position + player.Radius * player.Direction);
             screen.PlotLineSafe(playerPositionInScreenCoords, playerLineEnd, Color.LightGreen);
         }
     }

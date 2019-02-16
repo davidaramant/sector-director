@@ -9,5 +9,6 @@ namespace SectorDirector.Engine
     public static class UdfmExtensions
     {
         public static Point ToPoint(this Vertex v) => new Point((int)v.X, (int)v.Y);
+        public static Vector2 ToVector2(this Vertex v) => new Vector2((float)v.X, (float)v.Y);
     }
 }
