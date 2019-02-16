@@ -157,5 +157,81 @@ namespace SectorDirector.Engine
                 D = D + 2 * dx;
             }
         }
+
+
+        public static void PlotCircle(this ScreenBuffer buffer, Point center, int radius, Color color) => 
+            PlotCircle(buffer, center.X, center.Y, radius, color);
+
+        public static void PlotCircle(this ScreenBuffer buffer, int xCenter, int yCenter, int radius, Color color)
+        {
+            int x = 0, y = radius;
+            int d = 3 - 2 * radius;
+            PlotCircleSegments(buffer, xCenter, yCenter, x, y, color);
+            while (y >= x)
+            {
+                x++;
+
+                if (d > 0)
+                {
+                    y--;
+                    d = d + 4 * (x - y) + 10;
+                }
+                else
+                {
+                    d = d + 4 * x + 6;
+                }
+                PlotCircleSegments(buffer, xCenter, yCenter, x, y, color);
+            }
+        }
+
+        private static void PlotCircleSegments(ScreenBuffer buffer, int xc, int yc, int x, int y, Color color)
+        {
+            buffer[xc + x, yc + y] = color;
+            buffer[xc - x, yc + y] = color;
+            buffer[xc + x, yc - y] = color;
+            buffer[xc - x, yc - y] = color;
+            buffer[xc + y, yc + x] = color;
+            buffer[xc - y, yc + x] = color;
+            buffer[xc + y, yc - x] = color;
+            buffer[xc - y, yc - x] = color;
+        }
+
+
+        public static void PlotCircleSafe(this ScreenBuffer buffer, Point center, int radius, Color color) => 
+            PlotCircleSafe(buffer, center.X, center.Y, radius, color);
+
+        public static void PlotCircleSafe(this ScreenBuffer buffer, int xCenter, int yCenter, int radius, Color color)
+        {
+            int x = 0, y = radius;
+            int d = 3 - 2 * radius;
+            PlotCircleSegmentsSafe(buffer, xCenter, yCenter, x, y, color);
+            while (y >= x)
+            {
+                x++;
+
+                if (d > 0)
+                {
+                    y--;
+                    d = d + 4 * (x - y) + 10;
+                }
+                else
+                {
+                    d = d + 4 * x + 6;
+                }
+                PlotCircleSegmentsSafe(buffer, xCenter, yCenter, x, y, color);
+            }
+        }
+
+        private static void PlotCircleSegmentsSafe(ScreenBuffer buffer, int xc, int yc, int x, int y, Color color)
+        {
+            buffer.SafeSet(xc + x, yc + y, color);
+            buffer.SafeSet(xc - x, yc + y, color);
+            buffer.SafeSet(xc + x, yc - y, color);
+            buffer.SafeSet(xc - x, yc - y, color);
+            buffer.SafeSet(xc + y, yc + x, color);
+            buffer.SafeSet(xc - y, yc + x, color);
+            buffer.SafeSet(xc + y, yc - x, color);
+            buffer.SafeSet(xc - y, yc - x, color);
+        }
     }
 }
