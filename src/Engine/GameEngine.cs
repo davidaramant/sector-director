@@ -80,12 +80,12 @@ namespace SectorDirector.Engine
 
         private void SwitchToMap(int index)
         {
+            _screenMessage.ShowMessage($"Switching to map index {index}");
             var map = _maps[index];
             _currentMap = new MapGeometry(map);
             _renderer = new OverheadRenderer(_currentMap);
+            _playerInfo = new PlayerInfo(_currentMap);
 
-            var playerThing = map.Things.First(t => t.Type == 1);
-            _playerInfo = new PlayerInfo(playerThing);
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace SectorDirector.Engine
             }
 
 
-            _playerInfo.Update(_currentMap, inputs, gameTime);
+            _playerInfo.Update(inputs, gameTime);
 
             base.Update(gameTime);
         }
@@ -231,7 +231,6 @@ namespace SectorDirector.Engine
 
             base.Draw(gameTime);
         }
-
 
         private void DrawShadowedString(SpriteFont font, string value, Vector2 position, Color color)
         {

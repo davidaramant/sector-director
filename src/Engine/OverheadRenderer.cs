@@ -41,10 +41,17 @@ namespace SectorDirector.Engine
 
             foreach (var lineDef in _map.Map.LineDefs)
             {
-                var vertex1 = _map.Vertices[lineDef.V1];
-                var vertex2 = _map.Vertices[lineDef.V2];
+                var vertex1 = _map.GetVertex(lineDef.V1);
+                var vertex2 = _map.GetVertex(lineDef.V2);
 
-                var lineColor = lineDef.TwoSided ? Color.DarkGray : Color.White;
+                var isPlayerInThisSector =
+                    _map.Map.SideDefs[lineDef.SideFront].Sector == player.CurrentSectorId ||
+                    (lineDef.TwoSided && _map.Map.SideDefs[lineDef.SideBack].Sector == player.CurrentSectorId);
+
+                var lineColor = 
+                    isPlayerInThisSector ?
+                        (lineDef.TwoSided ? Color.DarkRed : Color.Red) :
+                        (lineDef.TwoSided ? Color.DarkGray : Color.White);
 
                 var p1 = ConvertToScreenCoords(vertex1);
                 var p2 = ConvertToScreenCoords(vertex2);

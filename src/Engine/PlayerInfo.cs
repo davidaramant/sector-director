@@ -1,12 +1,16 @@
 ﻿// Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
-using SectorDirector.Core.FormatModels.Udmf;
+
+using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 
 namespace SectorDirector.Engine
 {
     public sealed class PlayerInfo
     {
+        private readonly MapGeometry _map;
+        public int CurrentSectorId { get; private set; }
         public Vector2 Position;
         public Vector2 Direction;
         public int Radius { get; } = 10;
@@ -14,39 +18,74 @@ namespace SectorDirector.Engine
         private const float _msToMoveSpeed = 80f / 1000f;
         private const float _msToRotateSpeed = 5f / 1000f;
 
-        public PlayerInfo(Thing playerThing)
+        public PlayerInfo(MapGeometry map)
         {
+            _map = map;
+            var playerThing = map.Map.Things.First(t => t.Type == 1);
+
             Position = new Vector2((float)playerThing.X, (float)playerThing.Y);
             Direction = new Vector2(1, 0);
             Rotate(MathHelper.ToRadians(playerThing.Angle));
+
+            CurrentSectorId = Enumerable.Range(0, _map.SectorCount).First(IsInsideSector);
         }
 
-        public void Update(MapGeometry mapData, MovementInputs inputs, GameTime gameTime)
+        private bool IsInsideSector(int sectorId)
+        {
+            foreach (var lineDefId in _map.GetSector(sectorId).LineIds)
+            {
+                var lineDef = _map.LineDefs[lineDefId];
+
+                var v1 = _map.GetVertex(lineDef.V1);
+                var v2 = _map.GetVertex(lineDef.V2);
+
+                if (lineDef.TwoSided)
+                {
+                    var frontSideDef = _map.Map.SideDefs[lineDef.SideFront];
+                    if (frontSideDef.Sector != sectorId)
+                    {
+                        // The linedef must be facing away from the sector; switch the vertices
+                        var temp = v2;
+                        v2 = v1;
+                        v1 = temp;
+                    }
+                }
+                
+                var d = (Position.X - v1.X) * (v2.Y - v1.Y) - (Position.Y - v1.Y) * (v2.X - v1.X);
+            
+                if (d < 0)
+                    return false;
+            }
+
+            return true;
+        }
+
+        public void Update(MovementInputs inputs, GameTime gameTime)
         {
             var moveSpeed = gameTime.ElapsedGameTime.Milliseconds * _msToMoveSpeed;
             var rotSpeed = gameTime.ElapsedGameTime.Milliseconds * _msToRotateSpeed;
 
             if (inputs.HasFlag(MovementInputs.Forward))
             {
-                Move(mapData, ref Direction, moveSpeed);
+                Move(ref Direction, moveSpeed);
             }
             else if (inputs.HasFlag(MovementInputs.Backward))
             {
                 var direction = new Vector2 { X = -Direction.X, Y = -Direction.Y };
 
-                Move(mapData, ref direction, moveSpeed);
+                Move(ref direction, moveSpeed);
             }
             if (inputs.HasFlag(MovementInputs.StrafeLeft))
             {
                 var direction = new Vector2 { X = -Direction.Y, Y = Direction.X };
 
-                Move(mapData, ref direction, moveSpeed);
+                Move(ref direction, moveSpeed);
             }
             else if (inputs.HasFlag(MovementInputs.StrafeRight))
             {
                 var direction = new Vector2 { X = Direction.Y, Y = -Direction.X };
 
-                Move(mapData, ref direction, moveSpeed);
+                Move(ref direction, moveSpeed);
             }
 
             if (inputs.HasFlag(MovementInputs.TurnRight))
@@ -59,7 +98,7 @@ namespace SectorDirector.Engine
             }
         }
 
-        public void Move(MapGeometry mapData, ref Vector2 direction, float speed)
+        public void Move(ref Vector2 direction, float speed)
         {
             // TODO: Collisions
             var movement = direction * speed;

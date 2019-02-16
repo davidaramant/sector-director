@@ -30,7 +30,6 @@ namespace SectorDirector.Engine
         {
             switch (_currentState)
             {
-
                 case State.NewText:
                     _firstShown = currentTime.TotalGameTime;
                     _currentState = State.TimerRunning;
