@@ -11,7 +11,9 @@ namespace SectorDirector.Engine
         readonly MapData _map;
         const float _mapToScreenFactor = 0.9f;
         readonly Point[] _vertices;
-        readonly Rectangle _mapBounds;
+
+        readonly Point _mapCorner;
+        readonly Point _mapSize;
 
         public OverheadRenderer(MapData map)
         {
@@ -23,23 +25,28 @@ namespace SectorDirector.Engine
             var minY = _vertices.Min(p => p.Y);
             var maxY = _vertices.Max(p => p.Y);
 
-            _mapBounds = new Rectangle(x: minX, y: minY, width: maxX - minY, height: maxY - minY);
+            _mapCorner = new Point(minX, minY);
+            _mapSize = new Point(maxX - minX, maxY - minY);
         }
 
         public void Render(ScreenBuffer screen)
         {
             screen.Clear();
 
+            // The screen has an origin in the top left.  Positive Y is DOWN
+
+            // Maps have an origin in the bottom left.  Positive Y is UP
+
             var desiredMapScreenLength = screen.Dimensions.SmallestSide() * _mapToScreenFactor;
-            var largestMapSide = _mapBounds.LargestSide();
+            var largestMapSide = _mapSize.LargestSide();
 
             var worldToScreenFactor = desiredMapScreenLength / largestMapSide;
 
-            var mapSizeInScreenCoords = _mapBounds.Size.Scale(worldToScreenFactor);
+            var mapSizeInScreenCoords = _mapSize.Scale(worldToScreenFactor);
             var centeringOffset = (screen.Dimensions - mapSizeInScreenCoords).DivideBy(2);
 
             Point ConvertToScreenCoords(Point gameCoordinate) =>
-                (centeringOffset + (gameCoordinate - _mapBounds.Location).Scale(worldToScreenFactor)).InvertY(screen.Height);
+                (centeringOffset + (gameCoordinate - _mapCorner).Scale(worldToScreenFactor)).InvertY(screen.Height);
 
             foreach (var lineDef in _map.LineDefs)
             {
