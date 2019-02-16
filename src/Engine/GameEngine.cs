@@ -19,6 +19,7 @@ namespace SectorDirector.Engine
         ScreenBuffer _screenBuffer;
         PlayerInfo _playerInfo;
         List<MapData> _maps;
+        MapGeometry _currentMap;
         readonly KeyboardLatch _decreaseRenderFidelityLatch = new KeyboardLatch(kb => kb.IsKeyDown(Keys.OemOpenBrackets));
         readonly KeyboardLatch _increaseRenderFidelityLatch = new KeyboardLatch(kb => kb.IsKeyDown(Keys.OemCloseBrackets));
         readonly KeyboardLatch _toggleFullscreenLatch = new KeyboardLatch(kb => (kb.IsKeyDown(Keys.LeftAlt) || kb.IsKeyDown(Keys.RightAlt)) && kb.IsKeyDown(Keys.Enter));
@@ -76,10 +77,11 @@ namespace SectorDirector.Engine
         private void SwitchToMap(int index)
         {
             var map = _maps[index];
-            _renderer = new OverheadRenderer(map);
+            _currentMap = new MapGeometry(map);
+            _renderer = new OverheadRenderer(_currentMap);
 
             var playerThing = map.Things.First(t => t.Type == 1);
-            _playerInfo = new PlayerInfo(new Point((int)playerThing.X, (int)playerThing.Y), rotationAngleRadians: MathHelper.ToRadians(playerThing.Angle));
+            _playerInfo = new PlayerInfo(playerThing);
         }
 
         /// <summary>

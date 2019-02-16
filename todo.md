@@ -2,14 +2,15 @@
 
 - [x] Load UDMF from disk
 - [x] Make test maps
-- [ ] Move player position
+- [ ] Move player
+- [ ] Rotate player
 - [ ] Player clipping
 - [ ] Text rendering (MonoGame)
 
 # 2D Renderer
 
-- [X] Render player position
-- [ ] Render player direction
+- [x] Render player position
+- [x] Render player direction
 - [ ] Zoom in/out
 - [ ] Move view around
 - [ ] Show front side of linedef

@@ -1,5 +1,6 @@
 ﻿// Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
+using SectorDirector.Core.FormatModels.Udmf;
 using Microsoft.Xna.Framework;
 
 namespace SectorDirector.Engine
@@ -10,11 +11,11 @@ namespace SectorDirector.Engine
         public Vector2 Direction { get; private set; }
         public int Radius { get; } = 10;
 
-        public PlayerInfo(Point position, float rotationAngleRadians)
+        public PlayerInfo(Thing playerThing)
         {
-            Position = new Vector2(position.X, position.Y);
+            Position = new Vector2((float)playerThing.X, (float)playerThing.Y);
             Direction = new Vector2(1, 0);
-            Rotate(rotationAngleRadians);
+            Rotate(MathHelper.ToRadians(playerThing.Angle));
         }
 
         //public void Update(MapData mapData, MovementInputs inputs, GameTime gameTime)
