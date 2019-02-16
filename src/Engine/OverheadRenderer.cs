@@ -41,8 +41,8 @@ namespace SectorDirector.Engine
 
             foreach (var lineDef in _map.Map.LineDefs)
             {
-                var vertex1 = _map.GetVertex(lineDef.V1);
-                var vertex2 = _map.GetVertex(lineDef.V2);
+                ref Vector2 vertex1 = ref _map.GetVertex(lineDef.V1);
+                ref Vector2 vertex2 = ref _map.GetVertex(lineDef.V2);
 
                 var isPlayerInThisSector =
                     _map.Map.SideDefs[lineDef.SideFront].Sector == player.CurrentSectorId ||

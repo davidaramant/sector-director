@@ -34,25 +34,13 @@ namespace SectorDirector.Engine
         {
             foreach (var lineDefId in _map.GetSector(sectorId).LineIds)
             {
-                var lineDef = _map.LineDefs[lineDefId];
+                ref Line line = ref _map.GetLine(lineDefId);
 
-                var v1 = _map.GetVertex(lineDef.V1);
-                var v2 = _map.GetVertex(lineDef.V2);
+                ref Vector2 v1 = ref _map.GetVertex(line.V1);
+                ref Vector2 v2 = ref _map.GetVertex(line.V2);
 
-                if (lineDef.TwoSided)
-                {
-                    var frontSideDef = _map.Map.SideDefs[lineDef.SideFront];
-                    if (frontSideDef.Sector != sectorId)
-                    {
-                        // The linedef must be facing away from the sector; switch the vertices
-                        var temp = v2;
-                        v2 = v1;
-                        v1 = temp;
-                    }
-                }
-                
                 var d = (Position.X - v1.X) * (v2.Y - v1.Y) - (Position.Y - v1.Y) * (v2.X - v1.X);
-            
+
                 if (d < 0)
                     return false;
             }
