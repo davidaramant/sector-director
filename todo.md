@@ -8,7 +8,8 @@
 
 # 2D Renderer
 
-- [ ] Player rendering
+- [X] Render player position
+- [ ] Render player direction
 - [ ] Zoom in/out
 - [ ] Move view around
 - [ ] Show front side of linedef

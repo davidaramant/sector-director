@@ -29,7 +29,7 @@ namespace SectorDirector.Engine
             _mapSize = new Point(maxX - minX, maxY - minY);
         }
 
-        public void Render(ScreenBuffer screen)
+        public void Render(ScreenBuffer screen, PlayerInfo player)
         {
             screen.Clear();
 
@@ -40,13 +40,13 @@ namespace SectorDirector.Engine
             var desiredMapScreenLength = screen.Dimensions.SmallestSide() * _mapToScreenFactor;
             var largestMapSide = _mapSize.LargestSide();
 
-            var worldToScreenFactor = desiredMapScreenLength / largestMapSide;
+            var gameToScreenFactor = desiredMapScreenLength / largestMapSide;
 
-            var mapSizeInScreenCoords = _mapSize.Scale(worldToScreenFactor);
+            var mapSizeInScreenCoords = _mapSize.Scale(gameToScreenFactor);
             var centeringOffset = (screen.Dimensions - mapSizeInScreenCoords).DivideBy(2);
 
             Point ConvertToScreenCoords(Point gameCoordinate) =>
-                (centeringOffset + (gameCoordinate - _mapCorner).Scale(worldToScreenFactor)).InvertY(screen.Height);
+                (centeringOffset + (gameCoordinate - _mapCorner).Scale(gameToScreenFactor)).InvertY(screen.Height);
 
             foreach (var lineDef in _map.LineDefs)
             {
@@ -59,6 +59,10 @@ namespace SectorDirector.Engine
                 var p2 = ConvertToScreenCoords(vertex2);
                 screen.PlotLineSafe(p1, p2, color);
             }
+
+            var playerPositionInScreenCoords = ConvertToScreenCoords(player.Position.ToPoint());
+            var playerRadiusInScreenSize = (int)(player.Radius * gameToScreenFactor);
+            screen.PlotCircleSafe(playerPositionInScreenCoords, playerRadiusInScreenSize, Color.Green);
         }
     }
 }

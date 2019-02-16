@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using SectorDirector.Core.FormatModels.Udmf;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,6 +17,7 @@ namespace SectorDirector.Engine
         Texture2D _outputTexture;
         RenderScale _renderScale = RenderScale.Normal;
         ScreenBuffer _screenBuffer;
+        PlayerInfo _playerInfo;
         List<MapData> _maps;
         readonly KeyboardLatch _decreaseRenderFidelityLatch = new KeyboardLatch(kb => kb.IsKeyDown(Keys.OemOpenBrackets));
         readonly KeyboardLatch _increaseRenderFidelityLatch = new KeyboardLatch(kb => kb.IsKeyDown(Keys.OemCloseBrackets));
@@ -68,7 +70,16 @@ namespace SectorDirector.Engine
             _screenBuffer = new ScreenBuffer(CurrentScreenSize);
 
             _maps = WadLoader.Load("testmaps.wad");
-            _renderer = new OverheadRenderer(_maps[0]);
+            SwitchToMap(0);
+        }
+
+        private void SwitchToMap(int index)
+        {
+            var map = _maps[index];
+            _renderer = new OverheadRenderer(map);
+
+            var playerThing = map.Things.First(t => t.Type == 1);
+            _playerInfo = new PlayerInfo(new Point((int)playerThing.X, (int)playerThing.Y), rotationAngleRadians: MathHelper.ToRadians(playerThing.Angle));
         }
 
         /// <summary>
@@ -122,15 +133,15 @@ namespace SectorDirector.Engine
             }
             else if (_loadMap1.IsTriggered(keyboardState))
             {
-                _renderer = new OverheadRenderer(_maps[0]);
+                SwitchToMap(0);
             }
             else if (_loadMap2.IsTriggered(keyboardState) && _maps.Count >= 2)
             {
-                _renderer = new OverheadRenderer(_maps[1]);
+                SwitchToMap(1);
             }
             else if (_loadMap3.IsTriggered(keyboardState) && _maps.Count >= 3)
             {
-                _renderer = new OverheadRenderer(_maps[2]);
+                SwitchToMap(2);
             }
 
             base.Update(gameTime);
@@ -158,7 +169,7 @@ namespace SectorDirector.Engine
                 depthStencilState: DepthStencilState.None,
                 rasterizerState: RasterizerState.CullNone);
 
-            _renderer.Render(_screenBuffer);
+            _renderer.Render(_screenBuffer, _playerInfo);
 
             _screenBuffer.CopyToTexture(_outputTexture);
 
