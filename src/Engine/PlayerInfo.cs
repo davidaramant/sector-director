@@ -7,9 +7,12 @@ namespace SectorDirector.Engine
 {
     public sealed class PlayerInfo
     {
-        public Vector2 Position { get; private set; }
-        public Vector2 Direction { get; private set; }
+        public Vector2 Position;
+        public Vector2 Direction;
         public int Radius { get; } = 10;
+
+        private const float _msToMoveSpeed = 80f / 1000f;
+        private const float _msToRotateSpeed = 5f / 1000f;
 
         public PlayerInfo(Thing playerThing)
         {
@@ -18,60 +21,60 @@ namespace SectorDirector.Engine
             Rotate(MathHelper.ToRadians(playerThing.Angle));
         }
 
-        //public void Update(MapData mapData, MovementInputs inputs, GameTime gameTime)
-        //{
-        //    var moveSpeed = 5.0f * (gameTime.ElapsedGameTime.Milliseconds / 1000.0f);
-        //    var rotSpeed = 3.0f * (gameTime.ElapsedGameTime.Milliseconds / 1000.0f);
+        public void Update(MapGeometry mapData, MovementInputs inputs, GameTime gameTime)
+        {
+            var moveSpeed = gameTime.ElapsedGameTime.Milliseconds * _msToMoveSpeed;
+            var rotSpeed = gameTime.ElapsedGameTime.Milliseconds * _msToRotateSpeed;
 
-        //    if (inputs.HasFlag(MovementInputs.Forward))
-        //    {
-        //        Move(mapData, Direction, moveSpeed);
-        //    }
-        //    else if (inputs.HasFlag(MovementInputs.Backward))
-        //    {
-        //        var direction = new Vector2 { X = -Direction.X, Y = -Direction.Y };
+            if (inputs.HasFlag(MovementInputs.Forward))
+            {
+                Move(mapData, ref Direction, moveSpeed);
+            }
+            else if (inputs.HasFlag(MovementInputs.Backward))
+            {
+                var direction = new Vector2 { X = -Direction.X, Y = -Direction.Y };
 
-        //        Move(mapData, direction, moveSpeed);
-        //    }
-        //    if (inputs.HasFlag(MovementInputs.StrafeLeft))
-        //    {
-        //        var direction = new Vector2 { X = Direction.Y, Y = -Direction.X };
+                Move(mapData, ref direction, moveSpeed);
+            }
+            if (inputs.HasFlag(MovementInputs.StrafeLeft))
+            {
+                var direction = new Vector2 { X = -Direction.Y, Y = Direction.X };
 
-        //        Move(mapData, direction, moveSpeed);
-        //    }
-        //    else if (inputs.HasFlag(MovementInputs.StrafeRight))
-        //    {
-        //        var direction = new Vector2 { X = -Direction.Y, Y = Direction.X };
+                Move(mapData, ref direction, moveSpeed);
+            }
+            else if (inputs.HasFlag(MovementInputs.StrafeRight))
+            {
+                var direction = new Vector2 { X = Direction.Y, Y = -Direction.X };
 
-        //        Move(mapData, direction, moveSpeed);
-        //    }
+                Move(mapData, ref direction, moveSpeed);
+            }
 
-        //    if (inputs.HasFlag(MovementInputs.TurnRight))
-        //    {
-        //        Rotate(rotSpeed);
-        //    }
-        //    else if (inputs.HasFlag(MovementInputs.TurnLeft))
-        //    {
-        //        Rotate(-rotSpeed);
-        //    }
-        //}
+            if (inputs.HasFlag(MovementInputs.TurnRight))
+            {
+                Rotate(-rotSpeed);
+            }
+            else if (inputs.HasFlag(MovementInputs.TurnLeft))
+            {
+                Rotate(rotSpeed);
+            }
+        }
 
-        //public void Move(MapData mapData, Vector2 direction, float speed)
-        //{
-        //    // Should MapData be passed in here?  Feels odd...
-        //    var movement = direction * speed;
-        //    var newPosition = Position + movement;
-        //    var newBoundingEdge = newPosition + direction * _radius;
+        public void Move(MapGeometry mapData, ref Vector2 direction, float speed)
+        {
+            // TODO: Collisions
+            var movement = direction * speed;
+            var newPosition = Position + movement;
+            //var newBoundingEdge = newPosition + direction * Radius;
 
-        //    if (mapData.IsPassable((int)newBoundingEdge.X, (int)Position.Y))
-        //    {
-        //        Position.X = newPosition.X;
-        //    }
-        //    if (mapData.IsPassable((int)Position.X, (int)newBoundingEdge.Y))
-        //    {
-        //        Position.Y = newPosition.Y;
-        //    }
-        //}
+            //if (mapData.IsPassable((int)newBoundingEdge.X, (int)Position.Y))
+            {
+                Position.X = newPosition.X;
+            }
+            //if (mapData.IsPassable((int)Position.X, (int)newBoundingEdge.Y))
+            {
+                Position.Y = newPosition.Y;
+            }
+        }
 
         public void Rotate(float rotationRadians)
         {

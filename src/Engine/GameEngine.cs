@@ -146,6 +146,38 @@ namespace SectorDirector.Engine
                 SwitchToMap(2);
             }
 
+            var inputs = MovementInputs.None;
+
+            if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W))
+            {
+                inputs |= MovementInputs.Forward;
+            }
+            else if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S))
+            {
+                inputs |= MovementInputs.Backward;
+            }
+
+            if (keyboardState.IsKeyDown(Keys.Left))
+            {
+                inputs |= MovementInputs.TurnLeft;
+            }
+            else if (keyboardState.IsKeyDown(Keys.Right))
+            {
+                inputs |= MovementInputs.TurnRight;
+            }
+
+            if (keyboardState.IsKeyDown(Keys.Q))
+            {
+                inputs |= MovementInputs.StrafeLeft;
+            }
+            else if (keyboardState.IsKeyDown(Keys.E))
+            {
+                inputs |= MovementInputs.StrafeRight;
+            }
+
+
+            _playerInfo.Update(_currentMap, inputs, gameTime);
+
             base.Update(gameTime);
         }
 

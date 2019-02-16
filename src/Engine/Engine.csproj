@@ -50,6 +50,7 @@
     <Compile Include="GeometryExtensions.cs" />
     <Compile Include="KeyboardLatch.cs" />
     <Compile Include="MapGeometry.cs" />
+    <Compile Include="MovementInputs.cs" />
     <Compile Include="OverheadRenderer.cs" />
     <Compile Include="PlayerInfo.cs" />
     <Compile Include="Program.cs" />

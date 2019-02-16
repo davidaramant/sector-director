@@ -2,8 +2,8 @@
 
 - [x] Load UDMF from disk
 - [x] Make test maps
-- [ ] Move player
-- [ ] Rotate player
+- [x] Move player
+- [x] Rotate player
 - [ ] Player clipping
 - [ ] Text rendering (MonoGame)
 
