@@ -53,6 +53,11 @@ namespace SectorDirector.Engine
                 _renderer.ToggleFollowMode();
                 _screenMessage.ShowMessage($"Follow mode {(_renderer.FollowMode ? "ON" : "OFF")}");
             };
+            _keyToggles.RotateMode += (s, e) =>
+            {
+                _renderer.ToggleRotateMode();
+                _screenMessage.ShowMessage($"Rotate mode {(_renderer.RotateMode ? "ON" : "OFF")}");
+            };
             _keyToggles.FitToScreenZoom += (s, e) => _renderer.ResetZoom();
             _keyToggles.LoadMap += KeyToggled_LoadMap;
         }
@@ -139,7 +144,7 @@ namespace SectorDirector.Engine
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+            Content.Unload();
         }
 
         /// <summary>

@@ -15,7 +15,7 @@ namespace SectorDirector.Engine
             TimerRunning,
         }
 
-        private static readonly TimeSpan TimeToShow = TimeSpan.FromSeconds(1);
+        private static readonly TimeSpan TimeToShow = TimeSpan.FromSeconds(2);
         private State _currentState = State.NothingToShow;
         private TimeSpan _firstShown;
         private string _currentMessage;

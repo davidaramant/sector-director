@@ -2,6 +2,7 @@
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System;
+using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 
@@ -22,6 +23,7 @@ namespace SectorDirector.Engine
         Vector2 _viewOffset = Vector2.Zero;
 
         public bool FollowMode { get; private set; } = true;
+        public bool RotateMode { get; private set; } = false;
 
         public OverheadRenderer(MapGeometry map)
         {
@@ -32,6 +34,11 @@ namespace SectorDirector.Engine
         {
             FollowMode = !FollowMode;
             _viewOffset = Vector2.Zero;
+        }
+
+        public void ToggleRotateMode()
+        {
+            RotateMode = !RotateMode;
         }
 
         public void ResetZoom()
@@ -92,8 +99,25 @@ namespace SectorDirector.Engine
             var screenCenterInMapCoords = screenDimensionsV / gameToScreenFactor / 2;
             var playerCenteringOffset = screenCenterInMapCoords - player.Position;
 
-            Point ConvertToScreenCoords(Vector2 gameCoordinate) =>
-                ((gameCoordinate + playerCenteringOffset + _viewOffset) * gameToScreenFactor).ToPoint().InvertY(screen.Height);
+            Point ConvertToScreenCoords(Vector2 gameCoordinate)
+            {
+                var shiftedGameCoordinate = gameCoordinate;
+
+                if (RotateMode)
+                {
+                    // translate coordinate to be relative to player
+                    shiftedGameCoordinate -= player.Position;
+
+                    var rotation = Matrix.CreateRotationZ(-(float)Math.Atan2(player.Direction.Y, player.Direction.X) + MathHelper.PiOver2);
+
+                    var rotatedCoord = Vector2.Transform(shiftedGameCoordinate, rotation);
+                    shiftedGameCoordinate = rotatedCoord + player.Position;
+                }
+
+                shiftedGameCoordinate += playerCenteringOffset + _viewOffset;
+
+                return (shiftedGameCoordinate * gameToScreenFactor).ToPoint().InvertY(screen.Height);
+            }
 
             foreach (var lineDef in _map.Map.LineDefs)
             {
