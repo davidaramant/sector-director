@@ -82,17 +82,18 @@ namespace SectorDirector.Engine
 
             // Maps have an origin in the bottom left.  Positive Y is UP
 
+            // TODO: The scale shouldn't depend on the size of the map...
             var screenDimensionsV = screen.Dimensions.ToVector2();
             var desiredMapScreenLength = screen.Dimensions.SmallestSide() * _mapToScreenRatio;
             var largestMapSide = _map.Area.LargestSide();
 
             var gameToScreenFactor = desiredMapScreenLength / largestMapSide;
 
-            var mapSizeInScreenCoords = _map.Area * gameToScreenFactor;
-            var centeringOffset = (screenDimensionsV - mapSizeInScreenCoords) / 2;
+            var screenCenterInMapCoords = screenDimensionsV / gameToScreenFactor / 2;
+            var playerCenteringOffset = screenCenterInMapCoords - player.Position;
 
             Point ConvertToScreenCoords(Vector2 gameCoordinate) =>
-                (centeringOffset + (gameCoordinate - _map.BottomLeftCorner + _viewOffset) * gameToScreenFactor).ToPoint().InvertY(screen.Height);
+                ((gameCoordinate + playerCenteringOffset + _viewOffset) * gameToScreenFactor).ToPoint().InvertY(screen.Height);
 
             foreach (var lineDef in _map.Map.LineDefs)
             {
