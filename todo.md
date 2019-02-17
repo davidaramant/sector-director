@@ -4,7 +4,9 @@
 - [x] Make test maps
 - [x] Move player
 - [x] Rotate player
-- [ ] Player clipping
+- [x] Player horizontal clipping (simple)
+- [ ] Player vertical clipping
+- [ ] Player horizontal clipping (properly taking into account radius)
 - [x] Text rendering (MonoGame)
 
 # 2D Renderer

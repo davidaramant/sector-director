@@ -22,13 +22,8 @@ namespace SectorDirector.Engine
         List<MapData> _maps;
         MapGeometry _currentMap;
         private SpriteFont _messageFont;
+        readonly KeyToggles _keyToggles = new KeyToggles();
         readonly ScreenMessage _screenMessage = new ScreenMessage();
-        readonly KeyboardLatch _decreaseRenderFidelityLatch = new KeyboardLatch(kb => kb.IsKeyDown(Keys.OemOpenBrackets));
-        readonly KeyboardLatch _increaseRenderFidelityLatch = new KeyboardLatch(kb => kb.IsKeyDown(Keys.OemCloseBrackets));
-        readonly KeyboardLatch _toggleFullscreenLatch = new KeyboardLatch(kb => (kb.IsKeyDown(Keys.LeftAlt) || kb.IsKeyDown(Keys.RightAlt)) && kb.IsKeyDown(Keys.Enter));
-        readonly KeyboardLatch _loadMap1 = new KeyboardLatch(kb => kb.IsKeyDown(Keys.D1));
-        readonly KeyboardLatch _loadMap2 = new KeyboardLatch(kb => kb.IsKeyDown(Keys.D2));
-        readonly KeyboardLatch _loadMap3 = new KeyboardLatch(kb => kb.IsKeyDown(Keys.D3));
 
         OverheadRenderer _renderer;
 
@@ -48,8 +43,52 @@ namespace SectorDirector.Engine
             Content.RootDirectory = "Content";
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += (s, e) => UpdateScreenBuffer(CurrentScreenSize);
+
+            _keyToggles.DecreaseFidelity += KeyToggled_DecreaseFidelity;
+            _keyToggles.IncreaseFidelity += KeyToggled_IncreaseFidelity;
+            _keyToggles.ToggleFullscreen += KeyToggled_ToggleFullscreen;
+            _keyToggles.LoadMap += KeyToggled_LoadMap;
         }
 
+        private void KeyToggled_DecreaseFidelity(object sender, System.EventArgs e)
+        {
+            _renderScale = _renderScale.DecreaseFidelity();
+            var newSize = CurrentScreenSize.DivideBy((int)_renderScale);
+            UpdateScreenBuffer(newSize);
+        }
+
+        private void KeyToggled_IncreaseFidelity(object sender, System.EventArgs e)
+        {
+            _renderScale = _renderScale.IncreaseFidelity();
+            var newSize = CurrentScreenSize.DivideBy((int)_renderScale);
+            UpdateScreenBuffer(newSize);
+        }
+
+        private void KeyToggled_ToggleFullscreen(object sender, System.EventArgs e)
+        {
+            _graphics.IsFullScreen = !_graphics.IsFullScreen;
+            if (_graphics.IsFullScreen)
+            {
+                _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            }
+            else
+            {
+                _graphics.PreferredBackBufferWidth = 800;
+                _graphics.PreferredBackBufferHeight = 600;
+            }
+            _renderScale = RenderScale.Normal;
+            _graphics.ApplyChanges();
+        }
+
+        private void KeyToggled_LoadMap(object sender, LoadMapArgs e)
+        {
+            if (e.MapIndex < _maps.Count)
+            {
+                SwitchToMap(e.MapIndex);
+            }
+        }
+        
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -109,46 +148,7 @@ namespace SectorDirector.Engine
             if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
 
-            if (_decreaseRenderFidelityLatch.IsTriggered(keyboardState))
-            {
-                _renderScale = _renderScale.DecreaseFidelity();
-                var newSize = CurrentScreenSize.DivideBy((int)_renderScale);
-                UpdateScreenBuffer(newSize);
-            }
-            else if (_increaseRenderFidelityLatch.IsTriggered(keyboardState))
-            {
-                _renderScale = _renderScale.IncreaseFidelity();
-                var newSize = CurrentScreenSize.DivideBy((int)_renderScale);
-                UpdateScreenBuffer(newSize);
-            }
-            else if (_toggleFullscreenLatch.IsTriggered(keyboardState))
-            {
-                _graphics.IsFullScreen = !_graphics.IsFullScreen;
-                if (_graphics.IsFullScreen)
-                {
-                    _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-                    _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-                }
-                else
-                {
-                    _graphics.PreferredBackBufferWidth = 800;
-                    _graphics.PreferredBackBufferHeight = 600;
-                }
-                _renderScale = RenderScale.Normal;
-                _graphics.ApplyChanges();
-            }
-            else if (_loadMap1.IsTriggered(keyboardState))
-            {
-                SwitchToMap(0);
-            }
-            else if (_loadMap2.IsTriggered(keyboardState) && _maps.Count >= 2)
-            {
-                SwitchToMap(1);
-            }
-            else if (_loadMap3.IsTriggered(keyboardState) && _maps.Count >= 3)
-            {
-                SwitchToMap(2);
-            }
+            _keyToggles.Update(keyboardState);
 
             var inputs = MovementInputs.None;
 

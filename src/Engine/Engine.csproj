@@ -44,11 +44,13 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="GameEngine.cs" />
     <Compile Include="GeometryExtensions.cs" />
     <Compile Include="KeyboardLatch.cs" />
+    <Compile Include="KeyToggles.cs" />
     <Compile Include="MapGeometry.cs" />
     <Compile Include="MovementInputs.cs" />
     <Compile Include="OverheadRenderer.cs" />
