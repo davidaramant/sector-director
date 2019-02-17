@@ -2,7 +2,6 @@
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System;
-using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 
@@ -144,9 +143,9 @@ namespace SectorDirector.Engine
                 var perpendicularDirection = lineDirection.PerpendicularClockwise();
                 perpendicularDirection.Normalize();
 
-                var frontMarkerlineEnd = lineMidPoint + perpendicularDirection * FrontSideMarkerLength;
+                var frontMarkerLineEnd = lineMidPoint + perpendicularDirection * FrontSideMarkerLength;
 
-                screen.PlotLineSafe(ConvertToScreenCoords(lineMidPoint), ConvertToScreenCoords(frontMarkerlineEnd), lineColor);
+                screen.PlotLineSafe(ConvertToScreenCoords(lineMidPoint), ConvertToScreenCoords(frontMarkerLineEnd), lineColor);
             }
 
             // Circle every vertex

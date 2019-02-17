@@ -1,7 +1,7 @@
-﻿using System;
+﻿// Copyright (c) 2019, David Aramant
+// Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Contexts;
 using SectorDirector.Core.FormatModels.Udmf;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
