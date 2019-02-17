@@ -18,14 +18,16 @@ namespace SectorDirector.Engine
         readonly KeyboardLatch _decreaseRenderFidelityLatch = new KeyboardLatch(kb => kb.IsKeyDown(Keys.OemOpenBrackets));
         readonly KeyboardLatch _increaseRenderFidelityLatch = new KeyboardLatch(kb => kb.IsKeyDown(Keys.OemCloseBrackets));
         readonly KeyboardLatch _toggleFullscreenLatch = new KeyboardLatch(kb => (kb.IsKeyDown(Keys.LeftAlt) || kb.IsKeyDown(Keys.RightAlt)) && kb.IsKeyDown(Keys.Enter));
-        readonly KeyboardLatch _fitToScreenZoom = new KeyboardLatch(kb=>kb.IsKeyDown(Keys.F));
+        readonly KeyboardLatch _fitToScreenZoom = new KeyboardLatch(kb => kb.IsKeyDown(Keys.Z));
+        readonly KeyboardLatch _followModeToggle = new KeyboardLatch(kb => kb.IsKeyDown(Keys.F));
         readonly KeyboardLatch _loadMap1 = new KeyboardLatch(kb => kb.IsKeyDown(Keys.D1));
         readonly KeyboardLatch _loadMap2 = new KeyboardLatch(kb => kb.IsKeyDown(Keys.D2));
         readonly KeyboardLatch _loadMap3 = new KeyboardLatch(kb => kb.IsKeyDown(Keys.D3));
 
         public event EventHandler DecreaseFidelity;
         public event EventHandler IncreaseFidelity;
-        public event EventHandler ToggleFullscreen;
+        public event EventHandler FullScreen;
+        public event EventHandler FollowMode;
         public event EventHandler FitToScreenZoom;
         public event EventHandler<LoadMapArgs> LoadMap;
 
@@ -41,11 +43,15 @@ namespace SectorDirector.Engine
             }
             else if (_toggleFullscreenLatch.IsTriggered(keyboardState))
             {
-                ToggleFullscreen?.Invoke(this, EventArgs.Empty);
+                FullScreen?.Invoke(this, EventArgs.Empty);
             }
-            else if(_fitToScreenZoom.IsTriggered(keyboardState))
+            else if (_followModeToggle.IsTriggered(keyboardState))
             {
-                FitToScreenZoom?.Invoke(this,EventArgs.Empty);
+                FollowMode?.Invoke(this, EventArgs.Empty);
+            }
+            else if (_fitToScreenZoom.IsTriggered(keyboardState))
+            {
+                FitToScreenZoom?.Invoke(this, EventArgs.Empty);
             }
             else if (_loadMap1.IsTriggered(keyboardState))
             {

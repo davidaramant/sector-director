@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
 using SectorDirector.Core.FormatModels.Udmf;
@@ -46,7 +47,12 @@ namespace SectorDirector.Engine
 
             _keyToggles.DecreaseFidelity += KeyToggled_DecreaseFidelity;
             _keyToggles.IncreaseFidelity += KeyToggled_IncreaseFidelity;
-            _keyToggles.ToggleFullscreen += KeyToggled_ToggleFullscreen;
+            _keyToggles.FullScreen += KeyToggled_FullScreen;
+            _keyToggles.FollowMode += (s, e) =>
+            {
+                _renderer.ToggleFollowMode();
+                _screenMessage.ShowMessage($"Follow mode {(_renderer.FollowMode ? "ON" : "OFF")}");
+            };
             _keyToggles.FitToScreenZoom += (s, e) => _renderer.ResetZoom();
             _keyToggles.LoadMap += KeyToggled_LoadMap;
         }
@@ -65,7 +71,7 @@ namespace SectorDirector.Engine
             UpdateScreenBuffer(newSize);
         }
 
-        private void KeyToggled_ToggleFullscreen(object sender, System.EventArgs e)
+        private void KeyToggled_FullScreen(object sender, System.EventArgs e)
         {
             _graphics.IsFullScreen = !_graphics.IsFullScreen;
             if (_graphics.IsFullScreen)
@@ -89,7 +95,7 @@ namespace SectorDirector.Engine
                 SwitchToMap(e.MapIndex);
             }
         }
-        
+
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -178,8 +184,15 @@ namespace SectorDirector.Engine
             {
                 movementInputs |= MovementInputs.StrafeRight;
             }
-            
-            _playerInfo.Update(movementInputs, gameTime);
+
+            if (_renderer.FollowMode)
+            {
+                _playerInfo.Update(movementInputs, gameTime);
+            }
+            else
+            {
+                _renderer.UpdateView(movementInputs, gameTime);
+            }
 
             if (keyboardState.IsKeyDown(Keys.OemMinus))
             {

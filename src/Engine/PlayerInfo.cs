@@ -17,8 +17,8 @@ namespace SectorDirector.Engine
         public Vector2 Direction;
         public int Radius { get; } = 10;
 
-        private const float _msToMoveSpeed = 80f / 1000f;
-        private const float _msToRotateSpeed = 5f / 1000f;
+        private const float MsToMoveSpeed = 80f / 1000f;
+        private const float MsToRotateSpeed = 5f / 1000f;
 
         public PlayerInfo(MapGeometry map)
         {
@@ -53,47 +53,47 @@ namespace SectorDirector.Engine
 
         public void Update(MovementInputs inputs, GameTime gameTime)
         {
-            var moveSpeed = gameTime.ElapsedGameTime.Milliseconds * _msToMoveSpeed;
-            var rotSpeed = gameTime.ElapsedGameTime.Milliseconds * _msToRotateSpeed;
+            var distance = gameTime.ElapsedGameTime.Milliseconds * MsToMoveSpeed;
+            var rotationAmount = gameTime.ElapsedGameTime.Milliseconds * MsToRotateSpeed;
 
             if (inputs.HasFlag(MovementInputs.Forward))
             {
-                Move(ref Direction, moveSpeed);
+                Move(ref Direction, distance);
             }
             else if (inputs.HasFlag(MovementInputs.Backward))
             {
                 var direction = new Vector2 { X = -Direction.X, Y = -Direction.Y };
 
-                Move(ref direction, moveSpeed);
+                Move(ref direction, distance);
             }
             if (inputs.HasFlag(MovementInputs.StrafeLeft))
             {
                 var direction = new Vector2 { X = -Direction.Y, Y = Direction.X };
 
-                Move(ref direction, moveSpeed);
+                Move(ref direction, distance);
             }
             else if (inputs.HasFlag(MovementInputs.StrafeRight))
             {
                 var direction = new Vector2 { X = Direction.Y, Y = -Direction.X };
 
-                Move(ref direction, moveSpeed);
+                Move(ref direction, distance);
             }
 
             if (inputs.HasFlag(MovementInputs.TurnRight))
             {
-                Rotate(-rotSpeed);
+                Rotate(-rotationAmount);
             }
             else if (inputs.HasFlag(MovementInputs.TurnLeft))
             {
-                Rotate(rotSpeed);
+                Rotate(rotationAmount);
             }
         }
 
-        public void Move(ref Vector2 direction, float speed)
+        public void Move(ref Vector2 direction, float distance)
         {
             _possibleSectorsToEnter.Clear();
 
-            var movement = direction * speed;
+            var movement = direction * distance;
             var newPlayerEdge = Position + movement + direction * Radius;
 
             ref SectorInfo currentSector = ref _map.GetSector(CurrentSectorId);

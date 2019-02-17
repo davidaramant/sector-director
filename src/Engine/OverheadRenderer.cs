@@ -18,10 +18,20 @@ namespace SectorDirector.Engine
         private const float DefaultMapToScreenRatio = 0.9f;
         private float _mapToScreenRatio = DefaultMapToScreenRatio;
 
+        private const float MsToMoveSpeed = 200f / 1000f;
+        Vector2 _viewOffset = Vector2.Zero;
+
+        public bool FollowMode { get; private set; } = true;
 
         public OverheadRenderer(MapGeometry map)
         {
             _map = map;
+        }
+
+        public void ToggleFollowMode()
+        {
+            FollowMode = !FollowMode;
+            _viewOffset = Vector2.Zero;
         }
 
         public void ResetZoom()
@@ -39,6 +49,29 @@ namespace SectorDirector.Engine
         {
             var zoomAmount = gameTime.ElapsedGameTime.Milliseconds * MsToZoomSpeed;
             _mapToScreenRatio = Math.Max(MinMapToScreenRatio, _mapToScreenRatio / (1f + zoomAmount));
+        }
+
+        public void UpdateView(MovementInputs inputs, GameTime gameTime)
+        {
+            var distance = gameTime.ElapsedGameTime.Milliseconds * MsToMoveSpeed;
+
+            if (inputs.HasFlag(MovementInputs.Forward))
+            {
+                _viewOffset -= Vector2.UnitY * distance;
+            }
+            else if (inputs.HasFlag(MovementInputs.Backward))
+            {
+                _viewOffset += Vector2.UnitY * distance;
+            }
+
+            if (inputs.HasFlag(MovementInputs.TurnRight) || inputs.HasFlag(MovementInputs.StrafeRight))
+            {
+                _viewOffset -= Vector2.UnitX * distance;
+            }
+            else if (inputs.HasFlag(MovementInputs.TurnLeft) || inputs.HasFlag(MovementInputs.StrafeLeft))
+            {
+                _viewOffset += Vector2.UnitX * distance;
+            }
         }
 
         public void Render(ScreenBuffer screen, PlayerInfo player)
@@ -59,7 +92,7 @@ namespace SectorDirector.Engine
             var centeringOffset = (screenDimensionsV - mapSizeInScreenCoords) / 2;
 
             Point ConvertToScreenCoords(Vector2 gameCoordinate) =>
-                (centeringOffset + (gameCoordinate - _map.BottomLeftCorner) * gameToScreenFactor).ToPoint().InvertY(screen.Height);
+                (centeringOffset + (gameCoordinate - _map.BottomLeftCorner + _viewOffset) * gameToScreenFactor).ToPoint().InvertY(screen.Height);
 
             foreach (var lineDef in _map.Map.LineDefs)
             {
