@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
+using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
 
@@ -9,13 +10,35 @@ namespace SectorDirector.Engine
     public sealed class OverheadRenderer
     {
         readonly MapGeometry _map;
-        const float MapToScreenFactor = 0.9f;
         const float VertexSize = 3f;
         const float FrontSideMarkerLength = 5f;
+        private const float MsToZoomSpeed = 0.001f;
+        private const float MinMapToScreenRatio = 0.2f;
+        private const float MaxMapToScreenRatio = 5f;
+        private const float DefaultMapToScreenRatio = 0.9f;
+        private float _mapToScreenRatio = DefaultMapToScreenRatio;
+
 
         public OverheadRenderer(MapGeometry map)
         {
             _map = map;
+        }
+
+        public void ResetZoom()
+        {
+            _mapToScreenRatio = DefaultMapToScreenRatio;
+        }
+
+        public void ZoomIn(GameTime gameTime)
+        {
+            var zoomAmount = gameTime.ElapsedGameTime.Milliseconds * MsToZoomSpeed;
+            _mapToScreenRatio = Math.Min(MaxMapToScreenRatio, _mapToScreenRatio * (1f + zoomAmount));
+        }
+
+        public void ZoomOut(GameTime gameTime)
+        {
+            var zoomAmount = gameTime.ElapsedGameTime.Milliseconds * MsToZoomSpeed;
+            _mapToScreenRatio = Math.Max(MinMapToScreenRatio, _mapToScreenRatio / (1f + zoomAmount));
         }
 
         public void Render(ScreenBuffer screen, PlayerInfo player)
@@ -27,8 +50,7 @@ namespace SectorDirector.Engine
             // Maps have an origin in the bottom left.  Positive Y is UP
 
             var screenDimensionsV = screen.Dimensions.ToVector2();
-
-            var desiredMapScreenLength = screen.Dimensions.SmallestSide() * MapToScreenFactor;
+            var desiredMapScreenLength = screen.Dimensions.SmallestSide() * _mapToScreenRatio;
             var largestMapSide = _map.Area.LargestSide();
 
             var gameToScreenFactor = desiredMapScreenLength / largestMapSide;
@@ -48,7 +70,7 @@ namespace SectorDirector.Engine
                     _map.Map.SideDefs[lineDef.SideFront].Sector == player.CurrentSectorId ||
                     (lineDef.TwoSided && _map.Map.SideDefs[lineDef.SideBack].Sector == player.CurrentSectorId);
 
-                var lineColor = 
+                var lineColor =
                     isPlayerInThisSector ?
                         (lineDef.TwoSided ? Color.DarkRed : Color.Red) :
                         (lineDef.TwoSided ? Color.DarkGray : Color.White);
@@ -66,7 +88,7 @@ namespace SectorDirector.Engine
 
                 var frontMarkerlineEnd = lineMidPoint + perpendicularDirection * FrontSideMarkerLength;
 
-                screen.PlotLineSafe(ConvertToScreenCoords(lineMidPoint),ConvertToScreenCoords(frontMarkerlineEnd), lineColor);
+                screen.PlotLineSafe(ConvertToScreenCoords(lineMidPoint), ConvertToScreenCoords(frontMarkerlineEnd), lineColor);
             }
 
             // Circle every vertex

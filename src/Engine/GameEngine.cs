@@ -47,6 +47,7 @@ namespace SectorDirector.Engine
             _keyToggles.DecreaseFidelity += KeyToggled_DecreaseFidelity;
             _keyToggles.IncreaseFidelity += KeyToggled_IncreaseFidelity;
             _keyToggles.ToggleFullscreen += KeyToggled_ToggleFullscreen;
+            _keyToggles.FitToScreenZoom += (s, e) => _renderer.ResetZoom();
             _keyToggles.LoadMap += KeyToggled_LoadMap;
         }
 
@@ -124,7 +125,6 @@ namespace SectorDirector.Engine
             _currentMap = new MapGeometry(map);
             _renderer = new OverheadRenderer(_currentMap);
             _playerInfo = new PlayerInfo(_currentMap);
-
         }
 
         /// <summary>
@@ -150,37 +150,45 @@ namespace SectorDirector.Engine
 
             _keyToggles.Update(keyboardState);
 
-            var inputs = MovementInputs.None;
+            var movementInputs = MovementInputs.None;
 
             if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W))
             {
-                inputs |= MovementInputs.Forward;
+                movementInputs |= MovementInputs.Forward;
             }
             else if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S))
             {
-                inputs |= MovementInputs.Backward;
+                movementInputs |= MovementInputs.Backward;
             }
 
             if (keyboardState.IsKeyDown(Keys.Left))
             {
-                inputs |= MovementInputs.TurnLeft;
+                movementInputs |= MovementInputs.TurnLeft;
             }
             else if (keyboardState.IsKeyDown(Keys.Right))
             {
-                inputs |= MovementInputs.TurnRight;
+                movementInputs |= MovementInputs.TurnRight;
             }
 
             if (keyboardState.IsKeyDown(Keys.Q))
             {
-                inputs |= MovementInputs.StrafeLeft;
+                movementInputs |= MovementInputs.StrafeLeft;
             }
             else if (keyboardState.IsKeyDown(Keys.E))
             {
-                inputs |= MovementInputs.StrafeRight;
+                movementInputs |= MovementInputs.StrafeRight;
             }
+            
+            _playerInfo.Update(movementInputs, gameTime);
 
-
-            _playerInfo.Update(inputs, gameTime);
+            if (keyboardState.IsKeyDown(Keys.OemMinus))
+            {
+                _renderer.ZoomOut(gameTime);
+            }
+            else if (keyboardState.IsKeyDown(Keys.OemPlus))
+            {
+                _renderer.ZoomIn(gameTime);
+            }
 
             base.Update(gameTime);
         }
