@@ -36,5 +36,33 @@ namespace SectorDirector.Engine.Tests
 
             Assert.That(Line.HasCrossed(ref v1, ref v2, ref pos), Is.EqualTo(hasCrossed));
         }
+
+        [Test]
+        public void ShouldComputeIntersection()
+        {
+            var v1 = new Vector2(-10, 0);
+            var v2 = new Vector2(10, 0);
+
+            var p1 = new Vector2(5, -10);
+            var p2 = new Vector2(5, 10);
+
+            var intersection = Line.Intersection(ref v1, ref v2, ref p1, ref p2);
+
+            Assert.That(intersection, Is.EqualTo(new Vector2(5, 0)));
+        }
+
+        [Test]
+        public void WhatIsTheIntersectionIfItDoesNotIntersect()
+        {
+            var v1 = new Vector2(-10, 0);
+            var v2 = new Vector2(10, 0);
+
+            var p1 = new Vector2(15, -10);
+            var p2 = new Vector2(15, 10);
+
+            var intersection = Line.Intersection(ref v1, ref v2, ref p1, ref p2);
+
+            Assert.That(intersection, Is.EqualTo(new Vector2(15, 0)));
+        }
     }
 }

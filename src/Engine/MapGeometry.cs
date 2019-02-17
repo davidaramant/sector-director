@@ -1,6 +1,7 @@
 // Copyright (c) 2016, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
+using static System.Math;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -27,6 +28,37 @@ namespace SectorDirector.Engine
 
         public static bool HasCrossed(ref Vector2 v1, ref Vector2 v2, ref Vector2 point) =>
             (v2.X - v1.X) * (point.Y - v1.Y) - (v2.Y - v1.Y) * (point.X - v1.X) > 0;
+
+        public static float CrossProduct(ref Vector2 v1, ref Vector2 v2) => v1.X * v2.Y - v2.X * v1.Y;
+
+        public static Vector2 Intersection(
+            ref Vector2 v1,
+            ref Vector2 v2,
+            ref Vector2 p1,
+            ref Vector2 p2)
+        {
+            var v1_minus_v2 = v1 - v2;
+            var p1_minus_p2 = p1 - p2;
+
+            var v1_minus_v2_cross_p1_minus_p2 = CrossProduct(ref v1_minus_v2, ref p1_minus_p2);
+
+            var v1_cross_v2 = CrossProduct(ref v1, ref v2);
+            var p1_cross_p2 = CrossProduct(ref p1, ref p2);
+
+            var x_temp1 = new Vector2(v1_cross_v2, v1_minus_v2.X);
+            var x_temp2 = new Vector2(p1_cross_p2, p1_minus_p2.X);
+
+            var y_temp1 = new Vector2(v1_cross_v2, v1_minus_v2.Y);
+            var y_temp2 = new Vector2(p1_cross_p2, p1_minus_p2.Y);
+
+            return new Vector2(
+                x: CrossProduct(ref x_temp1, ref x_temp2) / v1_minus_v2_cross_p1_minus_p2,
+                y: CrossProduct(ref y_temp1, ref y_temp2) / v1_minus_v2_cross_p1_minus_p2);
+        }
+
+        public static bool IsPointOnLineSegment(ref Vector2 v1, ref Vector2 v2, ref Vector2 p) =>
+            p.X <= Max(v1.X, v2.X) && p.X >= Min(v1.X, v2.X) &&
+            p.Y <= Max(v1.Y, v2.Y) && p.Y >= Min(v1.Y, v2.Y);
     }
 
     public struct SectorInfo
