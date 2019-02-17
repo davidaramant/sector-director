@@ -24,6 +24,9 @@ namespace SectorDirector.Engine
             V2 = v2;
             PortalToSectorId = portalToSectorId;
         }
+
+        public static bool HasCrossed(ref Vector2 v1, ref Vector2 v2, ref Vector2 point) =>
+            (v2.X - v1.X) * (point.Y - v1.Y) - (v2.Y - v1.Y) * (point.X - v1.X) > 0;
     }
 
     public struct SectorInfo
@@ -74,7 +77,7 @@ namespace SectorDirector.Engine
                 var lineDef = Map.LineDefs[lineDefId];
                 var frontSide = Map.SideDefs[lineDef.SideFront];
 
-                if (lineDef.TwoSided)
+                if (!lineDef.TwoSided)
                 {
                     lines.Add(new Line(lineDefId, frontSide.Sector, lineDef.V1, lineDef.V2));
                 }

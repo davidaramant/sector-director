@@ -88,19 +88,31 @@ namespace SectorDirector.Engine
 
         public void Move(ref Vector2 direction, float speed)
         {
-            // TODO: Collisions
             var movement = direction * speed;
             var newPosition = Position + movement;
-            //var newBoundingEdge = newPosition + direction * Radius;
+            var newPlayerEdge = newPosition + direction * Radius;
 
-            //if (mapData.IsPassable((int)newBoundingEdge.X, (int)Position.Y))
+            ref SectorInfo currentSector = ref _map.GetSector(CurrentSectorId);
+            foreach (var lineId in currentSector.LineIds)
             {
-                Position.X = newPosition.X;
+                ref Line line = ref _map.GetLine(lineId);
+                ref Vector2 v1 = ref _map.GetVertex(line.V1);
+                ref Vector2 v2 = ref _map.GetVertex(line.V2);
+
+                if (Line.HasCrossed(ref v1, ref v2, ref newPlayerEdge))
+                {
+                    if (line.PortalToSectorId != -1)
+                    {
+                        CurrentSectorId = line.PortalToSectorId;
+                    }
+                    else
+                    {
+                        // TODO: vector shearing
+                        movement = new Vector2();
+                    }
+                }
             }
-            //if (mapData.IsPassable((int)Position.X, (int)newBoundingEdge.Y))
-            {
-                Position.Y = newPosition.Y;
-            }
+            Position += movement;
         }
 
         public void Rotate(float rotationRadians)
