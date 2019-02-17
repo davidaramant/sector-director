@@ -70,21 +70,11 @@ namespace SectorDirector.Engine
 
     public sealed class MapGeometry
     {
-        private readonly Vector2[] _vertices;
-        private readonly Line[] _lines;
-        private readonly SectorInfo[] _sectors;
-
         public MapData Map { get; }
 
-        public int VertexCount => _vertices.Length;
-        public Vector2[] Vertices => _vertices;
-        public ref Vector2 GetVertex(int vertexIndex) => ref _vertices[vertexIndex];
-
-        public int LineCount => _lines.Length;
-        public ref Line GetLine(int lineIndex) => ref _lines[lineIndex];
-
-        public ref SectorInfo GetSector(int sectorIndex) => ref _sectors[sectorIndex];
-        public int SectorCount => _sectors.Length;
+        public Vector2[] Vertices { get; }
+        public Line[] Lines { get; }
+        public SectorInfo[] Sectors { get; }
 
         public Vector2 BottomLeftCorner { get; }
         public Vector2 Area { get; }
@@ -93,12 +83,12 @@ namespace SectorDirector.Engine
         {
             Map = map;
 
-            _vertices = map.Vertices.Select(v => v.ToVector2()).ToArray();
+            Vertices = map.Vertices.Select(v => v.ToVector2()).ToArray();
 
-            var minX = _vertices.Min(p => p.X);
-            var maxX = _vertices.Max(p => p.X);
-            var minY = _vertices.Min(p => p.Y);
-            var maxY = _vertices.Max(p => p.Y);
+            var minX = Vertices.Min(p => p.X);
+            var maxX = Vertices.Max(p => p.X);
+            var minY = Vertices.Min(p => p.Y);
+            var maxY = Vertices.Max(p => p.Y);
 
             BottomLeftCorner = new Vector2(minX, minY);
             Area = new Vector2(maxX - minX, maxY - minY);
@@ -120,19 +110,19 @@ namespace SectorDirector.Engine
                     lines.Add(new Line(lineDefId, backSide.Sector, lineDef.V2, lineDef.V1, portalToSectorId: frontSide.Sector));
                 }
             }
-            _lines = lines.ToArray();
+            Lines = lines.ToArray();
 
-            _sectors = new SectorInfo[map.Sectors.Count];
+            Sectors = new SectorInfo[map.Sectors.Count];
 
-            foreach (var sectorIndex in Enumerable.Range(0, _sectors.Length))
+            foreach (var sectorIndex in Enumerable.Range(0, Sectors.Length))
             {
                 var linesForSector =
-                    _lines.Select((line, index) => (line, index))
+                    Lines.Select((line, index) => (line, index))
                     .Where(indexedLine => indexedLine.line.SectorId == sectorIndex)
                     .Select(indexedLine => indexedLine.index)
                     .ToArray();
 
-                _sectors[sectorIndex] = new SectorInfo(linesForSector);
+                Sectors[sectorIndex] = new SectorInfo(linesForSector);
             }
         }
     }

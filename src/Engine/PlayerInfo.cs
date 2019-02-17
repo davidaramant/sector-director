@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using SectorDirector.Core.FormatModels.Udmf;
 
 namespace SectorDirector.Engine
 {
@@ -23,24 +24,25 @@ namespace SectorDirector.Engine
         public PlayerInfo(MapGeometry map)
         {
             _map = map;
-            _possibleSectorsToEnter = new List<int>(map.SectorCount);
+            _possibleSectorsToEnter = new List<int>(map.Sectors.Length);
             var playerThing = map.Map.Things.First(t => t.Type == 1);
 
             Position = new Vector2((float)playerThing.X, (float)playerThing.Y);
             Direction = new Vector2(1, 0);
             Rotate(MathHelper.ToRadians(playerThing.Angle));
 
-            CurrentSectorId = Enumerable.Range(0, _map.SectorCount).First(sectorId => IsInsideSector(ref Position, sectorId));
+            CurrentSectorId = Enumerable.Range(0, _map.Sectors.Length).First(sectorId => IsInsideSector(ref Position, sectorId));
         }
 
         private bool IsInsideSector(ref Vector2 position, int sectorId)
         {
-            foreach (var lineDefId in _map.GetSector(sectorId).LineIds)
+            ref SectorInfo sector = ref _map.Sectors[sectorId];
+            foreach (var lineDefId in sector.LineIds)
             {
-                ref Line line = ref _map.GetLine(lineDefId);
+                ref Line line = ref _map.Lines[lineDefId];
 
-                ref Vector2 v1 = ref _map.GetVertex(line.V1);
-                ref Vector2 v2 = ref _map.GetVertex(line.V2);
+                ref Vector2 v1 = ref _map.Vertices[line.V1];
+                ref Vector2 v2 = ref _map.Vertices[line.V2];
 
                 var d = (position.X - v1.X) * (v2.Y - v1.Y) - (position.Y - v1.Y) * (v2.X - v1.X);
 
@@ -96,13 +98,13 @@ namespace SectorDirector.Engine
             var movement = direction * distance;
             var newPlayerEdge = Position + movement + direction * Radius;
 
-            ref SectorInfo currentSector = ref _map.GetSector(CurrentSectorId);
+            ref SectorInfo currentSector = ref _map.Sectors[CurrentSectorId];
 
             foreach (var lineId in currentSector.LineIds)
             {
-                ref Line line = ref _map.GetLine(lineId);
-                ref Vector2 v1 = ref _map.GetVertex(line.V1);
-                ref Vector2 v2 = ref _map.GetVertex(line.V2);
+                ref Line line = ref _map.Lines[lineId];
+                ref Vector2 v1 = ref _map.Vertices[line.V1];
+                ref Vector2 v2 = ref _map.Vertices[line.V2];
 
                 if (Line.HasCrossed(ref v1, ref v2, ref newPlayerEdge))
                 {
