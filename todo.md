@@ -14,9 +14,10 @@
 - [x] Render player position
 - [x] Render player direction
 - [x] Zoom in/out
-- [ ] Move view around
+- [x] Move view around
 - [x] Show front side of linedef
-- [ ] Rotate view around player
+- [x] Rotate view around player
+- [ ] Replace clunky math with real linear algebra stuff
 
 # 3D Renderer
 

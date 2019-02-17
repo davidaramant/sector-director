@@ -16,17 +16,24 @@ namespace SectorDirector.Engine
         public Color this[Point p]
         {
             get => this[p.X, p.Y];
-            set => this[p.X, p.Y] = value;
+            private set => this[p.X, p.Y] = value;
         }
 
         public Color this[int x, int y]
         {
             get => _buffer[y * Width + x];
-            set => _buffer[y * Width + x] = value;
+            private set => _buffer[y * Width + x] = value;
         }
 
-        public void SafeSet(Point p, Color c) => SafeSet(p.X, p.Y, c);
-        public void SafeSet(int x, int y, Color c)
+        public void DrawPixel(Point p, Color c) => DrawPixel(p.X, p.Y, c);
+
+        public void DrawPixel(int x, int y, Color c)
+        {
+            this[x, y] = c;
+        }
+
+        public void DrawPixelSafe(Point p, Color c) => DrawPixelSafe(p.X, p.Y, c);
+        public void DrawPixelSafe(int x, int y, Color c)
         {
             if (x >= 0 && x < Width && y >= 0 && y < Height)
             {

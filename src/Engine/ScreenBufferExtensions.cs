@@ -7,6 +7,8 @@ namespace SectorDirector.Engine
 {
     public static class ScreenBufferExtensions
     {
+        #region Bresenham's Line Algorithm (unsafe, will crash if drawing off the buffer)
+
         public static void PlotLine(this ScreenBuffer buffer, Point p0, Point p1, Color color) =>
             PlotLine(buffer, p0.X, p0.Y, p1.X, p1.Y, color);
 
@@ -44,7 +46,7 @@ namespace SectorDirector.Engine
 
             for (int x = x0; x <= x1; x++)
             {
-                buffer[x, y] = color;
+                buffer.DrawPixel(x, y, color);
 
                 if (D > 0)
                 {
@@ -71,7 +73,7 @@ namespace SectorDirector.Engine
 
             for (int y = y0; y <= y1; y++)
             {
-                buffer[x, y] = color;
+                buffer.DrawPixel(x, y, color);
 
                 if (D > 0)
                 {
@@ -82,6 +84,9 @@ namespace SectorDirector.Engine
             }
         }
 
+        #endregion
+
+        #region Bresenham's Line Algorithm (safe, will silently ignore drawing off the buffer)
 
         public static void PlotLineSafe(this ScreenBuffer buffer, Point p0, Point p1, Color color) =>
             PlotLineSafe(buffer, p0.X, p0.Y, p1.X, p1.Y, color);
@@ -120,7 +125,7 @@ namespace SectorDirector.Engine
 
             for (int x = x0; x <= x1; x++)
             {
-                buffer.SafeSet(x, y, color);
+                buffer.DrawPixelSafe(x, y, color);
 
                 if (D > 0)
                 {
@@ -147,7 +152,7 @@ namespace SectorDirector.Engine
 
             for (int y = y0; y <= y1; y++)
             {
-                buffer.SafeSet(x, y, color);
+                buffer.DrawPixelSafe(x, y, color);
 
                 if (D > 0)
                 {
@@ -157,9 +162,10 @@ namespace SectorDirector.Engine
                 D = D + 2 * dx;
             }
         }
+        #endregion
 
-
-        public static void PlotCircle(this ScreenBuffer buffer, Point center, int radius, Color color) => 
+        #region Bresenham's Circle Algorithm (unsafe, will crash if drawing off the buffer)
+        public static void PlotCircle(this ScreenBuffer buffer, Point center, int radius, Color color) =>
             PlotCircle(buffer, center.X, center.Y, radius, color);
 
         public static void PlotCircle(this ScreenBuffer buffer, int xCenter, int yCenter, int radius, Color color)
@@ -186,18 +192,19 @@ namespace SectorDirector.Engine
 
         private static void PlotCircleSegments(ScreenBuffer buffer, int xc, int yc, int x, int y, Color color)
         {
-            buffer[xc + x, yc + y] = color;
-            buffer[xc - x, yc + y] = color;
-            buffer[xc + x, yc - y] = color;
-            buffer[xc - x, yc - y] = color;
-            buffer[xc + y, yc + x] = color;
-            buffer[xc - y, yc + x] = color;
-            buffer[xc + y, yc - x] = color;
-            buffer[xc - y, yc - x] = color;
+            buffer.DrawPixel(xc + x, yc + y, color);
+            buffer.DrawPixel(xc - x, yc + y, color);
+            buffer.DrawPixel(xc + x, yc - y, color);
+            buffer.DrawPixel(xc - x, yc - y, color);
+            buffer.DrawPixel(xc + y, yc + x, color);
+            buffer.DrawPixel(xc - y, yc + x, color);
+            buffer.DrawPixel(xc + y, yc - x, color);
+            buffer.DrawPixel(xc - y, yc - x, color);
         }
+        #endregion
 
-
-        public static void PlotCircleSafe(this ScreenBuffer buffer, Point center, int radius, Color color) => 
+        #region Bresenham's Circle Algorithm (safe, will silently ignore drawing off the buffer)
+        public static void PlotCircleSafe(this ScreenBuffer buffer, Point center, int radius, Color color) =>
             PlotCircleSafe(buffer, center.X, center.Y, radius, color);
 
         public static void PlotCircleSafe(this ScreenBuffer buffer, int xCenter, int yCenter, int radius, Color color)
@@ -224,14 +231,15 @@ namespace SectorDirector.Engine
 
         private static void PlotCircleSegmentsSafe(ScreenBuffer buffer, int xc, int yc, int x, int y, Color color)
         {
-            buffer.SafeSet(xc + x, yc + y, color);
-            buffer.SafeSet(xc - x, yc + y, color);
-            buffer.SafeSet(xc + x, yc - y, color);
-            buffer.SafeSet(xc - x, yc - y, color);
-            buffer.SafeSet(xc + y, yc + x, color);
-            buffer.SafeSet(xc - y, yc + x, color);
-            buffer.SafeSet(xc + y, yc - x, color);
-            buffer.SafeSet(xc - y, yc - x, color);
+            buffer.DrawPixelSafe(xc + x, yc + y, color);
+            buffer.DrawPixelSafe(xc - x, yc + y, color);
+            buffer.DrawPixelSafe(xc + x, yc - y, color);
+            buffer.DrawPixelSafe(xc - x, yc - y, color);
+            buffer.DrawPixelSafe(xc + y, yc + x, color);
+            buffer.DrawPixelSafe(xc - y, yc + x, color);
+            buffer.DrawPixelSafe(xc + y, yc - x, color);
+            buffer.DrawPixelSafe(xc - y, yc - x, color);
         }
+        #endregion
     }
 }
