@@ -14,7 +14,11 @@ namespace SectorDirector.Engine
         public int CurrentSectorId { get; private set; }
         public Vector2 Position;
         public Vector2 Direction;
-        public int Radius { get; } = 10;
+
+        public float Height { get; } = 56;
+        public float Width { get; } = 32;
+        public float Radius { get; } = 16;
+        public float ClimbableHeight { get; } = 24;
 
         private const float MsToMoveSpeed = 80f / 1000f;
         private const float MsToRotateSpeed = 5f / 1000f;

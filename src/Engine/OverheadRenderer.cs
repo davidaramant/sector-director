@@ -98,7 +98,7 @@ namespace SectorDirector.Engine
             var screenCenterInMapCoords = screenDimensionsV / gameToScreenFactor / 2;
             var playerCenteringOffset = screenCenterInMapCoords - player.Position;
 
-            Point ConvertToScreenCoords(Vector2 gameCoordinate)
+            Point ToScreenCoords(Vector2 gameCoordinate)
             {
                 var shiftedGameCoordinate = gameCoordinate;
 
@@ -132,8 +132,8 @@ namespace SectorDirector.Engine
                         (lineDef.TwoSided ? Color.DarkRed : Color.Red) :
                         (lineDef.TwoSided ? Color.DarkGray : Color.White);
 
-                var p1 = ConvertToScreenCoords(vertex1);
-                var p2 = ConvertToScreenCoords(vertex2);
+                var p1 = ToScreenCoords(vertex1);
+                var p2 = ToScreenCoords(vertex2);
                 screen.PlotLineSafe(p1, p2, lineColor);
 
                 // Draw front side indication
@@ -145,23 +145,41 @@ namespace SectorDirector.Engine
 
                 var frontMarkerLineEnd = lineMidPoint + perpendicularDirection * FrontSideMarkerLength;
 
-                screen.PlotLineSafe(ConvertToScreenCoords(lineMidPoint), ConvertToScreenCoords(frontMarkerLineEnd), lineColor);
+                screen.PlotLineSafe(ToScreenCoords(lineMidPoint), ToScreenCoords(frontMarkerLineEnd), lineColor);
             }
 
             // Circle every vertex
-            foreach (var vertexInScreenCoords in _map.Vertices.Select(ConvertToScreenCoords))
+            foreach (var vertexInScreenCoords in _map.Vertices.Select(ToScreenCoords))
             {
                 screen.PlotCircleSafe(vertexInScreenCoords, (int)(gameToScreenFactor * VertexSize), Color.Aqua);
             }
 
             // Draw player position
-            var playerPositionInScreenCoords = ConvertToScreenCoords(player.Position);
-            var playerRadiusInScreenSize = (int)(player.Radius * gameToScreenFactor);
-            screen.PlotCircleSafe(playerPositionInScreenCoords, playerRadiusInScreenSize, Color.Green);
+            var playerPositionInScreenCoords = ToScreenCoords(player.Position);
+            var halfWidth = player.Width / 2;
+            var playerTopLeft = ToScreenCoords(player.Position + new Vector2(-halfWidth, halfWidth));
+            var playerTopRight = ToScreenCoords(player.Position + new Vector2(halfWidth, halfWidth));
+            var playerBottomLeft = ToScreenCoords(player.Position + new Vector2(-halfWidth, -halfWidth));
+            var playerBottomRight = ToScreenCoords(player.Position + new Vector2(halfWidth, -halfWidth));
 
-            // Draw player direction
-            var playerLineEnd = ConvertToScreenCoords(player.Position + player.Radius * player.Direction);
-            screen.PlotLineSafe(playerPositionInScreenCoords, playerLineEnd, Color.LightGreen);
+            screen.PlotLineSafe(playerTopLeft, playerTopRight, Color.Green);
+            screen.PlotLineSafe(playerTopRight, playerBottomRight, Color.Green);
+            screen.PlotLineSafe(playerBottomRight, playerBottomLeft, Color.Green);
+            screen.PlotLineSafe(playerBottomLeft, playerTopLeft, Color.Green);
+
+            // Draw player direction arrow
+            var playerLineStart = player.Position - (halfWidth / 2 * player.Direction);
+            var playerLineEnd = player.Position + (halfWidth / 2 * player.Direction);
+            screen.PlotLineSafe(ToScreenCoords(playerLineStart), ToScreenCoords(playerLineEnd), Color.LightGreen);
+
+            var perpendicularPlayerDirection = player.Direction.PerpendicularClockwise();
+            var baseOfArrow = player.Position + (halfWidth / 4 * player.Direction);
+
+            var rightBaseOfArrow = baseOfArrow + (halfWidth / 4 * perpendicularPlayerDirection);
+            screen.PlotLineSafe(ToScreenCoords(rightBaseOfArrow), ToScreenCoords(playerLineEnd), Color.LightGreen);
+
+            var leftBaseOfArrow = baseOfArrow - (halfWidth / 4 * perpendicularPlayerDirection);
+            screen.PlotLineSafe(ToScreenCoords(leftBaseOfArrow), ToScreenCoords(playerLineEnd), Color.LightGreen);
         }
     }
 }
