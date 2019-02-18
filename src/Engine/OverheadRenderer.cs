@@ -173,12 +173,13 @@ namespace SectorDirector.Engine
             screen.PlotLineSafe(ToScreenCoords(playerLineStart), ToScreenCoords(playerLineEnd), Color.LightGreen);
 
             var perpendicularPlayerDirection = player.Direction.PerpendicularClockwise();
-            var baseOfArrow = player.Position + (halfWidth / 4 * player.Direction);
+            var baseOfArrow = player.Position + (halfWidth / 5 * player.Direction);
+            var arrowBaseHalfWidth = halfWidth/3;
 
-            var rightBaseOfArrow = baseOfArrow + (halfWidth / 4 * perpendicularPlayerDirection);
+            var rightBaseOfArrow = baseOfArrow + (arrowBaseHalfWidth * perpendicularPlayerDirection);
             screen.PlotLineSafe(ToScreenCoords(rightBaseOfArrow), ToScreenCoords(playerLineEnd), Color.LightGreen);
 
-            var leftBaseOfArrow = baseOfArrow - (halfWidth / 4 * perpendicularPlayerDirection);
+            var leftBaseOfArrow = baseOfArrow - (arrowBaseHalfWidth * perpendicularPlayerDirection);
             screen.PlotLineSafe(ToScreenCoords(leftBaseOfArrow), ToScreenCoords(playerLineEnd), Color.LightGreen);
         }
     }
