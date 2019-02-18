@@ -25,11 +25,11 @@ namespace SectorDirector.Engine
             private set => _buffer[y * Width + x] = value;
         }
 
-        public void DrawPixel(Point p, Color c) => DrawPixel(p.X, p.Y, c);
-        public void DrawPixel(int x, int y, Color c)=>this[x, y] = c;
+        public void DrawPixelUnsafe(Point p, Color c) => DrawPixelUnsafe(p.X, p.Y, c);
+        public void DrawPixelUnsafe(int x, int y, Color c)=>this[x, y] = c;
 
-        public void DrawPixelSafe(Point p, Color c) => DrawPixelSafe(p.X, p.Y, c);
-        public void DrawPixelSafe(int x, int y, Color c)
+        public void DrawPixel(Point p, Color c) => DrawPixel(p.X, p.Y, c);
+        public void DrawPixel(int x, int y, Color c)
         {
             if (x >= 0 && x < Width && y >= 0 && y < Height)
             {
@@ -37,8 +37,8 @@ namespace SectorDirector.Engine
             }
         }
 
-        public void AddPixelSafe(Point p, Color c) => AddPixelSafe(p.X,p.Y,c);
-        public void AddPixelSafe(int x, int y, Color c)
+        public void AddPixel(Point p, Color c) => AddPixel(p.X,p.Y,c);
+        public void AddPixel(int x, int y, Color c)
         {
             if (x >= 0 && x < Width && y >= 0 && y < Height)
             {

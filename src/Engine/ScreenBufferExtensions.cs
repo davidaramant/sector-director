@@ -46,7 +46,7 @@ namespace SectorDirector.Engine
 
             for (int x = x0; x <= x1; x++)
             {
-                buffer.DrawPixel(x, y, color);
+                buffer.DrawPixelUnsafe(x, y, color);
 
                 if (D > 0)
                 {
@@ -73,7 +73,7 @@ namespace SectorDirector.Engine
 
             for (int y = y0; y <= y1; y++)
             {
-                buffer.DrawPixel(x, y, color);
+                buffer.DrawPixelUnsafe(x, y, color);
 
                 if (D > 0)
                 {
@@ -125,7 +125,7 @@ namespace SectorDirector.Engine
 
             for (int x = x0; x <= x1; x++)
             {
-                buffer.DrawPixelSafe(x, y, color);
+                buffer.DrawPixel(x, y, color);
 
                 if (D > 0)
                 {
@@ -152,7 +152,7 @@ namespace SectorDirector.Engine
 
             for (int y = y0; y <= y1; y++)
             {
-                buffer.DrawPixelSafe(x, y, color);
+                buffer.DrawPixel(x, y, color);
 
                 if (D > 0)
                 {
@@ -192,14 +192,14 @@ namespace SectorDirector.Engine
 
         private static void PlotCircleSegments(ScreenBuffer buffer, int xc, int yc, int x, int y, Color color)
         {
-            buffer.DrawPixel(xc + x, yc + y, color);
-            buffer.DrawPixel(xc - x, yc + y, color);
-            buffer.DrawPixel(xc + x, yc - y, color);
-            buffer.DrawPixel(xc - x, yc - y, color);
-            buffer.DrawPixel(xc + y, yc + x, color);
-            buffer.DrawPixel(xc - y, yc + x, color);
-            buffer.DrawPixel(xc + y, yc - x, color);
-            buffer.DrawPixel(xc - y, yc - x, color);
+            buffer.DrawPixelUnsafe(xc + x, yc + y, color);
+            buffer.DrawPixelUnsafe(xc - x, yc + y, color);
+            buffer.DrawPixelUnsafe(xc + x, yc - y, color);
+            buffer.DrawPixelUnsafe(xc - x, yc - y, color);
+            buffer.DrawPixelUnsafe(xc + y, yc + x, color);
+            buffer.DrawPixelUnsafe(xc - y, yc + x, color);
+            buffer.DrawPixelUnsafe(xc + y, yc - x, color);
+            buffer.DrawPixelUnsafe(xc - y, yc - x, color);
         }
         #endregion
 
@@ -231,14 +231,14 @@ namespace SectorDirector.Engine
 
         private static void PlotCircleSegmentsSafe(ScreenBuffer buffer, int xc, int yc, int x, int y, Color color)
         {
-            buffer.DrawPixelSafe(xc + x, yc + y, color);
-            buffer.DrawPixelSafe(xc - x, yc + y, color);
-            buffer.DrawPixelSafe(xc + x, yc - y, color);
-            buffer.DrawPixelSafe(xc - x, yc - y, color);
-            buffer.DrawPixelSafe(xc + y, yc + x, color);
-            buffer.DrawPixelSafe(xc - y, yc + x, color);
-            buffer.DrawPixelSafe(xc + y, yc - x, color);
-            buffer.DrawPixelSafe(xc - y, yc - x, color);
+            buffer.DrawPixel(xc + x, yc + y, color);
+            buffer.DrawPixel(xc - x, yc + y, color);
+            buffer.DrawPixel(xc + x, yc - y, color);
+            buffer.DrawPixel(xc - x, yc - y, color);
+            buffer.DrawPixel(xc + y, yc + x, color);
+            buffer.DrawPixel(xc - y, yc + x, color);
+            buffer.DrawPixel(xc + y, yc - x, color);
+            buffer.DrawPixel(xc - y, yc - x, color);
         }
         #endregion
     }
