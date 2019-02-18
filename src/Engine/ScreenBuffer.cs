@@ -26,11 +26,7 @@ namespace SectorDirector.Engine
         }
 
         public void DrawPixel(Point p, Color c) => DrawPixel(p.X, p.Y, c);
-
-        public void DrawPixel(int x, int y, Color c)
-        {
-            this[x, y] = c;
-        }
+        public void DrawPixel(int x, int y, Color c)=>this[x, y] = c;
 
         public void DrawPixelSafe(Point p, Color c) => DrawPixelSafe(p.X, p.Y, c);
         public void DrawPixelSafe(int x, int y, Color c)
@@ -38,6 +34,20 @@ namespace SectorDirector.Engine
             if (x >= 0 && x < Width && y >= 0 && y < Height)
             {
                 this[x, y] = c;
+            }
+        }
+
+        public void AddPixelSafe(Point p, Color c) => AddPixelSafe(p.X,p.Y,c);
+        public void AddPixelSafe(int x, int y, Color c)
+        {
+            if (x >= 0 && x < Width && y >= 0 && y < Height)
+            {
+                var current = this[x,y];
+
+                this[x, y] = new Color(
+                                    MathHelper.Clamp(current.R + c.R,0,255),
+                                    MathHelper.Clamp(current.G + c.G,0,255),
+                                    MathHelper.Clamp(current.B + c.B,0,255));
             }
         }
 
