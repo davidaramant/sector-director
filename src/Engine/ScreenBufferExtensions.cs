@@ -9,6 +9,85 @@ namespace SectorDirector.Engine
     {
         #region Bresenham's Line Algorithm (unsafe, will crash if drawing off the buffer)
 
+        public static void PlotLineUnsafe(this ScreenBuffer buffer, Point p0, Point p1, Color color) =>
+            PlotLineUnsafe(buffer, p0.X, p0.Y, p1.X, p1.Y, color);
+
+        public static void PlotLineUnsafe(this ScreenBuffer buffer, int x0, int y0, int x1, int y1, Color color)
+        {
+            if (Abs(y1 - y0) < Abs(x1 - x0))
+            {
+                if (x0 > x1)
+                    PlotLineLowUnsafe(buffer, x1, y1, x0, y0, color);
+                else
+                    PlotLineLowUnsafe(buffer, x0, y0, x1, y1, color);
+            }
+            else
+            {
+                if (y0 > y1)
+                    PlotLineHighUnsafe(buffer, x1, y1, x0, y0, color);
+                else
+                    PlotLineHighUnsafe(buffer, x0, y0, x1, y1, color);
+            }
+        }
+
+        private static void PlotLineLowUnsafe(ScreenBuffer buffer, int x0, int y0, int x1, int y1, Color color)
+        {
+            int dx = x1 - x0;
+            int dy = y1 - y0;
+            int yi = 1;
+            if (dy < 0)
+            {
+                yi = -1;
+                dy = -dy;
+            }
+
+            int D = 2 * dy - dx;
+            int y = y0;
+
+            for (int x = x0; x <= x1; x++)
+            {
+                buffer.DrawPixelUnsafe(x, y, color);
+
+                if (D > 0)
+                {
+                    y = y + yi;
+                    D = D - 2 * dx;
+                }
+                D = D + 2 * dy;
+            }
+        }
+
+        private static void PlotLineHighUnsafe(ScreenBuffer buffer, int x0, int y0, int x1, int y1, Color color)
+        {
+            int dx = x1 - x0;
+            int dy = y1 - y0;
+            int xi = 1;
+            if (dx < 0)
+            {
+                xi = -1;
+                dx = -dx;
+            }
+
+            int D = 2 * dx - dy;
+            int x = x0;
+
+            for (int y = y0; y <= y1; y++)
+            {
+                buffer.DrawPixelUnsafe(x, y, color);
+
+                if (D > 0)
+                {
+                    x = x + xi;
+                    D = D - 2 * dy;
+                }
+                D = D + 2 * dx;
+            }
+        }
+
+        #endregion
+
+        #region Bresenham's Line Algorithm (safe, will silently ignore drawing off the buffer)
+
         public static void PlotLine(this ScreenBuffer buffer, Point p0, Point p1, Color color) =>
             PlotLine(buffer, p0.X, p0.Y, p1.X, p1.Y, color);
 
@@ -46,85 +125,6 @@ namespace SectorDirector.Engine
 
             for (int x = x0; x <= x1; x++)
             {
-                buffer.DrawPixelUnsafe(x, y, color);
-
-                if (D > 0)
-                {
-                    y = y + yi;
-                    D = D - 2 * dx;
-                }
-                D = D + 2 * dy;
-            }
-        }
-
-        private static void PlotLineHigh(ScreenBuffer buffer, int x0, int y0, int x1, int y1, Color color)
-        {
-            int dx = x1 - x0;
-            int dy = y1 - y0;
-            int xi = 1;
-            if (dx < 0)
-            {
-                xi = -1;
-                dx = -dx;
-            }
-
-            int D = 2 * dx - dy;
-            int x = x0;
-
-            for (int y = y0; y <= y1; y++)
-            {
-                buffer.DrawPixelUnsafe(x, y, color);
-
-                if (D > 0)
-                {
-                    x = x + xi;
-                    D = D - 2 * dy;
-                }
-                D = D + 2 * dx;
-            }
-        }
-
-        #endregion
-
-        #region Bresenham's Line Algorithm (safe, will silently ignore drawing off the buffer)
-
-        public static void PlotLineSafe(this ScreenBuffer buffer, Point p0, Point p1, Color color) =>
-            PlotLineSafe(buffer, p0.X, p0.Y, p1.X, p1.Y, color);
-
-        public static void PlotLineSafe(this ScreenBuffer buffer, int x0, int y0, int x1, int y1, Color color)
-        {
-            if (Abs(y1 - y0) < Abs(x1 - x0))
-            {
-                if (x0 > x1)
-                    PlotLineLowSafe(buffer, x1, y1, x0, y0, color);
-                else
-                    PlotLineLowSafe(buffer, x0, y0, x1, y1, color);
-            }
-            else
-            {
-                if (y0 > y1)
-                    PlotLineHighSafe(buffer, x1, y1, x0, y0, color);
-                else
-                    PlotLineHighSafe(buffer, x0, y0, x1, y1, color);
-            }
-        }
-
-        private static void PlotLineLowSafe(ScreenBuffer buffer, int x0, int y0, int x1, int y1, Color color)
-        {
-            int dx = x1 - x0;
-            int dy = y1 - y0;
-            int yi = 1;
-            if (dy < 0)
-            {
-                yi = -1;
-                dy = -dy;
-            }
-
-            int D = 2 * dy - dx;
-            int y = y0;
-
-            for (int x = x0; x <= x1; x++)
-            {
                 buffer.DrawPixel(x, y, color);
 
                 if (D > 0)
@@ -136,7 +136,7 @@ namespace SectorDirector.Engine
             }
         }
 
-        private static void PlotLineHighSafe(ScreenBuffer buffer, int x0, int y0, int x1, int y1, Color color)
+        private static void PlotLineHigh(ScreenBuffer buffer, int x0, int y0, int x1, int y1, Color color)
         {
             int dx = x1 - x0;
             int dy = y1 - y0;

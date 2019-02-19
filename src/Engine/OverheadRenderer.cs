@@ -134,7 +134,7 @@ namespace SectorDirector.Engine
 
                 var p1 = ToScreenCoords(vertex1);
                 var p2 = ToScreenCoords(vertex2);
-                screen.PlotLineSafe(p1, p2, lineColor);
+                screen.PlotLine(p1, p2, lineColor);
 
                 // Draw front side indication
                 var lineDirection = vertex2 - vertex1;
@@ -145,7 +145,7 @@ namespace SectorDirector.Engine
 
                 var frontMarkerLineEnd = lineMidPoint + perpendicularDirection * FrontSideMarkerLength;
 
-                screen.PlotLineSafe(ToScreenCoords(lineMidPoint), ToScreenCoords(frontMarkerLineEnd), lineColor);
+                screen.PlotLine(ToScreenCoords(lineMidPoint), ToScreenCoords(frontMarkerLineEnd), lineColor);
             }
 
             // Circle every vertex
@@ -162,25 +162,25 @@ namespace SectorDirector.Engine
             var playerBottomLeft = ToScreenCoords(player.Position + new Vector2(-halfWidth, -halfWidth));
             var playerBottomRight = ToScreenCoords(player.Position + new Vector2(halfWidth, -halfWidth));
 
-            screen.PlotLineSafe(playerTopLeft, playerTopRight, Color.Green);
-            screen.PlotLineSafe(playerTopRight, playerBottomRight, Color.Green);
-            screen.PlotLineSafe(playerBottomRight, playerBottomLeft, Color.Green);
-            screen.PlotLineSafe(playerBottomLeft, playerTopLeft, Color.Green);
+            screen.PlotLine(playerTopLeft, playerTopRight, Color.Green);
+            screen.PlotLine(playerTopRight, playerBottomRight, Color.Green);
+            screen.PlotLine(playerBottomRight, playerBottomLeft, Color.Green);
+            screen.PlotLine(playerBottomLeft, playerTopLeft, Color.Green);
 
             // Draw player direction arrow
             var playerLineStart = player.Position - (halfWidth / 2 * player.Direction);
             var playerLineEnd = player.Position + (halfWidth / 2 * player.Direction);
-            screen.PlotLineSafe(ToScreenCoords(playerLineStart), ToScreenCoords(playerLineEnd), Color.LightGreen);
+            screen.PlotLine(ToScreenCoords(playerLineStart), ToScreenCoords(playerLineEnd), Color.LightGreen);
 
             var perpendicularPlayerDirection = player.Direction.PerpendicularClockwise();
             var baseOfArrow = player.Position + (halfWidth / 5 * player.Direction);
             var arrowBaseHalfWidth = halfWidth/3;
 
             var rightBaseOfArrow = baseOfArrow + (arrowBaseHalfWidth * perpendicularPlayerDirection);
-            screen.PlotLineSafe(ToScreenCoords(rightBaseOfArrow), ToScreenCoords(playerLineEnd), Color.LightGreen);
+            screen.PlotLine(ToScreenCoords(rightBaseOfArrow), ToScreenCoords(playerLineEnd), Color.LightGreen);
 
             var leftBaseOfArrow = baseOfArrow - (arrowBaseHalfWidth * perpendicularPlayerDirection);
-            screen.PlotLineSafe(ToScreenCoords(leftBaseOfArrow), ToScreenCoords(playerLineEnd), Color.LightGreen);
+            screen.PlotLine(ToScreenCoords(leftBaseOfArrow), ToScreenCoords(playerLineEnd), Color.LightGreen);
         }
     }
 }
