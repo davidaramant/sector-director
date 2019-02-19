@@ -25,6 +25,8 @@ namespace SectorDirector.Engine
         private SpriteFont _messageFont;
         readonly KeyToggles _keyToggles = new KeyToggles();
         readonly ScreenMessage _screenMessage = new ScreenMessage();
+        FrameTimeAggregator _frameTimeAggregator = new FrameTimeAggregator();
+        bool _showFrameTime = false;
 
         OverheadRenderer _renderer;
 
@@ -59,6 +61,7 @@ namespace SectorDirector.Engine
                 _screenMessage.ShowMessage($"Rotate mode {(_renderer.RotateMode ? "ON" : "OFF")}");
             };
             _keyToggles.FitToScreenZoom += (s, e) => _renderer.ResetZoom();
+            _keyToggles.ShowFrameTime += (s, e) => _showFrameTime = !_showFrameTime;
             _keyToggles.LoadMap += KeyToggled_LoadMap;
         }
 
@@ -215,6 +218,7 @@ namespace SectorDirector.Engine
         {
             if (_screenBuffer.Dimensions != renderSize)
             {
+                _frameTimeAggregator.Reset();
                 _screenMessage.ShowMessage($"Changing screen buffer to {renderSize.X}x{renderSize.Y}");
                 _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: renderSize.X, height: renderSize.Y);
                 _screenBuffer = new ScreenBuffer(renderSize);
@@ -234,7 +238,12 @@ namespace SectorDirector.Engine
                 depthStencilState: DepthStencilState.None,
                 rasterizerState: RasterizerState.CullNone);
 
+            if (_showFrameTime)
+                _frameTimeAggregator.StartTiming();
             _renderer.Render(_screenBuffer, _playerInfo);
+
+            if (_showFrameTime)
+                _frameTimeAggregator.StopTiming();
 
             _screenBuffer.CopyToTexture(_outputTexture);
 
@@ -251,6 +260,13 @@ namespace SectorDirector.Engine
             if (message != null)
             {
                 DrawShadowedString(_messageFont, message, new Vector2(0, 0), Color.White);
+            }
+
+            if (_showFrameTime)
+            {
+                var text = $"Frame time: {_frameTimeAggregator.GetAverageFrameTimeInMs():#0.00}ms";
+                var size = _messageFont.MeasureString(text);
+                DrawShadowedString(_messageFont, text, new Vector2(0, CurrentScreenSize.Y - size.Y), Color.Red);
             }
 
             _spriteBatch.End();

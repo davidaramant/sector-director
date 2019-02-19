@@ -21,6 +21,7 @@ namespace SectorDirector.Engine
         readonly KeyboardLatch _fitToScreenZoom = new KeyboardLatch(kb => kb.IsKeyDown(Keys.Z));
         readonly KeyboardLatch _followModeToggle = new KeyboardLatch(kb => kb.IsKeyDown(Keys.F));
         readonly KeyboardLatch _rotateModeToggle = new KeyboardLatch(kb => kb.IsKeyDown(Keys.R));
+        readonly KeyboardLatch _showFrameTime = new KeyboardLatch(kb => kb.IsKeyDown(Keys.A));
         readonly KeyboardLatch _loadMap1 = new KeyboardLatch(kb => kb.IsKeyDown(Keys.D1));
         readonly KeyboardLatch _loadMap2 = new KeyboardLatch(kb => kb.IsKeyDown(Keys.D2));
         readonly KeyboardLatch _loadMap3 = new KeyboardLatch(kb => kb.IsKeyDown(Keys.D3));
@@ -30,6 +31,7 @@ namespace SectorDirector.Engine
         public event EventHandler FullScreen;
         public event EventHandler FollowMode;
         public event EventHandler RotateMode;
+        public event EventHandler ShowFrameTime;
         public event EventHandler FitToScreenZoom;
         public event EventHandler<LoadMapArgs> LoadMap;
 
@@ -58,6 +60,10 @@ namespace SectorDirector.Engine
             else if (_fitToScreenZoom.IsTriggered(keyboardState))
             {
                 FitToScreenZoom?.Invoke(this, EventArgs.Empty);
+            }
+            else if (_showFrameTime.IsTriggered(keyboardState))
+            {
+                ShowFrameTime?.Invoke(this, EventArgs.Empty);
             }
             else if (_loadMap1.IsTriggered(keyboardState))
             {

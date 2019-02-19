@@ -47,6 +47,7 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="FrameTimeAggregator.cs" />
     <Compile Include="GameEngine.cs" />
     <Compile Include="GeometryExtensions.cs" />
     <Compile Include="KeyboardLatch.cs" />
