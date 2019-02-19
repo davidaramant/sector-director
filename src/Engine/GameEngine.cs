@@ -25,7 +25,7 @@ namespace SectorDirector.Engine
         private SpriteFont _messageFont;
         readonly KeyToggles _keyToggles = new KeyToggles();
         readonly ScreenMessage _screenMessage = new ScreenMessage();
-        FrameTimeAggregator _frameTimeAggregator = new FrameTimeAggregator();
+        readonly FrameTimeAggregator _frameTimeAggregator = new FrameTimeAggregator();
         bool _showFrameTime = false;
 
         OverheadRenderer _renderer;
@@ -269,7 +269,7 @@ namespace SectorDirector.Engine
 
             if (_showFrameTime)
             {
-                var text = $"Average frame time: {_frameTimeAggregator.GetAverageFrameTimeInMs():#0.00}ms";
+                var text = $"Average render time: {_frameTimeAggregator.GetAverageFrameTimeInMs():#0.00}ms";
                 var size = _messageFont.MeasureString(text);
                 DrawShadowedString(_messageFont, text, new Vector2(0, CurrentScreenSize.Y - size.Y), Color.Red);
             }
