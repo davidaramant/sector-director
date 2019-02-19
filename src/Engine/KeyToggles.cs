@@ -2,6 +2,7 @@
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 
 namespace SectorDirector.Engine
@@ -15,55 +16,54 @@ namespace SectorDirector.Engine
 
     public sealed class KeyToggles
     {
-        readonly KeyboardLatch _decreaseRenderFidelityLatch = new KeyboardLatch(kb => kb.IsKeyDown(Keys.OemOpenBrackets));
-        readonly KeyboardLatch _increaseRenderFidelityLatch = new KeyboardLatch(kb => kb.IsKeyDown(Keys.OemCloseBrackets));
         readonly KeyboardLatch _toggleFullscreenLatch = new KeyboardLatch(kb => (kb.IsKeyDown(Keys.LeftAlt) || kb.IsKeyDown(Keys.RightAlt)) && kb.IsKeyDown(Keys.Enter));
-        readonly KeyboardLatch _fitToScreenZoom = new KeyboardLatch(kb => kb.IsKeyDown(Keys.Z));
-        readonly KeyboardLatch _followModeToggle = new KeyboardLatch(kb => kb.IsKeyDown(Keys.F));
-        readonly KeyboardLatch _rotateModeToggle = new KeyboardLatch(kb => kb.IsKeyDown(Keys.R));
-        readonly KeyboardLatch _showFrameTime = new KeyboardLatch(kb => kb.IsKeyDown(Keys.A));
         readonly KeyboardLatch _loadMap1 = new KeyboardLatch(kb => kb.IsKeyDown(Keys.D1));
         readonly KeyboardLatch _loadMap2 = new KeyboardLatch(kb => kb.IsKeyDown(Keys.D2));
         readonly KeyboardLatch _loadMap3 = new KeyboardLatch(kb => kb.IsKeyDown(Keys.D3));
+
+        readonly List<KeyboardLatch> _simpleToggles = new List<KeyboardLatch>();
+
+        public KeyToggles()
+        {
+            AddSimpleToggles(
+                (Keys.OemOpenBrackets, () => DecreaseFidelity),
+                (Keys.OemCloseBrackets, () => IncreaseFidelity),
+                (Keys.Z, () => FitToScreenZoom),
+                (Keys.F, () => FollowMode),
+                (Keys.R, () => RotateMode),
+                (Keys.A, () => ShowFrameTime)
+            );
+        }
+
+        private void AddSimpleToggles(params (Keys key, Func<EventHandler> signal)[] simpleToggles)
+        {
+            foreach (var simple in simpleToggles)
+            {
+                var latch = new KeyboardLatch(kb => kb.IsKeyDown(simple.key));
+                latch.Triggered += (s, e) => simple.signal()?.Invoke(this, EventArgs.Empty);
+                _simpleToggles.Add(latch);
+            }
+        }
 
         public event EventHandler DecreaseFidelity;
         public event EventHandler IncreaseFidelity;
         public event EventHandler FullScreen;
         public event EventHandler FollowMode;
         public event EventHandler RotateMode;
-        public event EventHandler ShowFrameTime;
         public event EventHandler FitToScreenZoom;
+        public event EventHandler ShowFrameTime;
         public event EventHandler<LoadMapArgs> LoadMap;
 
         public void Update(KeyboardState keyboardState)
         {
-            if (_decreaseRenderFidelityLatch.IsTriggered(keyboardState))
+            foreach (var simpleToggle in _simpleToggles)
             {
-                DecreaseFidelity?.Invoke(this, EventArgs.Empty);
+                simpleToggle.IsTriggered(keyboardState);
             }
-            else if (_increaseRenderFidelityLatch.IsTriggered(keyboardState))
-            {
-                IncreaseFidelity?.Invoke(this, EventArgs.Empty);
-            }
-            else if (_toggleFullscreenLatch.IsTriggered(keyboardState))
+
+            if (_toggleFullscreenLatch.IsTriggered(keyboardState))
             {
                 FullScreen?.Invoke(this, EventArgs.Empty);
-            }
-            else if (_followModeToggle.IsTriggered(keyboardState))
-            {
-                FollowMode?.Invoke(this, EventArgs.Empty);
-            }
-            else if (_rotateModeToggle.IsTriggered(keyboardState))
-            {
-                RotateMode?.Invoke(this, EventArgs.Empty);
-            }
-            else if (_fitToScreenZoom.IsTriggered(keyboardState))
-            {
-                FitToScreenZoom?.Invoke(this, EventArgs.Empty);
-            }
-            else if (_showFrameTime.IsTriggered(keyboardState))
-            {
-                ShowFrameTime?.Invoke(this, EventArgs.Empty);
             }
             else if (_loadMap1.IsTriggered(keyboardState))
             {

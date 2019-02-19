@@ -15,6 +15,8 @@ namespace SectorDirector.Engine
             _keyMatcher = keyMatcher;
         }
 
+        public event EventHandler Triggered;
+
         public bool IsTriggered(KeyboardState state)
         {
             if (_keyMatcher(state))
@@ -22,6 +24,7 @@ namespace SectorDirector.Engine
                 if (!_pressing)
                 {
                     _pressing = true;
+                    Triggered?.Invoke(this, EventArgs.Empty);
                     return true;
                 }
             }
