@@ -61,6 +61,11 @@ namespace SectorDirector.Engine
                 _screenMessage.ShowMessage($"Rotate mode {(_renderer.RotateMode ? "ON" : "OFF")}");
             };
             _keyToggles.FitToScreenZoom += (s, e) => _renderer.ResetZoom();
+            _keyToggles.LineRenderingMode += (s, e) =>
+             {
+                 _renderer.ToggleDrawAntiAliased();
+                 _screenMessage.ShowMessage($"Drawing anti-aliased lines: {(_renderer.DrawAntiAliased ? "ON" : "OFF")}");
+             };
             _keyToggles.ShowFrameTime += (s, e) => _showFrameTime = !_showFrameTime;
             _keyToggles.LoadMap += KeyToggled_LoadMap;
         }
@@ -264,7 +269,7 @@ namespace SectorDirector.Engine
 
             if (_showFrameTime)
             {
-                var text = $"Frame time: {_frameTimeAggregator.GetAverageFrameTimeInMs():#0.00}ms";
+                var text = $"Average frame time: {_frameTimeAggregator.GetAverageFrameTimeInMs():#0.00}ms";
                 var size = _messageFont.MeasureString(text);
                 DrawShadowedString(_messageFont, text, new Vector2(0, CurrentScreenSize.Y - size.Y), Color.Red);
             }

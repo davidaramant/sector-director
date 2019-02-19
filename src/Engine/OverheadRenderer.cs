@@ -9,6 +9,8 @@ namespace SectorDirector.Engine
 {
     public sealed class OverheadRenderer
     {
+        delegate void DrawLine(ScreenBuffer buffer, Point p0, Point p1, Color c);
+        
         readonly MapGeometry _map;
         const float VertexSize = 3f;
         const float FrontSideMarkerLength = 5f;
@@ -17,12 +19,13 @@ namespace SectorDirector.Engine
         private const float MaxMapToScreenRatio = 5f;
         private const float DefaultMapToScreenRatio = 0.9f;
         private float _mapToScreenRatio = DefaultMapToScreenRatio;
-
+        DrawLine _drawLine = ScreenBufferExtensions.PlotLine;
         private const float MsToMoveSpeed = 200f / 1000f;
         Vector2 _viewOffset = Vector2.Zero;
 
         public bool FollowMode { get; private set; } = true;
         public bool RotateMode { get; private set; } = false;
+        public bool DrawAntiAliased { get; private set; } = false;
 
         public OverheadRenderer(MapGeometry map)
         {
@@ -80,6 +83,19 @@ namespace SectorDirector.Engine
             }
         }
 
+        public void ToggleDrawAntiAliased()
+        {
+            DrawAntiAliased = !DrawAntiAliased;
+            if(DrawAntiAliased)
+            {
+                _drawLine = ScreenBufferExtensions.PlotLineSmooth;
+            }
+            else
+            {
+                _drawLine = ScreenBufferExtensions.PlotLine;
+            }
+        }
+
         public void Render(ScreenBuffer screen, PlayerInfo player)
         {
             screen.Clear();
@@ -134,7 +150,7 @@ namespace SectorDirector.Engine
 
                 var p1 = ToScreenCoords(vertex1);
                 var p2 = ToScreenCoords(vertex2);
-                screen.PlotLine(p1, p2, lineColor);
+                _drawLine(screen,p1, p2, lineColor);
 
                 // Draw front side indication
                 var lineDirection = vertex2 - vertex1;
@@ -145,7 +161,7 @@ namespace SectorDirector.Engine
 
                 var frontMarkerLineEnd = lineMidPoint + perpendicularDirection * FrontSideMarkerLength;
 
-                screen.PlotLine(ToScreenCoords(lineMidPoint), ToScreenCoords(frontMarkerLineEnd), lineColor);
+                _drawLine(screen,ToScreenCoords(lineMidPoint), ToScreenCoords(frontMarkerLineEnd), lineColor);
             }
 
             // Circle every vertex
@@ -162,25 +178,25 @@ namespace SectorDirector.Engine
             var playerBottomLeft = ToScreenCoords(player.Position + new Vector2(-halfWidth, -halfWidth));
             var playerBottomRight = ToScreenCoords(player.Position + new Vector2(halfWidth, -halfWidth));
 
-            screen.PlotLine(playerTopLeft, playerTopRight, Color.Green);
-            screen.PlotLine(playerTopRight, playerBottomRight, Color.Green);
-            screen.PlotLine(playerBottomRight, playerBottomLeft, Color.Green);
-            screen.PlotLine(playerBottomLeft, playerTopLeft, Color.Green);
+            _drawLine(screen,playerTopLeft, playerTopRight, Color.Green);
+            _drawLine(screen,playerTopRight, playerBottomRight, Color.Green);
+            _drawLine(screen,playerBottomRight, playerBottomLeft, Color.Green);
+            _drawLine(screen,playerBottomLeft, playerTopLeft, Color.Green);
 
             // Draw player direction arrow
             var playerLineStart = player.Position - (halfWidth / 2 * player.Direction);
             var playerLineEnd = player.Position + (halfWidth / 2 * player.Direction);
-            screen.PlotLine(ToScreenCoords(playerLineStart), ToScreenCoords(playerLineEnd), Color.LightGreen);
+            _drawLine(screen,ToScreenCoords(playerLineStart), ToScreenCoords(playerLineEnd), Color.LightGreen);
 
             var perpendicularPlayerDirection = player.Direction.PerpendicularClockwise();
             var baseOfArrow = player.Position + (halfWidth / 5 * player.Direction);
-            var arrowBaseHalfWidth = halfWidth/3;
+            var arrowBaseHalfWidth = halfWidth / 3;
 
             var rightBaseOfArrow = baseOfArrow + (arrowBaseHalfWidth * perpendicularPlayerDirection);
-            screen.PlotLine(ToScreenCoords(rightBaseOfArrow), ToScreenCoords(playerLineEnd), Color.LightGreen);
+            _drawLine(screen,ToScreenCoords(rightBaseOfArrow), ToScreenCoords(playerLineEnd), Color.LightGreen);
 
             var leftBaseOfArrow = baseOfArrow - (arrowBaseHalfWidth * perpendicularPlayerDirection);
-            screen.PlotLine(ToScreenCoords(leftBaseOfArrow), ToScreenCoords(playerLineEnd), Color.LightGreen);
+            _drawLine(screen,ToScreenCoords(leftBaseOfArrow), ToScreenCoords(playerLineEnd), Color.LightGreen);
         }
     }
 }

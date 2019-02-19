@@ -31,7 +31,8 @@ namespace SectorDirector.Engine
                 (Keys.Z, () => FitToScreenZoom),
                 (Keys.F, () => FollowMode),
                 (Keys.R, () => RotateMode),
-                (Keys.A, () => ShowFrameTime)
+                (Keys.A, () => ShowFrameTime),
+                (Keys.D, () => LineRenderingMode)
             );
         }
 
@@ -52,6 +53,7 @@ namespace SectorDirector.Engine
         public event EventHandler RotateMode;
         public event EventHandler FitToScreenZoom;
         public event EventHandler ShowFrameTime;
+        public event EventHandler LineRenderingMode;
         public event EventHandler<LoadMapArgs> LoadMap;
 
         public void Update(KeyboardState keyboardState)
