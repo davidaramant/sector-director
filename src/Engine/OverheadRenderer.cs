@@ -146,7 +146,7 @@ namespace SectorDirector.Engine
                 var lineColor =
                     isPlayerInThisSector ?
                         (lineDef.TwoSided ? Color.DarkRed : Color.Red) :
-                        (lineDef.TwoSided ? Color.DarkGray : Color.White);
+                        (lineDef.TwoSided ? Color.DimGray : Color.White);
 
                 var p1 = ToScreenCoords(vertex1);
                 var p2 = ToScreenCoords(vertex2);
@@ -167,7 +167,7 @@ namespace SectorDirector.Engine
             // Circle every vertex
             foreach (var vertexInScreenCoords in _map.Vertices.Select(ToScreenCoords))
             {
-                screen.PlotCircleSafe(vertexInScreenCoords, (int)(gameToScreenFactor * VertexSize), Color.Aqua);
+                screen.PlotCircleSafe(vertexInScreenCoords, (int)(gameToScreenFactor * VertexSize), Color.DeepSkyBlue);
             }
 
             // Draw player position
