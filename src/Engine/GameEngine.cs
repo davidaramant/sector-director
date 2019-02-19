@@ -27,7 +27,7 @@ namespace SectorDirector.Engine
         readonly ScreenMessage _screenMessage = new ScreenMessage();
         readonly FrameTimeAggregator _frameTimeAggregator = new FrameTimeAggregator();
         bool _showFrameTime = false;
-
+        private readonly GameSettings _settings;
         OverheadRenderer _renderer;
 
         private Point CurrentScreenSize => new Point(
@@ -47,25 +47,12 @@ namespace SectorDirector.Engine
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += (s, e) => UpdateScreenBuffer(CurrentScreenSize);
 
+            _settings = new GameSettings(_keyToggles, _screenMessage);
+
             _keyToggles.DecreaseFidelity += KeyToggled_DecreaseFidelity;
             _keyToggles.IncreaseFidelity += KeyToggled_IncreaseFidelity;
             _keyToggles.FullScreen += KeyToggled_FullScreen;
-            _keyToggles.FollowMode += (s, e) =>
-            {
-                _renderer.ToggleFollowMode();
-                _screenMessage.ShowMessage($"Follow mode {(_renderer.FollowMode ? "ON" : "OFF")}");
-            };
-            _keyToggles.RotateMode += (s, e) =>
-            {
-                _renderer.ToggleRotateMode();
-                _screenMessage.ShowMessage($"Rotate mode {(_renderer.RotateMode ? "ON" : "OFF")}");
-            };
             _keyToggles.FitToScreenZoom += (s, e) => _renderer.ResetZoom();
-            _keyToggles.LineRenderingMode += (s, e) =>
-             {
-                 _renderer.ToggleDrawAntiAliased();
-                 _screenMessage.ShowMessage($"Drawing anti-aliased lines: {(_renderer.DrawAntiAliased ? "ON" : "OFF")}");
-             };
             _keyToggles.ShowFrameTime += (s, e) => _showFrameTime = !_showFrameTime;
             _keyToggles.LoadMap += KeyToggled_LoadMap;
         }
@@ -142,7 +129,7 @@ namespace SectorDirector.Engine
             _screenMessage.ShowMessage($"Switching to map index {index}");
             var map = _maps[index];
             _currentMap = new MapGeometry(map);
-            _renderer = new OverheadRenderer(_currentMap);
+            _renderer = new OverheadRenderer(_settings, _currentMap);
             _playerInfo = new PlayerInfo(_currentMap);
         }
 
@@ -198,7 +185,7 @@ namespace SectorDirector.Engine
                 movementInputs |= MovementInputs.StrafeRight;
             }
 
-            if (_renderer.FollowMode)
+            if (_settings.FollowMode)
             {
                 _playerInfo.Update(movementInputs, gameTime);
             }

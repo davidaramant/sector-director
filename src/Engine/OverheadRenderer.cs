@@ -10,8 +10,10 @@ namespace SectorDirector.Engine
     public sealed class OverheadRenderer
     {
         delegate void DrawLine(ScreenBuffer buffer, Point p0, Point p1, Color c);
-        
+
+        readonly GameSettings _settings;
         readonly MapGeometry _map;
+
         const float VertexSize = 3f;
         const float FrontSideMarkerLength = 5f;
         private const float MsToZoomSpeed = 0.001f;
@@ -23,24 +25,23 @@ namespace SectorDirector.Engine
         private const float MsToMoveSpeed = 200f / 1000f;
         Vector2 _viewOffset = Vector2.Zero;
 
-        public bool FollowMode { get; private set; } = true;
-        public bool RotateMode { get; private set; } = false;
-        public bool DrawAntiAliased { get; private set; } = false;
-
-        public OverheadRenderer(MapGeometry map)
+        public OverheadRenderer(GameSettings settings, MapGeometry map)
         {
+            _settings = settings;
             _map = map;
-        }
 
-        public void ToggleFollowMode()
-        {
-            FollowMode = !FollowMode;
-            _viewOffset = Vector2.Zero;
-        }
-
-        public void ToggleRotateMode()
-        {
-            RotateMode = !RotateMode;
+            _settings.FollowModeChanged += (s, e) => _viewOffset = Vector2.Zero;
+            _settings.DrawAntiAliasedModeChanged += (s, e) =>
+            {
+                if (_settings.DrawAntiAliased)
+                {
+                    _drawLine = ScreenBufferExtensions.PlotLineSmooth;
+                }
+                else
+                {
+                    _drawLine = ScreenBufferExtensions.PlotLine;
+                }
+            };
         }
 
         public void ResetZoom()
@@ -83,19 +84,6 @@ namespace SectorDirector.Engine
             }
         }
 
-        public void ToggleDrawAntiAliased()
-        {
-            DrawAntiAliased = !DrawAntiAliased;
-            if(DrawAntiAliased)
-            {
-                _drawLine = ScreenBufferExtensions.PlotLineSmooth;
-            }
-            else
-            {
-                _drawLine = ScreenBufferExtensions.PlotLine;
-            }
-        }
-
         public void Render(ScreenBuffer screen, PlayerInfo player)
         {
             screen.Clear();
@@ -118,7 +106,7 @@ namespace SectorDirector.Engine
             {
                 var shiftedGameCoordinate = gameCoordinate;
 
-                if (RotateMode)
+                if (_settings.RotateMode)
                 {
                     // translate coordinate to be relative to player
                     shiftedGameCoordinate -= player.Position;
@@ -171,7 +159,6 @@ namespace SectorDirector.Engine
             }
 
             // Draw player position
-            var playerPositionInScreenCoords = ToScreenCoords(player.Position);
             var halfWidth = player.Width / 2;
             var playerTopLeft = ToScreenCoords(player.Position + new Vector2(-halfWidth, halfWidth));
             var playerTopRight = ToScreenCoords(player.Position + new Vector2(halfWidth, halfWidth));

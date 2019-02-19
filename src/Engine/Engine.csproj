@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="FrameTimeAggregator.cs" />
     <Compile Include="GameEngine.cs" />
+    <Compile Include="GameSettings.cs" />
     <Compile Include="GeometryExtensions.cs" />
     <Compile Include="KeyboardLatch.cs" />
     <Compile Include="KeyToggles.cs" />
