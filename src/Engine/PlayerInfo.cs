@@ -55,39 +55,39 @@ namespace SectorDirector.Engine
             return true;
         }
 
-        public void Update(MovementInputs inputs, GameTime gameTime)
+        public void Update(ContinuousInputs inputs, GameTime gameTime)
         {
             var distance = gameTime.ElapsedGameTime.Milliseconds * MsToMoveSpeed;
             var rotationAmount = gameTime.ElapsedGameTime.Milliseconds * MsToRotateSpeed;
 
-            if (inputs.HasFlag(MovementInputs.Forward))
+            if (inputs.HasFlag(ContinuousInputs.Forward))
             {
                 Move(ref Direction, distance);
             }
-            else if (inputs.HasFlag(MovementInputs.Backward))
+            else if (inputs.HasFlag(ContinuousInputs.Backward))
             {
                 var direction = new Vector2 { X = -Direction.X, Y = -Direction.Y };
 
                 Move(ref direction, distance);
             }
-            if (inputs.HasFlag(MovementInputs.StrafeLeft))
+            if (inputs.HasFlag(ContinuousInputs.StrafeLeft))
             {
                 var direction = new Vector2 { X = -Direction.Y, Y = Direction.X };
 
                 Move(ref direction, distance);
             }
-            else if (inputs.HasFlag(MovementInputs.StrafeRight))
+            else if (inputs.HasFlag(ContinuousInputs.StrafeRight))
             {
                 var direction = new Vector2 { X = Direction.Y, Y = -Direction.X };
 
                 Move(ref direction, distance);
             }
 
-            if (inputs.HasFlag(MovementInputs.TurnRight))
+            if (inputs.HasFlag(ContinuousInputs.TurnRight))
             {
                 Rotate(-rotationAmount);
             }
-            else if (inputs.HasFlag(MovementInputs.TurnLeft))
+            else if (inputs.HasFlag(ContinuousInputs.TurnLeft))
             {
                 Rotate(rotationAmount);
             }

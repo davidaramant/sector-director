@@ -31,8 +31,9 @@ namespace SectorDirector.Engine
                 (Keys.Z, () => FitToScreenZoom),
                 (Keys.F, () => FollowMode),
                 (Keys.R, () => RotateMode),
-                (Keys.A, () => ShowFrameTime),
-                (Keys.D, () => LineRenderingMode)
+                (Keys.A, () => ShowRenderTime),
+                (Keys.D, () => DrawAntiAliased),
+                (Keys.T, () => SwitchRenderer)
             );
         }
 
@@ -52,8 +53,9 @@ namespace SectorDirector.Engine
         public event EventHandler FollowMode;
         public event EventHandler RotateMode;
         public event EventHandler FitToScreenZoom;
-        public event EventHandler ShowFrameTime;
-        public event EventHandler LineRenderingMode;
+        public event EventHandler ShowRenderTime;
+        public event EventHandler DrawAntiAliased;
+        public event EventHandler SwitchRenderer;
         public event EventHandler<LoadMapArgs> LoadMap;
 
         public void Update(KeyboardState keyboardState)

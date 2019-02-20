@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace SectorDirector.Engine
 {
-    public sealed class OverheadRenderer
+    public sealed class OverheadRenderer : IRenderer
     {
         delegate void DrawLine(ScreenBuffer buffer, Point p0, Point p1, Color c);
 
@@ -25,62 +25,64 @@ namespace SectorDirector.Engine
         private const float MsToMoveSpeed = 200f / 1000f;
         Vector2 _viewOffset = Vector2.Zero;
 
-        public OverheadRenderer(GameSettings settings, MapGeometry map)
+        public OverheadRenderer(GameSettings settings, KeyToggles keyToggles, MapGeometry map)
         {
             _settings = settings;
             _map = map;
 
             _settings.FollowModeChanged += (s, e) => _viewOffset = Vector2.Zero;
-            _settings.DrawAntiAliasedModeChanged += (s, e) =>
+            _settings.DrawAntiAliasedModeChanged += (s, e) => PickLineDrawer();
+            PickLineDrawer();
+
+            keyToggles.FitToScreenZoom += (s, e) => _mapToScreenRatio = DefaultMapToScreenRatio;
+        }
+
+        private void PickLineDrawer()
+        {
+            if (_settings.DrawAntiAliased)
             {
-                if (_settings.DrawAntiAliased)
+                _drawLine = ScreenBufferExtensions.PlotLineSmooth;
+            }
+            else
+            {
+                _drawLine = ScreenBufferExtensions.PlotLine;
+            }
+        }
+
+        public void Update(ContinuousInputs inputs, GameTime gameTime)
+        {
+            if (!_settings.FollowMode)
+            {
+                var distance = gameTime.ElapsedGameTime.Milliseconds * MsToMoveSpeed;
+
+                if (inputs.HasFlag(ContinuousInputs.Forward))
                 {
-                    _drawLine = ScreenBufferExtensions.PlotLineSmooth;
+                    _viewOffset -= Vector2.UnitY * distance;
                 }
-                else
+                else if (inputs.HasFlag(ContinuousInputs.Backward))
                 {
-                    _drawLine = ScreenBufferExtensions.PlotLine;
+                    _viewOffset += Vector2.UnitY * distance;
                 }
-            };
-        }
 
-        public void ResetZoom()
-        {
-            _mapToScreenRatio = DefaultMapToScreenRatio;
-        }
-
-        public void ZoomIn(GameTime gameTime)
-        {
-            var zoomAmount = gameTime.ElapsedGameTime.Milliseconds * MsToZoomSpeed;
-            _mapToScreenRatio = Math.Min(MaxMapToScreenRatio, _mapToScreenRatio * (1f + zoomAmount));
-        }
-
-        public void ZoomOut(GameTime gameTime)
-        {
-            var zoomAmount = gameTime.ElapsedGameTime.Milliseconds * MsToZoomSpeed;
-            _mapToScreenRatio = Math.Max(MinMapToScreenRatio, _mapToScreenRatio / (1f + zoomAmount));
-        }
-
-        public void UpdateView(MovementInputs inputs, GameTime gameTime)
-        {
-            var distance = gameTime.ElapsedGameTime.Milliseconds * MsToMoveSpeed;
-
-            if (inputs.HasFlag(MovementInputs.Forward))
-            {
-                _viewOffset -= Vector2.UnitY * distance;
-            }
-            else if (inputs.HasFlag(MovementInputs.Backward))
-            {
-                _viewOffset += Vector2.UnitY * distance;
+                if (inputs.HasFlag(ContinuousInputs.TurnRight) || inputs.HasFlag(ContinuousInputs.StrafeRight))
+                {
+                    _viewOffset -= Vector2.UnitX * distance;
+                }
+                else if (inputs.HasFlag(ContinuousInputs.TurnLeft) || inputs.HasFlag(ContinuousInputs.StrafeLeft))
+                {
+                    _viewOffset += Vector2.UnitX * distance;
+                }
             }
 
-            if (inputs.HasFlag(MovementInputs.TurnRight) || inputs.HasFlag(MovementInputs.StrafeRight))
+            if (inputs.HasFlag(ContinuousInputs.ZoomIn))
             {
-                _viewOffset -= Vector2.UnitX * distance;
+                var zoomAmount = gameTime.ElapsedGameTime.Milliseconds * MsToZoomSpeed;
+                _mapToScreenRatio = Math.Min(MaxMapToScreenRatio, _mapToScreenRatio * (1f + zoomAmount));
             }
-            else if (inputs.HasFlag(MovementInputs.TurnLeft) || inputs.HasFlag(MovementInputs.StrafeLeft))
+            else if (inputs.HasFlag(ContinuousInputs.ZoomOut))
             {
-                _viewOffset += Vector2.UnitX * distance;
+                var zoomAmount = gameTime.ElapsedGameTime.Milliseconds * MsToZoomSpeed;
+                _mapToScreenRatio = Math.Max(MinMapToScreenRatio, _mapToScreenRatio / (1f + zoomAmount));
             }
         }
 
@@ -138,7 +140,7 @@ namespace SectorDirector.Engine
 
                 var p1 = ToScreenCoords(vertex1);
                 var p2 = ToScreenCoords(vertex2);
-                _drawLine(screen,p1, p2, lineColor);
+                _drawLine(screen, p1, p2, lineColor);
 
                 // Draw front side indication
                 var lineDirection = vertex2 - vertex1;
@@ -149,7 +151,7 @@ namespace SectorDirector.Engine
 
                 var frontMarkerLineEnd = lineMidPoint + perpendicularDirection * FrontSideMarkerLength;
 
-                _drawLine(screen,ToScreenCoords(lineMidPoint), ToScreenCoords(frontMarkerLineEnd), lineColor);
+                _drawLine(screen, ToScreenCoords(lineMidPoint), ToScreenCoords(frontMarkerLineEnd), lineColor);
             }
 
             // Circle every vertex
@@ -165,25 +167,25 @@ namespace SectorDirector.Engine
             var playerBottomLeft = ToScreenCoords(player.Position + new Vector2(-halfWidth, -halfWidth));
             var playerBottomRight = ToScreenCoords(player.Position + new Vector2(halfWidth, -halfWidth));
 
-            _drawLine(screen,playerTopLeft, playerTopRight, Color.Green);
-            _drawLine(screen,playerTopRight, playerBottomRight, Color.Green);
-            _drawLine(screen,playerBottomRight, playerBottomLeft, Color.Green);
-            _drawLine(screen,playerBottomLeft, playerTopLeft, Color.Green);
+            _drawLine(screen, playerTopLeft, playerTopRight, Color.Green);
+            _drawLine(screen, playerTopRight, playerBottomRight, Color.Green);
+            _drawLine(screen, playerBottomRight, playerBottomLeft, Color.Green);
+            _drawLine(screen, playerBottomLeft, playerTopLeft, Color.Green);
 
             // Draw player direction arrow
             var playerLineStart = player.Position - (halfWidth / 2 * player.Direction);
             var playerLineEnd = player.Position + (halfWidth / 2 * player.Direction);
-            _drawLine(screen,ToScreenCoords(playerLineStart), ToScreenCoords(playerLineEnd), Color.LightGreen);
+            _drawLine(screen, ToScreenCoords(playerLineStart), ToScreenCoords(playerLineEnd), Color.LightGreen);
 
             var perpendicularPlayerDirection = player.Direction.PerpendicularClockwise();
             var baseOfArrow = player.Position + (halfWidth / 5 * player.Direction);
             var arrowBaseHalfWidth = halfWidth / 3;
 
             var rightBaseOfArrow = baseOfArrow + (arrowBaseHalfWidth * perpendicularPlayerDirection);
-            _drawLine(screen,ToScreenCoords(rightBaseOfArrow), ToScreenCoords(playerLineEnd), Color.LightGreen);
+            _drawLine(screen, ToScreenCoords(rightBaseOfArrow), ToScreenCoords(playerLineEnd), Color.LightGreen);
 
             var leftBaseOfArrow = baseOfArrow - (arrowBaseHalfWidth * perpendicularPlayerDirection);
-            _drawLine(screen,ToScreenCoords(leftBaseOfArrow), ToScreenCoords(playerLineEnd), Color.LightGreen);
+            _drawLine(screen, ToScreenCoords(leftBaseOfArrow), ToScreenCoords(playerLineEnd), Color.LightGreen);
         }
     }
 }

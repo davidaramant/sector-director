@@ -395,6 +395,8 @@ namespace SectorDirector.Engine
 
         #region https://github.com/nejcgalof/Rasterization/blob/master/rasterizacija/Form1.cs
 
+        // HACK!!!! Keep this as global mutable state for convenience
+        public static float GammaExponent = 2.5f;
         public static void PlotLineSmooth(this ScreenBuffer buffer, Point point1, Point point2, Color baseColor) =>
             RasterDude(buffer, point1.X, point1.Y, point2.X, point2.Y, baseColor);
         public static void RasterDude(this ScreenBuffer buffer, int x1, int y1, int x2, int y2, Color baseColor)
@@ -410,7 +412,8 @@ namespace SectorDirector.Engine
             float fPart(float f) => f - (int)f;
             float rfPart(float f) => 1 - fPart(f);
 
-            void draw(int x, int y, float factor) => buffer.AddPixel(x, y, baseColor * factor);
+            float Gamma(float x, float exp) => (float)Pow(x, 1.0f / exp);
+            void draw(int x, int y, float intensity) => buffer.AddPixel(x, y, baseColor * Gamma(intensity, GammaExponent));
 
             bool direction = Abs(y2 - y1) > Abs(x2 - x1);
             if (direction)//replace x and y

@@ -6,7 +6,7 @@ using System;
 namespace SectorDirector.Engine
 {
     [Flags]
-    public enum MovementInputs
+    public enum ContinuousInputs
     {
         None = 0,
         Forward = 1 << 1,
@@ -15,5 +15,7 @@ namespace SectorDirector.Engine
         TurnRight = 1 << 4,
         StrafeLeft = 1 << 5,
         StrafeRight = 1 << 6,
+        ZoomIn = 1 << 7,
+        ZoomOut = 1 << 8,
     }
 }

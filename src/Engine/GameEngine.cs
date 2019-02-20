@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019, David Aramant
+// Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System.Collections.Generic;
@@ -26,9 +26,8 @@ namespace SectorDirector.Engine
         readonly KeyToggles _keyToggles = new KeyToggles();
         readonly ScreenMessage _screenMessage = new ScreenMessage();
         readonly FrameTimeAggregator _frameTimeAggregator = new FrameTimeAggregator();
-        bool _showFrameTime = false;
         private readonly GameSettings _settings;
-        OverheadRenderer _renderer;
+        IRenderer _renderer;
 
         private Point CurrentScreenSize => new Point(
                 x: _graphics.PreferredBackBufferWidth,
@@ -48,13 +47,29 @@ namespace SectorDirector.Engine
             Window.ClientSizeChanged += (s, e) => UpdateScreenBuffer(CurrentScreenSize);
 
             _settings = new GameSettings(_keyToggles, _screenMessage);
+            _settings.RendererChanged += Settings_RendererChanged;
 
             _keyToggles.DecreaseFidelity += KeyToggled_DecreaseFidelity;
             _keyToggles.IncreaseFidelity += KeyToggled_IncreaseFidelity;
             _keyToggles.FullScreen += KeyToggled_FullScreen;
-            _keyToggles.FitToScreenZoom += (s, e) => _renderer.ResetZoom();
-            _keyToggles.ShowFrameTime += (s, e) => _showFrameTime = !_showFrameTime;
             _keyToggles.LoadMap += KeyToggled_LoadMap;
+        }
+
+        private void Settings_RendererChanged(object sender, System.EventArgs e)
+        {
+            switch (_settings.Renderer)
+            {
+                case RendererType.LineTest:
+                    _renderer = new LineTestRenderer(_settings, _screenMessage);
+                    break;
+
+                case RendererType.Overhead:
+                    SwitchToMap(0);
+                    break;
+
+                default:
+                    throw new System.Exception("Unknown renderer type");
+            }
         }
 
         private void KeyToggled_DecreaseFidelity(object sender, System.EventArgs e)
@@ -129,7 +144,7 @@ namespace SectorDirector.Engine
             _screenMessage.ShowMessage($"Switching to map index {index}");
             var map = _maps[index];
             _currentMap = new MapGeometry(map);
-            _renderer = new OverheadRenderer(_settings, _currentMap);
+            _renderer = new OverheadRenderer(_settings, _keyToggles, _currentMap);
             _playerInfo = new PlayerInfo(_currentMap);
         }
 
@@ -156,52 +171,49 @@ namespace SectorDirector.Engine
 
             _keyToggles.Update(keyboardState);
 
-            var movementInputs = MovementInputs.None;
+            var inputs = ContinuousInputs.None;
 
             if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W))
             {
-                movementInputs |= MovementInputs.Forward;
+                inputs |= ContinuousInputs.Forward;
             }
             else if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S))
             {
-                movementInputs |= MovementInputs.Backward;
+                inputs |= ContinuousInputs.Backward;
             }
 
             if (keyboardState.IsKeyDown(Keys.Left))
             {
-                movementInputs |= MovementInputs.TurnLeft;
+                inputs |= ContinuousInputs.TurnLeft;
             }
             else if (keyboardState.IsKeyDown(Keys.Right))
             {
-                movementInputs |= MovementInputs.TurnRight;
+                inputs |= ContinuousInputs.TurnRight;
             }
 
             if (keyboardState.IsKeyDown(Keys.Q))
             {
-                movementInputs |= MovementInputs.StrafeLeft;
+                inputs |= ContinuousInputs.StrafeLeft;
             }
             else if (keyboardState.IsKeyDown(Keys.E))
             {
-                movementInputs |= MovementInputs.StrafeRight;
-            }
-
-            if (_settings.FollowMode)
-            {
-                _playerInfo.Update(movementInputs, gameTime);
-            }
-            else
-            {
-                _renderer.UpdateView(movementInputs, gameTime);
+                inputs |= ContinuousInputs.StrafeRight;
             }
 
             if (keyboardState.IsKeyDown(Keys.OemMinus))
             {
-                _renderer.ZoomOut(gameTime);
+                inputs |= ContinuousInputs.ZoomOut;
             }
             else if (keyboardState.IsKeyDown(Keys.OemPlus))
             {
-                _renderer.ZoomIn(gameTime);
+                inputs |= ContinuousInputs.ZoomIn;
             }
+
+            if (_settings.FollowMode)
+            {
+                _playerInfo.Update(inputs, gameTime);
+            }
+            _renderer.Update(inputs, gameTime);
 
             base.Update(gameTime);
         }
@@ -230,11 +242,12 @@ namespace SectorDirector.Engine
                 depthStencilState: DepthStencilState.None,
                 rasterizerState: RasterizerState.CullNone);
 
-            if (_showFrameTime)
+            if (_settings.ShowRenderTime)
                 _frameTimeAggregator.StartTiming();
+
             _renderer.Render(_screenBuffer, _playerInfo);
 
-            if (_showFrameTime)
+            if (_settings.ShowRenderTime)
                 _frameTimeAggregator.StopTiming();
 
             _screenBuffer.CopyToTexture(_outputTexture);
@@ -254,7 +267,7 @@ namespace SectorDirector.Engine
                 DrawShadowedString(_messageFont, message, new Vector2(0, 0), Color.White);
             }
 
-            if (_showFrameTime)
+            if (_settings.ShowRenderTime)
             {
                 var text = $"Average render time: {_frameTimeAggregator.GetAverageFrameTimeInMs():#0.00}ms";
                 var size = _messageFont.MeasureString(text);
