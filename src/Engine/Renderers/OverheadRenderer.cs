@@ -181,8 +181,8 @@ namespace SectorDirector.Engine.Renderers
             _drawLine(screen, ToScreenCoords(playerLineStart), ToScreenCoords(playerLineEnd), Color.LightGreen);
 
             var perpendicularPlayerDirection = player.Direction.PerpendicularClockwise();
-            var baseOfArrow = player.Position + (halfWidth / 5 * player.Direction);
-            var arrowBaseHalfWidth = halfWidth / 3;
+            var baseOfArrow = player.Position + (halfWidth / 6 * player.Direction);
+            var arrowBaseHalfWidth = halfWidth / 3.5f;
 
             var rightBaseOfArrow = baseOfArrow + (arrowBaseHalfWidth * perpendicularPlayerDirection);
             _drawLine(screen, ToScreenCoords(rightBaseOfArrow), ToScreenCoords(playerLineEnd), Color.LightGreen);
