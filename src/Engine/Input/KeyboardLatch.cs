@@ -15,6 +15,10 @@ namespace SectorDirector.Engine.Input
             _keyMatcher = keyMatcher;
         }
 
+        public KeyboardLatch(Keys key) : this(kb => kb.IsKeyDown(key))
+        {
+        }
+
         public event EventHandler Triggered;
 
         public bool IsTriggered(KeyboardState state)

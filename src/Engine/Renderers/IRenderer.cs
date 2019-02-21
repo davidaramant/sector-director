@@ -15,7 +15,7 @@ namespace SectorDirector.Engine.Renderers
 
     public static class RendererTypeExtensions
     {
-        public static RendererType Next(this RendererType type) => 
+        public static RendererType Next(this RendererType type) =>
             (RendererType)(((int)type + 1) % Enum.GetValues(typeof(RendererType)).Length);
     }
 

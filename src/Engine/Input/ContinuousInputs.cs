@@ -17,5 +17,6 @@ namespace SectorDirector.Engine.Input
         StrafeRight = 1 << 6,
         ZoomIn = 1 << 7,
         ZoomOut = 1 << 8,
+        ResetZoom = 1 << 9,
     }
 }

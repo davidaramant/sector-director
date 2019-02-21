@@ -48,7 +48,7 @@ namespace SectorDirector.Engine
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += (s, e) => UpdateScreenBuffer(CurrentScreenSize);
 
-            _settings = new GameSettings(_keyToggles, _screenMessage);
+            _settings = new GameSettings(_screenMessage);
             _settings.RendererChanged += Settings_RendererChanged;
 
             _keyToggles.DecreaseFidelity += KeyToggled_DecreaseFidelity;
@@ -150,7 +150,7 @@ namespace SectorDirector.Engine
             _screenMessage.ShowMessage($"Switching to map index {index}");
             var map = _maps[index];
             _currentMap = new MapGeometry(map);
-            _renderer = new OverheadRenderer(_settings, _keyToggles, _currentMap);
+            _renderer = new OverheadRenderer(_settings, _currentMap);
             _playerInfo = new PlayerInfo(_currentMap);
         }
 
@@ -175,51 +175,55 @@ namespace SectorDirector.Engine
             if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
 
-            _keyToggles.Update(keyboardState);
-
-            var inputs = ContinuousInputs.None;
+            var discreteInput = _keyToggles.Update(keyboardState);
+            var continuousInputs = ContinuousInputs.None;
 
             if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W))
             {
-                inputs |= ContinuousInputs.Forward;
+                continuousInputs |= ContinuousInputs.Forward;
             }
             else if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S))
             {
-                inputs |= ContinuousInputs.Backward;
+                continuousInputs |= ContinuousInputs.Backward;
             }
 
             if (keyboardState.IsKeyDown(Keys.Left))
             {
-                inputs |= ContinuousInputs.TurnLeft;
+                continuousInputs |= ContinuousInputs.TurnLeft;
             }
             else if (keyboardState.IsKeyDown(Keys.Right))
             {
-                inputs |= ContinuousInputs.TurnRight;
+                continuousInputs |= ContinuousInputs.TurnRight;
             }
 
             if (keyboardState.IsKeyDown(Keys.Q))
             {
-                inputs |= ContinuousInputs.StrafeLeft;
+                continuousInputs |= ContinuousInputs.StrafeLeft;
             }
             else if (keyboardState.IsKeyDown(Keys.E))
             {
-                inputs |= ContinuousInputs.StrafeRight;
+                continuousInputs |= ContinuousInputs.StrafeRight;
             }
 
             if (keyboardState.IsKeyDown(Keys.OemMinus))
             {
-                inputs |= ContinuousInputs.ZoomOut;
+                continuousInputs |= ContinuousInputs.ZoomOut;
             }
             else if (keyboardState.IsKeyDown(Keys.OemPlus))
             {
-                inputs |= ContinuousInputs.ZoomIn;
+                continuousInputs |= ContinuousInputs.ZoomIn;
+            }
+            else if(keyboardState.IsKeyDown(Keys.Z))
+            {
+                continuousInputs |= ContinuousInputs.ResetZoom;
             }
 
             if (_settings.FollowMode)
             {
-                _playerInfo.Update(inputs, gameTime);
+                _playerInfo.Update(continuousInputs, gameTime);
             }
-            _renderer.Update(inputs, gameTime);
+            _renderer.Update(continuousInputs, gameTime);
+            _settings.Update(discreteInput);
 
             base.Update(gameTime);
         }

@@ -8,6 +8,7 @@ namespace SectorDirector.Engine
 {
     public sealed class GameSettings
     {
+        private readonly ScreenMessage _message;
         public bool FollowMode { get; private set; } = true;
         public bool RotateMode { get; private set; } = false;
         public bool DrawAntiAliased { get; private set; } = false;
@@ -20,36 +21,41 @@ namespace SectorDirector.Engine
         public event EventHandler ShowRenderTimeChanged;
         public event EventHandler RendererChanged;
 
-        public GameSettings(KeyToggles keyToggles, ScreenMessage message)
+        public GameSettings(ScreenMessage message)
         {
-            keyToggles.FollowMode += (s, e) =>
+            _message = message;
+        }
+
+        public void Update(DiscreteInput input)
+        {
+            switch (input)
             {
-                FollowMode = !FollowMode;
-                message.ShowMessage($"Follow mode is {(FollowMode ? "ON" : "OFF")}");
-                FollowModeChanged?.Invoke(this, EventArgs.Empty);
-            };
-            keyToggles.RotateMode += (s, e) =>
-            {
-                RotateMode = !RotateMode;
-                message.ShowMessage($"Rotate mode is {(RotateMode ? "ON" : "OFF")}");
-                RotateModeChanged?.Invoke(this, EventArgs.Empty);
-            };
-            keyToggles.DrawAntiAliased += (s, e) =>
-            {
-                DrawAntiAliased = !DrawAntiAliased;
-                message.ShowMessage($"Draw antialiased lines is {(DrawAntiAliased ? "ON" : "OFF")}");
-                DrawAntiAliasedModeChanged?.Invoke(this, EventArgs.Empty);
-            };
-            keyToggles.ShowRenderTime += (s, e) =>
-            {
-                ShowRenderTime = !ShowRenderTime;
-                ShowRenderTimeChanged?.Invoke(this, EventArgs.Empty);
-            };
-            keyToggles.SwitchRenderer += (s, e) =>
-            {
-                Renderer = Renderer.Next();
-                RendererChanged?.Invoke(this, EventArgs.Empty);
-            };
+                case DiscreteInput.ToggleFollowMode:
+                    FollowMode = !FollowMode;
+                    _message.ShowMessage($"Follow mode is {(FollowMode ? "ON" : "OFF")}");
+                    FollowModeChanged?.Invoke(this, EventArgs.Empty);
+                    break;
+                case DiscreteInput.ToggleRotateMode:
+                    RotateMode = !RotateMode;
+                    _message.ShowMessage($"Rotate mode is {(RotateMode ? "ON" : "OFF")}");
+                    RotateModeChanged?.Invoke(this, EventArgs.Empty);
+                    break;
+                case DiscreteInput.ToggleLineAntiAliasing:
+                    DrawAntiAliased = !DrawAntiAliased;
+                    _message.ShowMessage($"Draw antialiased lines is {(DrawAntiAliased ? "ON" : "OFF")}");
+                    DrawAntiAliasedModeChanged?.Invoke(this, EventArgs.Empty);
+                    break;
+                case DiscreteInput.ToggleShowRenderTime:
+                    ShowRenderTime = !ShowRenderTime;
+                    ShowRenderTimeChanged?.Invoke(this, EventArgs.Empty);
+                    break;
+                case DiscreteInput.SwitchRenderer:
+                    Renderer = Renderer.Next();
+                    RendererChanged?.Invoke(this, EventArgs.Empty);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

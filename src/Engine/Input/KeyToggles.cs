@@ -17,57 +17,59 @@ namespace SectorDirector.Engine.Input
     public sealed class KeyToggles
     {
         readonly KeyboardLatch _toggleFullscreenLatch = new KeyboardLatch(kb => (kb.IsKeyDown(Keys.LeftAlt) || kb.IsKeyDown(Keys.RightAlt)) && kb.IsKeyDown(Keys.Enter));
-        readonly KeyboardLatch _loadMap1 = new KeyboardLatch(kb => kb.IsKeyDown(Keys.D1));
-        readonly KeyboardLatch _loadMap2 = new KeyboardLatch(kb => kb.IsKeyDown(Keys.D2));
-        readonly KeyboardLatch _loadMap3 = new KeyboardLatch(kb => kb.IsKeyDown(Keys.D3));
+        readonly KeyboardLatch _decreaseFidelity = new KeyboardLatch(Keys.OemOpenBrackets);
+        readonly KeyboardLatch _increaseFidelity = new KeyboardLatch(Keys.OemCloseBrackets);
+        readonly KeyboardLatch _loadMap1 = new KeyboardLatch(Keys.D1);
+        readonly KeyboardLatch _loadMap2 = new KeyboardLatch(Keys.D2);
+        readonly KeyboardLatch _loadMap3 = new KeyboardLatch(Keys.D3);
 
-        readonly List<KeyboardLatch> _simpleToggles = new List<KeyboardLatch>();
+        readonly List<(KeyboardLatch latch, DiscreteInput input)> _simpleToggles = new List<(KeyboardLatch latch, DiscreteInput input)>();
 
         public KeyToggles()
         {
             AddSimpleToggles(
-                (Keys.OemOpenBrackets, () => DecreaseFidelity),
-                (Keys.OemCloseBrackets, () => IncreaseFidelity),
-                (Keys.Z, () => FitToScreenZoom),
-                (Keys.F, () => FollowMode),
-                (Keys.R, () => RotateMode),
-                (Keys.A, () => ShowRenderTime),
-                (Keys.D, () => DrawAntiAliased),
-                (Keys.T, () => SwitchRenderer)
+                (Keys.F, DiscreteInput.ToggleFollowMode),
+                (Keys.R, DiscreteInput.ToggleRotateMode),
+                (Keys.A, DiscreteInput.ToggleShowRenderTime),
+                (Keys.D, DiscreteInput.ToggleLineAntiAliasing),
+                (Keys.T, DiscreteInput.SwitchRenderer)
             );
         }
 
-        private void AddSimpleToggles(params (Keys key, Func<EventHandler> signal)[] simpleToggles)
+        private void AddSimpleToggles(params (Keys key, DiscreteInput input)[] simpleToggles)
         {
             foreach (var simple in simpleToggles)
             {
-                var latch = new KeyboardLatch(kb => kb.IsKeyDown(simple.key));
-                latch.Triggered += (s, e) => simple.signal()?.Invoke(this, EventArgs.Empty);
-                _simpleToggles.Add(latch);
+                _simpleToggles.Add((new KeyboardLatch(simple.key), simple.input));
             }
         }
 
         public event EventHandler DecreaseFidelity;
         public event EventHandler IncreaseFidelity;
         public event EventHandler FullScreen;
-        public event EventHandler FollowMode;
-        public event EventHandler RotateMode;
-        public event EventHandler FitToScreenZoom;
-        public event EventHandler ShowRenderTime;
-        public event EventHandler DrawAntiAliased;
-        public event EventHandler SwitchRenderer;
         public event EventHandler<LoadMapArgs> LoadMap;
 
-        public void Update(KeyboardState keyboardState)
+        public DiscreteInput Update(KeyboardState keyboardState)
         {
             foreach (var simpleToggle in _simpleToggles)
             {
-                simpleToggle.IsTriggered(keyboardState);
+                if (simpleToggle.latch.IsTriggered(keyboardState))
+                {
+                    return simpleToggle.input;
+                }
             }
 
             if (_toggleFullscreenLatch.IsTriggered(keyboardState))
             {
                 FullScreen?.Invoke(this, EventArgs.Empty);
+            }
+            else if (_decreaseFidelity.IsTriggered(keyboardState))
+            {
+                DecreaseFidelity?.Invoke(this, EventArgs.Empty);
+            }
+            else if (_increaseFidelity.IsTriggered(keyboardState))
+            {
+                IncreaseFidelity?.Invoke(this, EventArgs.Empty);
             }
             else if (_loadMap1.IsTriggered(keyboardState))
             {
@@ -81,6 +83,8 @@ namespace SectorDirector.Engine.Input
             {
                 LoadMap?.Invoke(this, new LoadMapArgs(2));
             }
+
+            return DiscreteInput.None;
         }
     }
 }

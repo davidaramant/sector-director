@@ -26,7 +26,7 @@ namespace SectorDirector.Engine.Renderers
         private const float MsToMoveSpeed = 200f / 1000f;
         Vector2 _viewOffset = Vector2.Zero;
 
-        public OverheadRenderer(GameSettings settings, KeyToggles keyToggles, MapGeometry map)
+        public OverheadRenderer(GameSettings settings, MapGeometry map)
         {
             _settings = settings;
             _map = map;
@@ -34,8 +34,6 @@ namespace SectorDirector.Engine.Renderers
             _settings.FollowModeChanged += (s, e) => _viewOffset = Vector2.Zero;
             _settings.DrawAntiAliasedModeChanged += (s, e) => PickLineDrawer();
             PickLineDrawer();
-
-            keyToggles.FitToScreenZoom += (s, e) => _mapToScreenRatio = DefaultMapToScreenRatio;
         }
 
         private void PickLineDrawer()
@@ -84,6 +82,10 @@ namespace SectorDirector.Engine.Renderers
             {
                 var zoomAmount = gameTime.ElapsedGameTime.Milliseconds * MsToZoomSpeed;
                 _mapToScreenRatio = Math.Max(MinMapToScreenRatio, _mapToScreenRatio / (1f + zoomAmount));
+            }
+            else if (inputs.HasFlag(ContinuousInputs.ResetZoom))
+            {
+                _mapToScreenRatio = DefaultMapToScreenRatio;
             }
         }
 
