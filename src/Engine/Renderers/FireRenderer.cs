@@ -55,8 +55,12 @@ namespace SectorDirector.Engine.Renderers
         static readonly Point FireSize = new Point(300, 200);
         byte[] _fireBuffer = new byte[FireSize.Area()];
         Random _rand = new Random();
-        readonly TimeSpan _updateFrequency = TimeSpan.FromSeconds(1 / 30);
+        readonly TimeSpan _updateFrequency = TimeSpan.FromSeconds(1 / 10);
         TimeSpan _lastUpdate;
+
+        bool _pressingLeft = false;
+        bool _pressingRight = false;
+        bool _killFire = false;
 
         public FireRenderer()
         {
@@ -71,13 +75,45 @@ namespace SectorDirector.Engine.Renderers
             {
                 _fireBuffer[(FireSize.Y - 1) * FireSize.X + x] = (byte)(_palette.Length - 1);
             }
+            _killFire = false;
         }
 
         public void Update(ContinuousInputs inputs, GameTime gameTime)
         {
+            if (inputs.HasFlag(ContinuousInputs.TurnLeft))
+            {
+                if (!_pressingLeft)
+                {
+                    _pressingLeft = true;
+                    _killFire = true;
+                }
+            }
+            else
+            {
+                _pressingLeft = false;
+            }
+
+            if (inputs.HasFlag(ContinuousInputs.TurnRight))
+            {
+                if (!_pressingRight)
+                {
+                    _pressingRight = true;
+                    InitializeFire();
+                }
+            }
+            else
+            {
+                _pressingRight = false;
+            }
+
+
             if (gameTime.TotalGameTime - _lastUpdate > _updateFrequency)
             {
                 _lastUpdate = gameTime.TotalGameTime;
+                if (_killFire)
+                {
+                    StopFire();
+                }
                 UpdateFire();
             }
         }
@@ -108,6 +144,20 @@ namespace SectorDirector.Engine.Renderers
                 }
             }
         }
+
+        void StopFire()
+        {
+            // Decrement the intensity of the bottom rows
+            const int rowsToDecrement = 8;
+            for (var y = 0; y < rowsToDecrement; y++)
+            {
+                for (int x = 0; x < FireSize.X; x++)
+                {
+                    var index = (FireSize.Y - 1 - y) * FireSize.X + x;
+                    var current = _fireBuffer[index];
+                    _fireBuffer[index] = (byte)Math.Max(0, current - _rand.Next(1, 3));
+                }
+            }
         }
 
         public void Render(ScreenBuffer screen, PlayerInfo player)
