@@ -78,18 +78,17 @@ namespace SectorDirector.Engine.Renderers
             var center = screen.Dimensions.DivideBy(2).ToVector2();
             var shortestSide = center.SmallestSide();
 
-            var innerRadius = 0.1f * shortestSide;
-            var outerRadius = 0.9f * shortestSide;
+            var radius = 0.9f * shortestSide;
 
-            const int numSegments = 10;
-            var radianOffset = MathHelper.TwoPi / numSegments;
+            const int numSegments = 5;
+            var radianOffset = MathHelper.TwoPi / numSegments / 2;
             foreach (var segment in Enumerable.Range(0, numSegments))
             {
                 var rotation = Matrix.CreateRotationZ(segment * radianOffset + _angle);
                 var direction = Vector2.Transform(Vector2.UnitX, rotation);
 
-                var start = (center + direction * innerRadius).ToPoint();
-                var end = (center + direction * outerRadius).ToPoint();
+                var start = (center - direction * radius).ToPoint();
+                var end = (center + direction * radius).ToPoint();
 
                 _drawLine(screen, start, end, Color.Red);
             }
