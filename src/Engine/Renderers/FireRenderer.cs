@@ -13,7 +13,7 @@ namespace SectorDirector.Engine.Renderers
 
         readonly Color[] _palette = new[]
         {
-            new Color(0x07,0x07,0x07),
+            new Color(0x00,0x00,0x00),
             new Color(0x1F,0x07,0x07),
             new Color(0x2F,0x0F,0x07),
             new Color(0x47,0x0F,0x07),
@@ -172,7 +172,7 @@ namespace SectorDirector.Engine.Renderers
                 InitializeFire();
             }
 
-            var yOffset = screen.Height - FireHeight - 1;
+            var yOffset = screen.Height - FireHeight;
             for (int y = 0; y < _size.Y; y++)
             {
                 for (int x = 0; x < _size.X; x++)
