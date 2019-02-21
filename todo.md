@@ -8,7 +8,7 @@
 - [ ] Player vertical clipping
 - [ ] Player horizontal clipping (properly taking into account radius)
 - [x] Text rendering (MonoGame)
-- [ ] Take another pass at input system (enum for discrete input?)
+- [x] Take another pass at input system (enum for discrete input?)
 - [ ] Benchmarks...
 
 # 2D Renderer
@@ -21,7 +21,7 @@
 - [x] Rotate view around player
 - [ ] Improve Wu line rendering
 - [ ] Wu circle rendering
-- [ ] PSX Fire effect
+- [x] PSX Fire effect
 - [ ] Ripple effect
 - [ ] Replace clunky math with real linear algebra stuff
 
