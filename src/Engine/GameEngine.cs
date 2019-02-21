@@ -29,6 +29,7 @@ namespace SectorDirector.Engine
         readonly ScreenMessage _screenMessage = new ScreenMessage();
         readonly FrameTimeAggregator _frameTimeAggregator = new FrameTimeAggregator();
         private readonly GameSettings _settings;
+        OverheadRenderer _overheadRenderer;
         IRenderer _renderer;
 
         private Point CurrentScreenSize => new Point(
@@ -66,7 +67,7 @@ namespace SectorDirector.Engine
                     break;
 
                 case RendererType.Overhead:
-                    SwitchToMap(0);
+                    _renderer = _overheadRenderer;
                     break;
 
                 case RendererType.Fire:
@@ -150,8 +151,12 @@ namespace SectorDirector.Engine
             _screenMessage.ShowMessage($"Switching to map index {index}");
             var map = _maps[index];
             _currentMap = new MapGeometry(map);
-            _renderer = new OverheadRenderer(_settings, _currentMap);
+            _overheadRenderer = new OverheadRenderer(_settings, _currentMap);
             _playerInfo = new PlayerInfo(_currentMap);
+            if(_settings.Renderer == RendererType.Overhead)
+            {
+                _renderer = _overheadRenderer;
+            }
         }
 
         /// <summary>
