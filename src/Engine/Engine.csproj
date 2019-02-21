@@ -51,6 +51,7 @@
     <Compile Include="GameEngine.cs" />
     <Compile Include="GameSettings.cs" />
     <Compile Include="GeometryExtensions.cs" />
+    <Compile Include="Renderers\FireRenderer.cs" />
     <Compile Include="Renderers\IRenderer.cs" />
     <Compile Include="Input\KeyboardLatch.cs" />
     <Compile Include="Input\KeyToggles.cs" />

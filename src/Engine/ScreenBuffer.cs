@@ -1,5 +1,6 @@
 ﻿// Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -26,7 +27,7 @@ namespace SectorDirector.Engine
         }
 
         public void DrawPixelUnsafe(Point p, Color c) => DrawPixelUnsafe(p.X, p.Y, c);
-        public void DrawPixelUnsafe(int x, int y, Color c)=>this[x, y] = c;
+        public void DrawPixelUnsafe(int x, int y, Color c) => this[x, y] = c;
 
         public void DrawPixel(Point p, Color c) => DrawPixel(p.X, p.Y, c);
         public void DrawPixel(int x, int y, Color c)
@@ -37,17 +38,17 @@ namespace SectorDirector.Engine
             }
         }
 
-        public void AddPixel(Point p, Color c) => AddPixel(p.X,p.Y,c);
+        public void AddPixel(Point p, Color c) => AddPixel(p.X, p.Y, c);
         public void AddPixel(int x, int y, Color c)
         {
             if (x >= 0 && x < Width && y >= 0 && y < Height)
             {
-                var current = this[x,y];
+                var current = this[x, y];
 
                 this[x, y] = new Color(
-                                    MathHelper.Clamp(current.R + c.R,0,255),
-                                    MathHelper.Clamp(current.G + c.G,0,255),
-                                    MathHelper.Clamp(current.B + c.B,0,255));
+                                    MathHelper.Clamp(current.R + c.R, 0, 255),
+                                    MathHelper.Clamp(current.G + c.G, 0, 255),
+                                    MathHelper.Clamp(current.B + c.B, 0, 255));
             }
         }
 
@@ -57,7 +58,14 @@ namespace SectorDirector.Engine
             _buffer = new Color[Width * Height];
         }
 
+        private ScreenBuffer(Point size, Color[] buffer)
+        {
+            Dimensions = size;
+            _buffer = buffer;
+        }
+
         public void CopyToTexture(Texture2D texture) => texture.SetData(_buffer);
         public void Clear() => System.Array.Clear(_buffer, 0, _buffer.Length);
+        public ScreenBuffer Clone() => new ScreenBuffer(Dimensions, _buffer.ToArray());
     }
 }

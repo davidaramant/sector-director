@@ -69,6 +69,10 @@ namespace SectorDirector.Engine
                     SwitchToMap(0);
                     break;
 
+                case RendererType.Fire:
+                    _renderer = new FireRenderer();
+                    break;
+
                 default:
                     throw new System.Exception("Unknown renderer type");
             }

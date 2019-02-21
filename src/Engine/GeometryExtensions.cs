@@ -16,7 +16,9 @@ namespace SectorDirector.Engine
         public static float SmallestSide(this Vector2 p) => Min(p.X, p.Y);
         public static float LargestSide(this Vector2 p) => Max(p.X, p.Y);
 
-        public static int SmallestSide(this Point p) => Min(p.X, p.Y);
-        public static int LargestSide(this Point p) => Max(p.X, p.Y);
+        public static int SmallestSide(this Point size) => Min(size.X, size.Y);
+        public static int LargestSide(this Point size) => Max(size.X, size.Y);
+        public static int Area(this Point size) => size.X * size.Y;
+        public static float AspectRation(this Point size) => (float)size.X / size.Y;
     }
 }

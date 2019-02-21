@@ -10,6 +10,7 @@ namespace SectorDirector.Engine.Renderers
     {
         Overhead,
         LineTest,
+        Fire
     }
 
     public static class RendererTypeExtensions
