@@ -13,6 +13,8 @@ namespace SectorDirector.Engine.Renderers
         float _angle = 0;
         private readonly ScreenMessage _message;
         private const float MsToGammaSpeed = 0.001f;
+        private const float MsToRadiansDeltaSpeed = 0.000001f;
+        private float _msToRadians = 0.1f / 1000f;
         private GameSettings _settings;
 
         public LineTestRenderer(GameSettings settings, ScreenMessage message)
@@ -37,8 +39,20 @@ namespace SectorDirector.Engine.Renderers
 
         public void Update(ContinuousInputs inputs, GameTime gameTime)
         {
-            var rotationRadians = gameTime.ElapsedGameTime.Milliseconds * (0.1f / 1000f);
-            _angle += rotationRadians;
+            var rotationDelta = gameTime.ElapsedGameTime.Milliseconds * MsToRadiansDeltaSpeed;
+
+            if (inputs.HasFlag(ContinuousInputs.TurnLeft))
+            {
+                _msToRadians -= rotationDelta;
+            }
+            else if (inputs.HasFlag(ContinuousInputs.TurnRight))
+            {
+                _msToRadians += rotationDelta;
+            }
+            else if(inputs.HasFlag(ContinuousInputs.Forward))
+            {
+                _msToRadians = 0;
+            }
 
             if (inputs.HasFlag(ContinuousInputs.ZoomIn))
             {
@@ -52,6 +66,9 @@ namespace SectorDirector.Engine.Renderers
                 ScreenBufferExtensions.GammaExponent -= changeAmount;
                 _message.ShowMessage($"Current gamma: {ScreenBufferExtensions.GammaExponent}");
             }
+
+            var rotationRadians = gameTime.ElapsedGameTime.Milliseconds * _msToRadians;
+            _angle += rotationRadians;
         }
 
         public void Render(ScreenBuffer screen, PlayerInfo player)
