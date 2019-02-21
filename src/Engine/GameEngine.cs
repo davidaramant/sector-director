@@ -47,7 +47,7 @@ namespace SectorDirector.Engine
             };
             Content.RootDirectory = "Content";
             Window.AllowUserResizing = true;
-            Window.ClientSizeChanged += (s, e) => UpdateScreenBuffer(CurrentScreenSize);
+            Window.ClientSizeChanged += (s, e) => UpdateScreenBuffer(CurrentScreenSize.DivideBy(_renderScale));
 
             _settings = new GameSettings(_screenMessage);
             _settings.RendererChanged += Settings_RendererChanged;
@@ -82,14 +82,14 @@ namespace SectorDirector.Engine
         private void KeyToggled_DecreaseFidelity(object sender, System.EventArgs e)
         {
             _renderScale = _renderScale.DecreaseFidelity();
-            var newSize = CurrentScreenSize.DivideBy((int)_renderScale);
+            var newSize = CurrentScreenSize.DivideBy(_renderScale);
             UpdateScreenBuffer(newSize);
         }
 
         private void KeyToggled_IncreaseFidelity(object sender, System.EventArgs e)
         {
             _renderScale = _renderScale.IncreaseFidelity();
-            var newSize = CurrentScreenSize.DivideBy((int)_renderScale);
+            var newSize = CurrentScreenSize.DivideBy(_renderScale);
             UpdateScreenBuffer(newSize);
         }
 
@@ -106,7 +106,6 @@ namespace SectorDirector.Engine
                 _graphics.PreferredBackBufferWidth = 800;
                 _graphics.PreferredBackBufferHeight = 600;
             }
-            _renderScale = RenderScale.Normal;
             _graphics.ApplyChanges();
         }
 
@@ -153,7 +152,7 @@ namespace SectorDirector.Engine
             _currentMap = new MapGeometry(map);
             _overheadRenderer = new OverheadRenderer(_settings, _currentMap);
             _playerInfo = new PlayerInfo(_currentMap);
-            if(_settings.Renderer == RendererType.Overhead)
+            if (_settings.Renderer == RendererType.Overhead)
             {
                 _renderer = _overheadRenderer;
             }
@@ -175,53 +174,22 @@ namespace SectorDirector.Engine
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            var keyboardState = Keyboard.GetState();
+            var keyboard = Keyboard.GetState();
 
-            if (keyboardState.IsKeyDown(Keys.Escape))
+            if (keyboard.IsKeyDown(Keys.Escape))
                 Exit();
 
-            var discreteInput = _keyToggles.Update(keyboardState);
-            var continuousInputs = ContinuousInputs.None;
-
-            if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W))
-            {
-                continuousInputs |= ContinuousInputs.Forward;
-            }
-            else if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S))
-            {
-                continuousInputs |= ContinuousInputs.Backward;
-            }
-
-            if (keyboardState.IsKeyDown(Keys.Left))
-            {
-                continuousInputs |= ContinuousInputs.TurnLeft;
-            }
-            else if (keyboardState.IsKeyDown(Keys.Right))
-            {
-                continuousInputs |= ContinuousInputs.TurnRight;
-            }
-
-            if (keyboardState.IsKeyDown(Keys.Q))
-            {
-                continuousInputs |= ContinuousInputs.StrafeLeft;
-            }
-            else if (keyboardState.IsKeyDown(Keys.E))
-            {
-                continuousInputs |= ContinuousInputs.StrafeRight;
-            }
-
-            if (keyboardState.IsKeyDown(Keys.OemMinus))
-            {
-                continuousInputs |= ContinuousInputs.ZoomOut;
-            }
-            else if (keyboardState.IsKeyDown(Keys.OemPlus))
-            {
-                continuousInputs |= ContinuousInputs.ZoomIn;
-            }
-            else if(keyboardState.IsKeyDown(Keys.Z))
-            {
-                continuousInputs |= ContinuousInputs.ResetZoom;
-            }
+            var discreteInput = _keyToggles.Update(keyboard);
+            var continuousInputs = new ContinuousInputs();
+            continuousInputs.Forward = keyboard.IsKeyDown(Keys.Up) || keyboard.IsKeyDown(Keys.W);
+            continuousInputs.Backward = keyboard.IsKeyDown(Keys.Down) || keyboard.IsKeyDown(Keys.S);
+            continuousInputs.TurnLeft = keyboard.IsKeyDown(Keys.Left);
+            continuousInputs.TurnRight = keyboard.IsKeyDown(Keys.Right);
+            continuousInputs.StrafeLeft = keyboard.IsKeyDown(Keys.Q);
+            continuousInputs.StrafeRight = keyboard.IsKeyDown(Keys.E);
+            continuousInputs.ZoomOut = keyboard.IsKeyDown(Keys.OemMinus);
+            continuousInputs.ZoomIn = keyboard.IsKeyDown(Keys.OemPlus);
+            continuousInputs.ResetZoom = keyboard.IsKeyDown(Keys.Z);
 
             if (_settings.FollowMode)
             {

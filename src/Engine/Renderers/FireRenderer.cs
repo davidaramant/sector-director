@@ -80,7 +80,7 @@ namespace SectorDirector.Engine.Renderers
 
         public void Update(ContinuousInputs inputs, GameTime gameTime)
         {
-            if (inputs.HasFlag(ContinuousInputs.TurnLeft))
+            if (inputs.TurnLeft)
             {
                 if (!_pressingLeft)
                 {
@@ -93,7 +93,7 @@ namespace SectorDirector.Engine.Renderers
                 _pressingLeft = false;
             }
 
-            if (inputs.HasFlag(ContinuousInputs.TurnRight))
+            if (inputs.TurnRight)
             {
                 if (!_pressingRight)
                 {

@@ -54,36 +54,36 @@ namespace SectorDirector.Engine.Renderers
             {
                 var distance = gameTime.ElapsedGameTime.Milliseconds * MsToMoveSpeed;
 
-                if (inputs.HasFlag(ContinuousInputs.Forward))
+                if (inputs.Forward)
                 {
                     _viewOffset -= Vector2.UnitY * distance;
                 }
-                else if (inputs.HasFlag(ContinuousInputs.Backward))
+                else if (inputs.Backward)
                 {
                     _viewOffset += Vector2.UnitY * distance;
                 }
 
-                if (inputs.HasFlag(ContinuousInputs.TurnRight) || inputs.HasFlag(ContinuousInputs.StrafeRight))
+                if (inputs.TurnRight || inputs.StrafeRight)
                 {
                     _viewOffset -= Vector2.UnitX * distance;
                 }
-                else if (inputs.HasFlag(ContinuousInputs.TurnLeft) || inputs.HasFlag(ContinuousInputs.StrafeLeft))
+                else if (inputs.TurnLeft || inputs.StrafeLeft)
                 {
                     _viewOffset += Vector2.UnitX * distance;
                 }
             }
 
-            if (inputs.HasFlag(ContinuousInputs.ZoomIn))
+            if (inputs.ZoomIn)
             {
                 var zoomAmount = gameTime.ElapsedGameTime.Milliseconds * MsToZoomSpeed;
                 _mapToScreenRatio = Math.Min(MaxMapToScreenRatio, _mapToScreenRatio * (1f + zoomAmount));
             }
-            else if (inputs.HasFlag(ContinuousInputs.ZoomOut))
+            else if (inputs.ZoomOut)
             {
                 var zoomAmount = gameTime.ElapsedGameTime.Milliseconds * MsToZoomSpeed;
                 _mapToScreenRatio = Math.Max(MinMapToScreenRatio, _mapToScreenRatio / (1f + zoomAmount));
             }
-            else if (inputs.HasFlag(ContinuousInputs.ResetZoom))
+            else if (inputs.ResetZoom)
             {
                 _mapToScreenRatio = DefaultMapToScreenRatio;
             }

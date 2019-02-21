@@ -41,26 +41,26 @@ namespace SectorDirector.Engine.Renderers
         {
             var rotationDelta = gameTime.ElapsedGameTime.Milliseconds * MsToRadiansDeltaSpeed;
 
-            if (inputs.HasFlag(ContinuousInputs.TurnLeft))
+            if (inputs.TurnLeft)
             {
                 _msToRadians -= rotationDelta;
             }
-            else if (inputs.HasFlag(ContinuousInputs.TurnRight))
+            else if (inputs.TurnRight)
             {
                 _msToRadians += rotationDelta;
             }
-            else if(inputs.HasFlag(ContinuousInputs.Forward))
+            else if(inputs.Forward)
             {
                 _msToRadians = 0;
             }
 
-            if (inputs.HasFlag(ContinuousInputs.ZoomIn))
+            if (inputs.ZoomIn)
             {
                 var changeAmount = gameTime.ElapsedGameTime.Milliseconds * MsToGammaSpeed;
                 ScreenBufferExtensions.GammaExponent += changeAmount;
                 _message.ShowMessage($"Current gamma: {ScreenBufferExtensions.GammaExponent}");
             }
-            else if (inputs.HasFlag(ContinuousInputs.ZoomOut))
+            else if (inputs.ZoomOut)
             {
                 var changeAmount = gameTime.ElapsedGameTime.Milliseconds * MsToGammaSpeed;
                 ScreenBufferExtensions.GammaExponent -= changeAmount;

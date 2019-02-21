@@ -61,34 +61,34 @@ namespace SectorDirector.Engine
             var distance = gameTime.ElapsedGameTime.Milliseconds * MsToMoveSpeed;
             var rotationAmount = gameTime.ElapsedGameTime.Milliseconds * MsToRotateSpeed;
 
-            if (inputs.HasFlag(ContinuousInputs.Forward))
+            if (inputs.Forward)
             {
                 Move(ref Direction, distance);
             }
-            else if (inputs.HasFlag(ContinuousInputs.Backward))
+            else if (inputs.Backward)
             {
                 var direction = new Vector2 { X = -Direction.X, Y = -Direction.Y };
 
                 Move(ref direction, distance);
             }
-            if (inputs.HasFlag(ContinuousInputs.StrafeLeft))
+            if (inputs.StrafeLeft)
             {
                 var direction = new Vector2 { X = -Direction.Y, Y = Direction.X };
 
                 Move(ref direction, distance);
             }
-            else if (inputs.HasFlag(ContinuousInputs.StrafeRight))
+            else if (inputs.StrafeRight)
             {
                 var direction = new Vector2 { X = Direction.Y, Y = -Direction.X };
 
                 Move(ref direction, distance);
             }
 
-            if (inputs.HasFlag(ContinuousInputs.TurnRight))
+            if (inputs.TurnRight)
             {
                 Rotate(-rotationAmount);
             }
-            else if (inputs.HasFlag(ContinuousInputs.TurnLeft))
+            else if (inputs.TurnLeft)
             {
                 Rotate(rotationAmount);
             }
