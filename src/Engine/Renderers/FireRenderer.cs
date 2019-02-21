@@ -52,8 +52,11 @@ namespace SectorDirector.Engine.Renderers
             new Color(0xFF,0xFF,0xFF)
         };
 
-        static readonly Point FireSize = new Point(300, 200);
-        byte[] _fireBuffer = new byte[FireSize.Area()];
+
+        Point _lastScreenSize;
+        Point _size;
+        byte[] _fireBuffer;
+        const int FireHeight = 168;
         Random _rand = new Random();
         readonly TimeSpan _updateFrequency = TimeSpan.FromSeconds(1 / 10);
         TimeSpan _lastUpdate;
@@ -62,24 +65,22 @@ namespace SectorDirector.Engine.Renderers
         bool _pressingRight = false;
         bool _killFire = false;
 
-        public FireRenderer()
-        {
-            InitializeFire();
-        }
-
         void InitializeFire()
         {
             Array.Clear(_fireBuffer, 0, _fireBuffer.Length);
             // set last row to white
-            for (int x = 0; x < FireSize.X; x++)
+            for (int x = 0; x < _size.X; x++)
             {
-                _fireBuffer[(FireSize.Y - 1) * FireSize.X + x] = (byte)(_palette.Length - 1);
+                _fireBuffer[(_size.Y - 1) * _size.X + x] = (byte)(_palette.Length - 1);
             }
             _killFire = false;
         }
 
         public void Update(ContinuousInputs inputs, GameTime gameTime)
         {
+            if (_size == Point.Zero)
+                return;
+
             if (inputs.TurnLeft)
             {
                 if (!_pressingLeft)
@@ -123,24 +124,24 @@ namespace SectorDirector.Engine.Renderers
             var colorIndex = _fireBuffer[pixelIndex];
             if (colorIndex == 0)
             {
-                _fireBuffer[pixelIndex - FireSize.X] = 0;
+                _fireBuffer[pixelIndex - _size.X] = 0;
             }
             else
             {
                 var randomOffset = _rand.Next(3);
                 var randomColorOffset = _rand.Next(2);
                 var destinationIndex = pixelIndex - randomOffset + 1;
-                _fireBuffer[destinationIndex - FireSize.X] = (byte)(colorIndex - randomColorOffset);
+                _fireBuffer[destinationIndex - _size.X] = (byte)(colorIndex - randomColorOffset);
             }
         }
 
         void UpdateFire()
         {
-            for (int x = 0; x < FireSize.X; x++)
+            for (int x = 0; x < _size.X; x++)
             {
-                for (int y = 1; y < FireSize.Y; y++)
+                for (int y = 1; y < _size.Y; y++)
                 {
-                    SpreadFire(y * FireSize.X + x);
+                    SpreadFire(y * _size.X + x);
                 }
             }
         }
@@ -151,9 +152,9 @@ namespace SectorDirector.Engine.Renderers
             const int rowsToDecrement = 8;
             for (var y = 0; y < rowsToDecrement; y++)
             {
-                for (int x = 0; x < FireSize.X; x++)
+                for (int x = 0; x < _size.X; x++)
                 {
-                    var index = (FireSize.Y - 1 - y) * FireSize.X + x;
+                    var index = (_size.Y - 1 - y) * _size.X + x;
                     var current = _fireBuffer[index];
                     _fireBuffer[index] = (byte)Math.Max(0, current - _rand.Next(1, 3));
                 }
@@ -163,18 +164,22 @@ namespace SectorDirector.Engine.Renderers
         public void Render(ScreenBuffer screen, PlayerInfo player)
         {
             screen.Clear();
-
-            var screenCenter = screen.Dimensions.DivideBy(2);
-            var fireCenter = FireSize.DivideBy(2);
-            var offset = screenCenter - fireCenter;
-
-            for (int y = 0; y < FireSize.Y; y++)
+            if (_lastScreenSize != screen.Dimensions)
             {
-                for (int x = 0; x < FireSize.X; x++)
+                _lastScreenSize = screen.Dimensions;
+                _size = new Point(screen.Dimensions.X, FireHeight);
+                _fireBuffer = new byte[_size.Area()];
+                InitializeFire();
+            }
+
+            var yOffset = screen.Height - FireHeight - 1;
+            for (int y = 0; y < _size.Y; y++)
+            {
+                for (int x = 0; x < _size.X; x++)
                 {
-                    var colorIndex = _fireBuffer[y * FireSize.X + x];
+                    var colorIndex = _fireBuffer[y * _size.X + x];
                     var color = _palette[colorIndex];
-                    screen.DrawPixel(offset.X + x, offset.Y + y, color);
+                    screen.DrawPixel(x, yOffset + y, color);
                 }
             }
         }
