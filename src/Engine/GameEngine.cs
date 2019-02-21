@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using SectorDirector.Core.FormatModels.Udmf;
+using SectorDirector.Engine.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;

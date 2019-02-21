@@ -3,7 +3,7 @@
 using System;
 using Microsoft.Xna.Framework.Input;
 
-namespace SectorDirector.Engine
+namespace SectorDirector.Engine.Input
 {
     public sealed class KeyboardLatch
     {

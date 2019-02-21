@@ -52,11 +52,11 @@
     <Compile Include="GameSettings.cs" />
     <Compile Include="GeometryExtensions.cs" />
     <Compile Include="IRenderer.cs" />
-    <Compile Include="KeyboardLatch.cs" />
-    <Compile Include="KeyToggles.cs" />
+    <Compile Include="Input\KeyboardLatch.cs" />
+    <Compile Include="Input\KeyToggles.cs" />
     <Compile Include="LineTestRenderer.cs" />
     <Compile Include="MapGeometry.cs" />
-    <Compile Include="ContinuousInputs.cs" />
+    <Compile Include="Input\ContinuousInputs.cs" />
     <Compile Include="OverheadRenderer.cs" />
     <Compile Include="PlayerInfo.cs" />
     <Compile Include="Program.cs" />

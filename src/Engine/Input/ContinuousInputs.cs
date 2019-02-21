@@ -3,7 +3,7 @@
 
 using System;
 
-namespace SectorDirector.Engine
+namespace SectorDirector.Engine.Input
 {
     [Flags]
     public enum ContinuousInputs

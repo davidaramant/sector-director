@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 
-namespace SectorDirector.Engine
+namespace SectorDirector.Engine.Input
 {
     public sealed class LoadMapArgs : EventArgs
     {

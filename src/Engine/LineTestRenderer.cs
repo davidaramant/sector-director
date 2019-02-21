@@ -2,6 +2,7 @@
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 using System.Linq;
 using Microsoft.Xna.Framework;
+using SectorDirector.Engine.Input;
 
 namespace SectorDirector.Engine
 {
