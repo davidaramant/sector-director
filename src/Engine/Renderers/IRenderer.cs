@@ -4,7 +4,7 @@ using System;
 using Microsoft.Xna.Framework;
 using SectorDirector.Engine.Input;
 
-namespace SectorDirector.Engine
+namespace SectorDirector.Engine.Renderers
 {
     public enum RendererType
     {

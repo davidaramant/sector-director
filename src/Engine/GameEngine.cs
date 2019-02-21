@@ -7,6 +7,7 @@ using SectorDirector.Engine.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SectorDirector.Engine.Renderers;
 
 namespace SectorDirector.Engine
 {

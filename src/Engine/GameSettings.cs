@@ -2,6 +2,7 @@
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 using System;
 using SectorDirector.Engine.Input;
+using SectorDirector.Engine.Renderers;
 
 namespace SectorDirector.Engine
 {
