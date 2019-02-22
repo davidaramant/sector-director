@@ -1,5 +1,6 @@
 ﻿// Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
+using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -65,7 +66,23 @@ namespace SectorDirector.Engine
         }
 
         public void CopyToTexture(Texture2D texture) => texture.SetData(_buffer);
-        public void Clear() => System.Array.Clear(_buffer, 0, _buffer.Length);
+        public void Clear() => Array.Clear(_buffer, 0, _buffer.Length);
         public ScreenBuffer Clone() => new ScreenBuffer(Dimensions, _buffer.ToArray());
+        public void CopyFrom(Color[] texture, Point textureSize, Point destination)
+        {
+            var xMargin = Width - destination.X;
+            var xToCopy = MathHelper.Min(xMargin, textureSize.X);
+
+            var yMargin = Height - destination.Y;
+            var yToCopy = MathHelper.Min(yMargin, textureSize.Y);
+
+            for (int y = 0; y < yToCopy; y++)
+            {
+                Array.Copy(
+                    sourceArray: texture, sourceIndex: y * textureSize.X,
+                    destinationArray: _buffer, destinationIndex: (destination.Y + y) * Width + destination.X,
+                    length: xToCopy);
+            }
+        }
     }
 }
