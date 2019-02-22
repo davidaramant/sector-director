@@ -56,7 +56,7 @@ namespace SectorDirector.Engine.Renderers
         Point _lastScreenSize;
         Point _size;
         byte[] _fireBuffer;
-        const int FireHeight = 168;
+        const int FireHeight = 150;
         Random _rand = new Random();
         readonly TimeSpan _updateFrequency = TimeSpan.FromSeconds(1 / 10);
         TimeSpan _lastUpdate;
