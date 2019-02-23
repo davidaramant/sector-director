@@ -11,7 +11,7 @@ namespace SectorDirector.Engine
         private readonly ScreenMessage _message;
         public bool FollowMode { get; private set; } = true;
         public bool RotateMode { get; private set; } = false;
-        public bool DrawAntiAliased { get; private set; } = false;
+        public bool DrawAntiAliased { get; private set; } = true;
         public bool ShowRenderTime { get; private set; } = false;
         public RendererType Renderer { get; private set; } = RendererType.Overhead;
 
