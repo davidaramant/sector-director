@@ -19,7 +19,7 @@
 - [x] Move view around
 - [x] Show front side of linedef
 - [x] Rotate view around player
-- [ ] Improve Wu line rendering
+- [x] Improve Wu line rendering
 - [ ] Wu circle rendering
 - [x] PSX Fire effect
 - [ ] Ripple effect
