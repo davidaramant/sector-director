@@ -109,22 +109,22 @@ namespace SectorDirector.Engine.Renderers
 
             Point ToScreenCoords(Vector2 worldCoordinate)
             {
-                var shiftedGameCoordinate = worldCoordinate;
+                var shiftedWorldCoordinate = worldCoordinate;
 
                 if (_settings.RotateMode)
                 {
                     // translate coordinate to be relative to player
-                    shiftedGameCoordinate -= player.Position;
+                    shiftedWorldCoordinate -= player.Position;
 
                     var rotation = Matrix.CreateRotationZ(-(float)Math.Atan2(player.Direction.Y, player.Direction.X) + MathHelper.PiOver2);
 
-                    var rotatedCoord = Vector2.Transform(shiftedGameCoordinate, rotation);
-                    shiftedGameCoordinate = rotatedCoord + player.Position;
+                    var rotatedCoord = Vector2.Transform(shiftedWorldCoordinate, rotation);
+                    shiftedWorldCoordinate = rotatedCoord + player.Position;
                 }
 
-                shiftedGameCoordinate += playerCenteringOffset + _viewOffset;
+                shiftedWorldCoordinate += playerCenteringOffset + _viewOffset;
 
-                return (shiftedGameCoordinate * gameToScreenFactor).ToPoint().InvertY(screen.Height);
+                return (shiftedWorldCoordinate * gameToScreenFactor).ToPoint().InvertY(screen.Height);
             }
 
             void DrawLine(Vector2 wc1, Vector2 wc2, Color c)
@@ -143,6 +143,21 @@ namespace SectorDirector.Engine.Renderers
 
                 _drawLine(screen, sc1, sc2, c);
             }
+
+            void DrawBox(Vector2 center, float halfWidth, Color c)
+            {
+                var topLeft = center + new Vector2(-halfWidth, halfWidth);
+                var topRight = center + new Vector2(halfWidth, halfWidth);
+                var bottomLeft = center + new Vector2(-halfWidth, -halfWidth);
+                var bottomRight = center + new Vector2(halfWidth, -halfWidth);
+
+                DrawLine(topLeft, topRight, c);
+                DrawLine(topRight, bottomRight, c);
+                DrawLine(bottomRight, bottomLeft, c);
+                DrawLine(bottomLeft, topLeft, c);
+            }
+
+            void DrawVertex(Vector2 wc, Color c) => DrawBox(wc, 2f, c);
 
             foreach (var lineDef in _map.Map.LineDefs)
             {
@@ -173,31 +188,23 @@ namespace SectorDirector.Engine.Renderers
             }
 
             // Circle every vertex
-            foreach (var vertexInScreenCoords in _map.Vertices.Select(ToScreenCoords))
+            foreach (var vertex in _map.Vertices)
             {
-                screen.PlotCircle(vertexInScreenCoords, (int)(gameToScreenFactor * VertexSize), Color.DeepSkyBlue);
+                DrawVertex(vertex, Color.DeepSkyBlue);
             }
 
             // Draw player position
-            var halfWidth = player.Width / 2;
-            var playerTopLeft = ToScreenCoords(player.Position + new Vector2(-halfWidth, halfWidth));
-            var playerTopRight = ToScreenCoords(player.Position + new Vector2(halfWidth, halfWidth));
-            var playerBottomLeft = ToScreenCoords(player.Position + new Vector2(-halfWidth, -halfWidth));
-            var playerBottomRight = ToScreenCoords(player.Position + new Vector2(halfWidth, -halfWidth));
-
-            _drawLine(screen, playerTopLeft, playerTopRight, Color.Green);
-            _drawLine(screen, playerTopRight, playerBottomRight, Color.Green);
-            _drawLine(screen, playerBottomRight, playerBottomLeft, Color.Green);
-            _drawLine(screen, playerBottomLeft, playerTopLeft, Color.Green);
+            var playerHalfWidth = player.Width / 2;
+            DrawBox(player.Position, halfWidth: playerHalfWidth, Color.Green);
 
             // Draw player direction arrow
-            var playerLineStart = player.Position - (halfWidth / 2 * player.Direction);
-            var playerLineEnd = player.Position + (halfWidth / 2 * player.Direction);
+            var playerLineStart = player.Position - (playerHalfWidth / 2 * player.Direction);
+            var playerLineEnd = player.Position + (playerHalfWidth / 2 * player.Direction);
             DrawLine(playerLineStart, playerLineEnd, Color.LightGreen);
 
             var perpendicularPlayerDirection = player.Direction.PerpendicularClockwise();
-            var baseOfArrow = player.Position + (halfWidth / 6 * player.Direction);
-            var arrowBaseHalfWidth = halfWidth / 3.5f;
+            var baseOfArrow = player.Position + (playerHalfWidth / 6 * player.Direction);
+            var arrowBaseHalfWidth = playerHalfWidth / 3.5f;
 
             var rightBaseOfArrow = baseOfArrow + (arrowBaseHalfWidth * perpendicularPlayerDirection);
             DrawLine(rightBaseOfArrow, playerLineEnd, Color.LightGreen);
