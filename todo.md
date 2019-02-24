@@ -20,6 +20,7 @@
 - [x] Show front side of linedef
 - [x] Rotate view around player
 - [x] Improve Wu line rendering
+- [x] Don't draw lines that can't show up on screen
 - [ ] Wu circle rendering
 - [x] PSX Fire effect
 - [ ] Ripple effect
