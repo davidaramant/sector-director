@@ -149,12 +149,12 @@ namespace SectorDirector.Engine.Renderers
                 ref Vector2 vertex1 = ref _map.Vertices[lineDef.V1];
                 ref Vector2 vertex2 = ref _map.Vertices[lineDef.V2];
 
-                var isPlayerInThisSector =
+                var lineSurroundsPlayerSector =
                     _map.Map.SideDefs[lineDef.SideFront].Sector == player.CurrentSectorId ||
                     (lineDef.TwoSided && _map.Map.SideDefs[lineDef.SideBack].Sector == player.CurrentSectorId);
 
                 var lineColor =
-                    isPlayerInThisSector ?
+                    lineSurroundsPlayerSector ?
                         (lineDef.TwoSided ? Color.DarkRed : Color.Red) :
                         (lineDef.TwoSided ? Color.DimGray : Color.White);
 
@@ -175,7 +175,7 @@ namespace SectorDirector.Engine.Renderers
             // Circle every vertex
             foreach (var vertexInScreenCoords in _map.Vertices.Select(ToScreenCoords))
             {
-                screen.PlotCircleSafe(vertexInScreenCoords, (int)(gameToScreenFactor * VertexSize), Color.DeepSkyBlue);
+                screen.PlotCircle(vertexInScreenCoords, (int)(gameToScreenFactor * VertexSize), Color.DeepSkyBlue);
             }
 
             // Draw player position

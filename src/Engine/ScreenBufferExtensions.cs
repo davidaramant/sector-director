@@ -166,6 +166,45 @@ namespace SectorDirector.Engine
         #endregion
 
         #region Bresenham's Circle Algorithm (unsafe, will crash if drawing off the buffer)
+        public static void PlotCircleUnsafe(this ScreenBuffer buffer, Point center, int radius, Color color) =>
+            PlotCircleUnsafe(buffer, center.X, center.Y, radius, color);
+
+        public static void PlotCircleUnsafe(this ScreenBuffer buffer, int xCenter, int yCenter, int radius, Color color)
+        {
+            int x = 0, y = radius;
+            int d = 3 - 2 * radius;
+            PlotCircleSegmentsUnsafe(buffer, xCenter, yCenter, x, y, color);
+            while (y >= x)
+            {
+                x++;
+
+                if (d > 0)
+                {
+                    y--;
+                    d = d + 4 * (x - y) + 10;
+                }
+                else
+                {
+                    d = d + 4 * x + 6;
+                }
+                PlotCircleSegmentsUnsafe(buffer, xCenter, yCenter, x, y, color);
+            }
+        }
+
+        private static void PlotCircleSegmentsUnsafe(ScreenBuffer buffer, int xc, int yc, int x, int y, Color color)
+        {
+            buffer.DrawPixelUnsafe(xc + x, yc + y, color);
+            buffer.DrawPixelUnsafe(xc - x, yc + y, color);
+            buffer.DrawPixelUnsafe(xc + x, yc - y, color);
+            buffer.DrawPixelUnsafe(xc - x, yc - y, color);
+            buffer.DrawPixelUnsafe(xc + y, yc + x, color);
+            buffer.DrawPixelUnsafe(xc - y, yc + x, color);
+            buffer.DrawPixelUnsafe(xc + y, yc - x, color);
+            buffer.DrawPixelUnsafe(xc - y, yc - x, color);
+        }
+        #endregion
+
+        #region Bresenham's Circle Algorithm (safe, will silently ignore drawing off the buffer)
         public static void PlotCircle(this ScreenBuffer buffer, Point center, int radius, Color color) =>
             PlotCircle(buffer, center.X, center.Y, radius, color);
 
@@ -192,45 +231,6 @@ namespace SectorDirector.Engine
         }
 
         private static void PlotCircleSegments(ScreenBuffer buffer, int xc, int yc, int x, int y, Color color)
-        {
-            buffer.DrawPixelUnsafe(xc + x, yc + y, color);
-            buffer.DrawPixelUnsafe(xc - x, yc + y, color);
-            buffer.DrawPixelUnsafe(xc + x, yc - y, color);
-            buffer.DrawPixelUnsafe(xc - x, yc - y, color);
-            buffer.DrawPixelUnsafe(xc + y, yc + x, color);
-            buffer.DrawPixelUnsafe(xc - y, yc + x, color);
-            buffer.DrawPixelUnsafe(xc + y, yc - x, color);
-            buffer.DrawPixelUnsafe(xc - y, yc - x, color);
-        }
-        #endregion
-
-        #region Bresenham's Circle Algorithm (safe, will silently ignore drawing off the buffer)
-        public static void PlotCircleSafe(this ScreenBuffer buffer, Point center, int radius, Color color) =>
-            PlotCircleSafe(buffer, center.X, center.Y, radius, color);
-
-        public static void PlotCircleSafe(this ScreenBuffer buffer, int xCenter, int yCenter, int radius, Color color)
-        {
-            int x = 0, y = radius;
-            int d = 3 - 2 * radius;
-            PlotCircleSegmentsSafe(buffer, xCenter, yCenter, x, y, color);
-            while (y >= x)
-            {
-                x++;
-
-                if (d > 0)
-                {
-                    y--;
-                    d = d + 4 * (x - y) + 10;
-                }
-                else
-                {
-                    d = d + 4 * x + 6;
-                }
-                PlotCircleSegmentsSafe(buffer, xCenter, yCenter, x, y, color);
-            }
-        }
-
-        private static void PlotCircleSegmentsSafe(ScreenBuffer buffer, int xc, int yc, int x, int y, Color color)
         {
             buffer.DrawPixel(xc + x, yc + y, color);
             buffer.DrawPixel(xc - x, yc + y, color);
