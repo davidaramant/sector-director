@@ -58,7 +58,7 @@ namespace SectorDirector.Engine.Renderers
         byte[] _fireBuffer;
         const int FireHeight = 150;
         Random _rand = new Random();
-        readonly TimeSpan _updateFrequency = TimeSpan.FromSeconds(1 / 10);
+        readonly TimeSpan _updateFrequency = TimeSpan.FromSeconds(1f / 30f);
         TimeSpan _lastUpdate;
 
         bool _pressingLeft = false;
@@ -137,12 +137,10 @@ namespace SectorDirector.Engine.Renderers
 
         void UpdateFire()
         {
-            for (int x = 0; x < _size.X; x++)
+            // Update everything but the bottom row
+            for (int index = _size.X; index < _size.Area(); index++)
             {
-                for (int y = 1; y < _size.Y; y++)
-                {
-                    SpreadFire(y * _size.X + x);
-                }
+                SpreadFire(index);
             }
         }
 
