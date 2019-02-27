@@ -15,17 +15,8 @@ namespace SectorDirector.Engine
         public int Width => Dimensions.X;
         public int Height => Dimensions.Y;
 
-        public Color this[Point p]
-        {
-            get => this[p.X, p.Y];
-            private set => this[p.X, p.Y] = value;
-        }
-
-        public Color this[int x, int y]
-        {
-            get => _buffer[y * Width + x];
-            private set => _buffer[y * Width + x] = value;
-        }
+        public Color this[Point p] => _buffer[p.Y * Width + p.X];
+        public Color this[int x, int y] => _buffer[y * Width + x];
 
         public void DrawPixel(Point p, Color c) => DrawPixel(p.X, p.Y, c);
         public void DrawPixel(int x, int y, Color c)
@@ -50,11 +41,10 @@ namespace SectorDirector.Engine
             }
         }
 
-
         public ScreenBuffer(Point size)
         {
             Dimensions = size;
-            _buffer = new Color[Width * Height];
+            _buffer = new Color[size.Area()];
         }
 
         private ScreenBuffer(Point size, Color[] buffer)
