@@ -2,7 +2,6 @@
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using SectorDirector.Engine.Input;
 
@@ -14,8 +13,9 @@ namespace SectorDirector.Engine.Renderers
 
         readonly GameSettings _settings;
         readonly MapGeometry _map;
+        private readonly Point[] _verticesInScreenCoords;
 
-        const float VertexSize = 3f;
+        const float VertexHalfWidth = 2f;
         const float FrontSideMarkerLength = 5f;
         private const float MsToZoomSpeed = 0.001f;
         private const float MinMapToScreenRatio = 0.2f;
@@ -30,6 +30,7 @@ namespace SectorDirector.Engine.Renderers
         {
             _settings = settings;
             _map = map;
+            _verticesInScreenCoords = new Point[map.Vertices.Length];
 
             _settings.FollowModeChanged += (s, e) => _viewOffset = Vector2.Zero;
             _settings.DrawAntiAliasedModeChanged += (s, e) => PickLineDrawer();
@@ -107,10 +108,18 @@ namespace SectorDirector.Engine.Renderers
             var screenCenterInMapCoords = screenDimensionsV / gameToScreenFactor / 2;
             var playerCenteringOffset = screenCenterInMapCoords - player.Position;
 
+            // Transform all vertices
+            for (int v = 0; v < _map.Vertices.Length; v++)
+            {
+                _verticesInScreenCoords[v] = ToScreenCoords(_map.Vertices[v]);
+            }
+
+
             Point ToScreenCoords(Vector2 worldCoordinate)
             {
                 var shiftedWorldCoordinate = worldCoordinate;
 
+                // TODO: This does not need to happen for every single call
                 if (_settings.RotateMode)
                 {
                     // translate coordinate to be relative to player
@@ -127,11 +136,17 @@ namespace SectorDirector.Engine.Renderers
                 return (shiftedWorldCoordinate * gameToScreenFactor).ToPoint().InvertY(screen.Height);
             }
 
-            void DrawLine(Vector2 wc1, Vector2 wc2, Color c)
+            void DrawLineFromVertices(int v1, int v2, Color c) =>
+                DrawLineFromScreenCoordinates(_verticesInScreenCoords[v1], _verticesInScreenCoords[v2], c);
+            void DrawLineFromWorldCoordinates(Vector2 wc1, Vector2 wc2, Color c)
             {
                 var sc1 = ToScreenCoords(wc1);
                 var sc2 = ToScreenCoords(wc2);
+                DrawLineFromScreenCoordinates(sc1, sc2, c);
+            }
 
+            void DrawLineFromScreenCoordinates(Point sc1, Point sc2, Color c)
+            {
                 //Do some rudimentary clipping to eliminate lines that can't possibly show up on screen
                 if ((sc1.X < 0 && sc2.X < 0) ||
                     (sc1.X >= screen.Width && sc2.X >= screen.Width) ||
@@ -151,13 +166,13 @@ namespace SectorDirector.Engine.Renderers
                 var bottomLeft = center + new Vector2(-halfWidth, -halfWidth);
                 var bottomRight = center + new Vector2(halfWidth, -halfWidth);
 
-                DrawLine(topLeft, topRight, c);
-                DrawLine(topRight, bottomRight, c);
-                DrawLine(bottomRight, bottomLeft, c);
-                DrawLine(bottomLeft, topLeft, c);
+                DrawLineFromWorldCoordinates(topLeft, topRight, c);
+                DrawLineFromWorldCoordinates(topRight, bottomRight, c);
+                DrawLineFromWorldCoordinates(bottomRight, bottomLeft, c);
+                DrawLineFromWorldCoordinates(bottomLeft, topLeft, c);
             }
 
-            void DrawVertex(Vector2 wc, Color c) => DrawBox(wc, 2f, c);
+            void DrawVertex(Vector2 wc, Color c) => DrawBox(wc, VertexHalfWidth, c);
 
             foreach (var lineDef in _map.Map.LineDefs)
             {
@@ -173,7 +188,7 @@ namespace SectorDirector.Engine.Renderers
                         (lineDef.TwoSided ? Color.DarkRed : Color.Red) :
                         (lineDef.TwoSided ? Color.DimGray : Color.White);
 
-                DrawLine(vertex1, vertex2, lineColor);
+                DrawLineFromVertices(lineDef.V1, lineDef.V2, lineColor);
 
                 // Draw front side indication
                 var lineDirection = vertex2 - vertex1;
@@ -184,7 +199,7 @@ namespace SectorDirector.Engine.Renderers
 
                 var frontMarkerLineEnd = lineMidPoint + perpendicularDirection * FrontSideMarkerLength;
 
-                DrawLine(lineMidPoint, frontMarkerLineEnd, lineColor);
+                DrawLineFromWorldCoordinates(lineMidPoint, frontMarkerLineEnd, lineColor);
             }
 
             // Circle every vertex
@@ -200,17 +215,17 @@ namespace SectorDirector.Engine.Renderers
             // Draw player direction arrow
             var playerLineStart = player.Position - (playerHalfWidth / 2 * player.Direction);
             var playerLineEnd = player.Position + (playerHalfWidth / 2 * player.Direction);
-            DrawLine(playerLineStart, playerLineEnd, Color.LightGreen);
+            DrawLineFromWorldCoordinates(playerLineStart, playerLineEnd, Color.LightGreen);
 
             var perpendicularPlayerDirection = player.Direction.PerpendicularClockwise();
             var baseOfArrow = player.Position + (playerHalfWidth / 6 * player.Direction);
             var arrowBaseHalfWidth = playerHalfWidth / 3.5f;
 
             var rightBaseOfArrow = baseOfArrow + (arrowBaseHalfWidth * perpendicularPlayerDirection);
-            DrawLine(rightBaseOfArrow, playerLineEnd, Color.LightGreen);
+            DrawLineFromWorldCoordinates(rightBaseOfArrow, playerLineEnd, Color.LightGreen);
 
             var leftBaseOfArrow = baseOfArrow - (arrowBaseHalfWidth * perpendicularPlayerDirection);
-            DrawLine(leftBaseOfArrow, playerLineEnd, Color.LightGreen);
+            DrawLineFromWorldCoordinates(leftBaseOfArrow, playerLineEnd, Color.LightGreen);
         }
     }
 }
