@@ -26,6 +26,7 @@ namespace SectorDirector.Engine
         MapGeometry _currentMap;
         private SpriteFont _messageFont;
         readonly KeyToggles _keyToggles = new KeyToggles();
+        readonly ContinuousInputs _continuousInputs = new ContinuousInputs();
         readonly ScreenMessage _screenMessage = new ScreenMessage();
         readonly FrameTimeAggregator _frameTimeAggregator = new FrameTimeAggregator();
         private readonly GameSettings _settings;
@@ -180,22 +181,21 @@ namespace SectorDirector.Engine
                 Exit();
 
             var discreteInput = _keyToggles.Update(keyboard);
-            var continuousInputs = new ContinuousInputs();
-            continuousInputs.Forward = keyboard.IsKeyDown(Keys.Up) || keyboard.IsKeyDown(Keys.W);
-            continuousInputs.Backward = keyboard.IsKeyDown(Keys.Down) || keyboard.IsKeyDown(Keys.S);
-            continuousInputs.TurnLeft = keyboard.IsKeyDown(Keys.Left);
-            continuousInputs.TurnRight = keyboard.IsKeyDown(Keys.Right);
-            continuousInputs.StrafeLeft = keyboard.IsKeyDown(Keys.Q);
-            continuousInputs.StrafeRight = keyboard.IsKeyDown(Keys.E);
-            continuousInputs.ZoomOut = keyboard.IsKeyDown(Keys.OemMinus);
-            continuousInputs.ZoomIn = keyboard.IsKeyDown(Keys.OemPlus);
-            continuousInputs.ResetZoom = keyboard.IsKeyDown(Keys.Z);
+            _continuousInputs.Forward = keyboard.IsKeyDown(Keys.Up) || keyboard.IsKeyDown(Keys.W);
+            _continuousInputs.Backward = keyboard.IsKeyDown(Keys.Down) || keyboard.IsKeyDown(Keys.S);
+            _continuousInputs.TurnLeft = keyboard.IsKeyDown(Keys.Left);
+            _continuousInputs.TurnRight = keyboard.IsKeyDown(Keys.Right);
+            _continuousInputs.StrafeLeft = keyboard.IsKeyDown(Keys.Q);
+            _continuousInputs.StrafeRight = keyboard.IsKeyDown(Keys.E);
+            _continuousInputs.ZoomOut = keyboard.IsKeyDown(Keys.OemMinus);
+            _continuousInputs.ZoomIn = keyboard.IsKeyDown(Keys.OemPlus);
+            _continuousInputs.ResetZoom = keyboard.IsKeyDown(Keys.Z);
 
             if (_settings.FollowMode)
             {
-                _playerInfo.Update(continuousInputs, gameTime);
+                _playerInfo.Update(_continuousInputs, gameTime);
             }
-            _renderer.Update(continuousInputs, gameTime);
+            _renderer.Update(_continuousInputs, gameTime);
             _settings.Update(discreteInput);
 
             base.Update(gameTime);
