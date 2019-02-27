@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "Engine\Engine.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine.Tests", "Engine.Tests\Engine.Tests.csproj", "{A12828C8-10E0-404B-8E5F-C59622FF801C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{3E4430E7-6E79-4C02-8579-55643E6611C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -58,6 +60,10 @@ Global
 		{A12828C8-10E0-404B-8E5F-C59622FF801C}.Debug|x64.Build.0 = Debug|x64
 		{A12828C8-10E0-404B-8E5F-C59622FF801C}.Release|x64.ActiveCfg = Release|x64
 		{A12828C8-10E0-404B-8E5F-C59622FF801C}.Release|x64.Build.0 = Release|x64
+		{3E4430E7-6E79-4C02-8579-55643E6611C7}.Debug|x64.ActiveCfg = Debug|x64
+		{3E4430E7-6E79-4C02-8579-55643E6611C7}.Debug|x64.Build.0 = Debug|x64
+		{3E4430E7-6E79-4C02-8579-55643E6611C7}.Release|x64.ActiveCfg = Release|x64
+		{3E4430E7-6E79-4C02-8579-55643E6611C7}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
