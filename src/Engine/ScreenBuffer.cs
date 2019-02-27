@@ -32,7 +32,7 @@ namespace SectorDirector.Engine
         {
             if (x >= 0 && x < Width && y >= 0 && y < Height)
             {
-                this[x, y] = c;
+                _buffer[y * Width + x] = c;
             }
         }
 
@@ -41,9 +41,9 @@ namespace SectorDirector.Engine
         {
             if (x >= 0 && x < Width && y >= 0 && y < Height)
             {
-                var current = this[x, y];
+                ref Color current = ref _buffer[y * Width + x];
 
-                this[x, y] = new Color(
+                current = new Color(
                     Math.Min(current.R + c.R, 255),
                     Math.Min(current.G + c.G, 255),
                     Math.Min(current.B + c.B, 255));
