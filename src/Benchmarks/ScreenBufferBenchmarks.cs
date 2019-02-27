@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
+using System;
+using System.Linq;
 using BenchmarkDotNet.Attributes;
 using Microsoft.Xna.Framework;
 using SectorDirector.Engine;
@@ -30,6 +32,45 @@ namespace Benchmarks
         public void CopyWithArrayCopy()
         {
             _buffer.CopyFrom(_textureData, TextureSize, _destination);
+        }
+    }
+
+    public class ScreenBufferLineRendering
+    {
+        readonly ScreenBuffer _buffer = new ScreenBuffer(new Point(2000, 2000));
+        private const int NumberOfPoints = 2000;
+        private readonly Point[] _points = new Point[NumberOfPoints];
+
+        [GlobalSetup]
+        public void PickLineEndPoints()
+        {
+            var random = new Random();
+
+            foreach (var pointIndex in Enumerable.Range(0, NumberOfPoints))
+            {
+                _points[pointIndex] = new Point(random.Next(_buffer.Width), random.Next(_buffer.Height));
+            }
+        }
+
+        [IterationSetup]
+        public void ClearBuffer() => _buffer.Clear();
+
+        [Benchmark(Baseline = true)]
+        public void BresenhamLineDrawer()
+        {
+            for (int i = 0; i < NumberOfPoints - 1; i++)
+            {
+                _buffer.PlotLine(_points[i], _points[i + 1], Color.Red);
+            }
+        }
+
+        [Benchmark]
+        public void WuLineDrawer()
+        {
+            for (int i = 0; i < NumberOfPoints - 1; i++)
+            {
+                _buffer.PlotLineSmooth(_points[i], _points[i + 1], Color.Red);
+            }
         }
     }
 }

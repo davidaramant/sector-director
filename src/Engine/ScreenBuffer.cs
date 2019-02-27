@@ -27,9 +27,6 @@ namespace SectorDirector.Engine
             private set => _buffer[y * Width + x] = value;
         }
 
-        public void DrawPixelUnsafe(Point p, Color c) => DrawPixelUnsafe(p.X, p.Y, c);
-        public void DrawPixelUnsafe(int x, int y, Color c) => this[x, y] = c;
-
         public void DrawPixel(Point p, Color c) => DrawPixel(p.X, p.Y, c);
         public void DrawPixel(int x, int y, Color c)
         {
@@ -47,11 +44,12 @@ namespace SectorDirector.Engine
                 var current = this[x, y];
 
                 this[x, y] = new Color(
-                                    MathHelper.Clamp(current.R + c.R, 0, 255),
-                                    MathHelper.Clamp(current.G + c.G, 0, 255),
-                                    MathHelper.Clamp(current.B + c.B, 0, 255));
+                    Math.Min(current.R + c.R, 255),
+                    Math.Min(current.G + c.G, 255),
+                    Math.Min(current.B + c.B, 255));
             }
         }
+
 
         public ScreenBuffer(Point size)
         {
