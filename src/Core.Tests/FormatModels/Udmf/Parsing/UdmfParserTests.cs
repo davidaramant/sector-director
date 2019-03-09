@@ -6,6 +6,7 @@ using System.Text;
 using NUnit.Framework;
 using SectorDirector.Core.FormatModels.Udmf;
 using SectorDirector.Core.FormatModels.Udmf.Parsing;
+using Is = NUnit.DeepObjectCompare.Is;
 
 namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
 {
@@ -28,7 +29,7 @@ namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
                     var sa = new UdmfSyntaxAnalyzer();
                     var roundTripped = UdmfParser.Parse(sa.Analyze(new UdmfLexer(textReader)));
 
-                    UdmfComparison.AssertEqual(roundTripped, map);
+                    Assert.That(roundTripped, Is.DeepEqualTo(map));                   
                 }
             }
         }

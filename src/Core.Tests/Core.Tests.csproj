@@ -38,6 +38,12 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="KellermanSoftware.Compare-NET-Objects, Version=4.58.0.0, Culture=neutral, PublicKeyToken=d970ace04cc85217, processorArchitecture=MSIL">
+      <HintPath>..\packages\CompareNETObjects.4.58.0\lib\net46\KellermanSoftware.Compare-NET-Objects.dll</HintPath>
+    </Reference>
+    <Reference Include="NUnit.DeepObjectCompare, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.DeepObjectCompare.2.0.0\lib\net462\NUnit.DeepObjectCompare.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework, Version=3.11.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.11.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
@@ -51,12 +57,6 @@
   <ItemGroup>
     <Compile Include="DemoMap.cs" />
     <Compile Include="FormatModels\Common\BaseLexerTests.cs" />
-    <Compile Include="FormatModels\Udmf\Parsing\UdmfComparison.cs" />
-    <Compile Include="FormatModels\Udmf\Parsing\UdmfComparison.Generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>UdmfComparison.Generated.tt</DependentUpon>
-    </Compile>
     <Compile Include="FormatModels\Udmf\Parsing\UdmfLexerTests.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\UdmfParserTests.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\UdmfSyntaxAnalyzerTests.cs" />
@@ -84,10 +84,6 @@
   <ItemGroup>
     <Content Include="FormatModels\Udmf\Parsing\TEXTMAP.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="FormatModels\Udmf\Parsing\UdmfComparison.Generated.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>UdmfComparison.Generated.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <ItemGroup>
