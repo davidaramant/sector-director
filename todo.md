@@ -1,15 +1,29 @@
 # Renderer Independent
 
+## Data Model Related
+
 - [x] Load UDMF from disk
 - [x] Make test maps
+- [ ] Create DataModelGenerator project as replacement for T4 templates
+- [ ] Replace Piglet with Superpower
+- [ ] Simplify parser
+
+## Game Related
+
 - [x] Move player
 - [x] Rotate player
 - [x] Player horizontal clipping (simple)
 - [ ] Player vertical clipping
 - [ ] Player horizontal clipping (properly taking into account radius)
+- [ ] Sub-sector division
+- [ ] Determine if a sector is convex
+
+## Misc
+
 - [x] Text rendering (MonoGame)
 - [x] Take another pass at input system (enum for discrete input?)
-- [ ] Benchmarks...
+- [x] Benchmarks...
+- [ ] Convert projects to .NET Standard
 
 # 2D Renderer
 
@@ -25,6 +39,7 @@
 - [x] PSX Fire effect
 - [ ] Ripple effect
 - [ ] Replace clunky math with real linear algebra stuff
+- [ ] Real clipping algorithm for lines
 
 # 3D Renderer
 
