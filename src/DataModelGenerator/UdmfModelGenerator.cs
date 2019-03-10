@@ -9,12 +9,15 @@ namespace SectorDirector.DataModelGenerator
 {
     public static class UdmfModelGenerator
     {
-        public static void WriteTo(StreamWriter stream)
+        public static void WriteToPath(string basePath)
         {
-            using (var output = new IndentedWriter(stream))
+            foreach (var block in UdmfDefinitions.Blocks)
             {
-                output.Line(
-                    $@"// Copyright (c) {DateTime.Today.Year}, David Aramant
+                using(var blockStream = File.CreateText(Path.Combine(basePath, block.ClassName.ToPascalCase() + ".Generated.cs")))
+                using (var output = new IndentedWriter(blockStream))
+                {
+                    output.Line(
+                        $@"// Copyright (c) {DateTime.Today.Year}, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System.CodeDom.Compiler;
@@ -24,9 +27,7 @@ using System.Linq;
 
 namespace SectorDirector.Core.FormatModels.Udmf");
 
-                output.OpenParen();
-                foreach (var block in UdmfDefinitions.Blocks)
-                {
+                    output.OpenParen();
                     var normalWriteInheritance = block.NormalWriting ? ", IWriteableUdmfBlock" : String.Empty;
                     output.Line(
                         $"[GeneratedCodeAttribute(\"{CurrentLibraryInfo.Name}\", \"{CurrentLibraryInfo.Version}\")]");
@@ -42,9 +43,8 @@ namespace SectorDirector.Core.FormatModels.Udmf");
 
                     output.CloseParen();
                     output.Line();
-                } // end classes
-
-                output.CloseParen(); // End namespace
+                    output.CloseParen(); // End namespace
+                } 
             }
         }
 

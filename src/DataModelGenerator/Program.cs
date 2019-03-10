@@ -13,10 +13,7 @@ namespace SectorDirector.DataModelGenerator
             var solutionBasePath = Path.Combine(Enumerable.Repeat("..", 5).ToArray());
             var udmfPath = Path.Combine(solutionBasePath, "Core", "FormatModels", "Udmf");
 
-            using (var dataModelStream = File.CreateText(Path.Combine(udmfPath, "Model.Generated.cs")))
-            {
-                UdmfModelGenerator.WriteTo(dataModelStream);
-            }
+            UdmfModelGenerator.WriteToPath(udmfPath);
 
             using (var parserStream = File.CreateText(Path.Combine(udmfPath, "Parsing", "UdmfParser.Generated.cs")))
             {
