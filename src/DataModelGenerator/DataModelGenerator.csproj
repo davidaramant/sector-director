@@ -6,6 +6,8 @@
     <LangVersion>latest</LangVersion>
     <Platforms>x64</Platforms>
     <RootNamespace>SectorDirector.DataModelGenerator</RootNamespace>
+    <Deterministic>False</Deterministic>
+    <AssemblyVersion>1.0.*</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
