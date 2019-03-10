@@ -4,9 +4,9 @@
 
 - [x] Load UDMF from disk
 - [x] Make test maps
-- [ ] Create DataModelGenerator project as replacement for T4 templates
+- [x] Create DataModelGenerator project as replacement for T4 templates
 - [ ] Replace Piglet with Superpower
-- [ ] Simplify parser
+- [ ] Simplify DataModelGenerator
 
 ## Game Related
 
