@@ -15,10 +15,12 @@ namespace SectorDirector.DataModelGenerator
 $@"// Copyright (c) {DateTime.Today.Year}, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
+using System.CodeDom.Compiler;
 using SectorDirector.Core.FormatModels.Common;
 
 namespace SectorDirector.Core.FormatModels.Udmf.Parsing").
 OpenParen().
+Line($"[GeneratedCodeAttribute(\"{CurrentLibraryInfo.Name}\", \"{CurrentLibraryInfo.Version}\")]").
 Line("public static partial class UdmfParser").
 OpenParen();
 

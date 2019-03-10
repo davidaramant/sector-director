@@ -1,10 +1,12 @@
 // Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
+using System.CodeDom.Compiler;
 using SectorDirector.Core.FormatModels.Common;
 
 namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 {
+    [GeneratedCodeAttribute("DataModelGenerator", "1.0.0.0")]
     public static partial class UdmfParser
     {
         static partial void SetGlobalAssignments(MapData map, UdmfSyntaxTree tree)

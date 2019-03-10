@@ -1,12 +1,14 @@
 // Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 namespace SectorDirector.Core.FormatModels.Udmf
 {
+    [GeneratedCodeAttribute("DataModelGenerator", "1.0.0.0")]
     public sealed partial class LineDef : BaseUdmfBlock, IWriteableUdmfBlock
     {
         private bool _v1HasBeenSet = false;
@@ -181,6 +183,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         }
     }
 
+    [GeneratedCodeAttribute("DataModelGenerator", "1.0.0.0")]
     public sealed partial class SideDef : BaseUdmfBlock, IWriteableUdmfBlock
     {
         private bool _sectorHasBeenSet = false;
@@ -263,6 +266,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         }
     }
 
+    [GeneratedCodeAttribute("DataModelGenerator", "1.0.0.0")]
     public sealed partial class Vertex : BaseUdmfBlock, IWriteableUdmfBlock
     {
         private bool _xHasBeenSet = false;
@@ -336,6 +340,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         }
     }
 
+    [GeneratedCodeAttribute("DataModelGenerator", "1.0.0.0")]
     public sealed partial class Sector : BaseUdmfBlock, IWriteableUdmfBlock
     {
         private bool _textureFloorHasBeenSet = false;
@@ -434,6 +439,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         }
     }
 
+    [GeneratedCodeAttribute("DataModelGenerator", "1.0.0.0")]
     public sealed partial class Thing : BaseUdmfBlock, IWriteableUdmfBlock
     {
         private bool _xHasBeenSet = false;
@@ -583,6 +589,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         }
     }
 
+    [GeneratedCodeAttribute("DataModelGenerator", "1.0.0.0")]
     public sealed partial class MapData : BaseUdmfBlock, IWriteableUdmfBlock
     {
         private bool _nameSpaceHasBeenSet = false;

@@ -15,6 +15,7 @@ namespace SectorDirector.DataModelGenerator
 $@"// Copyright (c) {DateTime.Today.Year}, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace SectorDirector.Core.FormatModels.Udmf");
             foreach (var block in UdmfDefinitions.Blocks)
             {
                 var normalWriteInheritance = block.NormalWriting ? ", IWriteableUdmfBlock" : String.Empty;
+                output.Line($"[GeneratedCodeAttribute(\"{CurrentLibraryInfo.Name}\", \"{CurrentLibraryInfo.Version}\")]");
                 output.Line($"public sealed partial class {block.ClassName.ToPascalCase()} : BaseUdmfBlock{normalWriteInheritance}");
                 output.OpenParen();
 
