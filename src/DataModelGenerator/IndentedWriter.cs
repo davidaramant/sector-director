@@ -2,13 +2,15 @@
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System;
-using System.Text;
+using System.IO;
 
 namespace SectorDirector.DataModelGenerator
 {
-    public sealed class IndentedWriter
+    public sealed class IndentedWriter : IDisposable
     {
-        private readonly StringBuilder _builder = new StringBuilder();
+        private readonly StreamWriter _writer;
+        public IndentedWriter(StreamWriter writer) => _writer = writer;
+
         public int IndentionLevel { get; private set; }
         public string CurrentIndent => new string(' ', IndentionLevel*4);
 
@@ -26,36 +28,27 @@ namespace SectorDirector.DataModelGenerator
             return this;
         }
 
-        public IndentedWriter OpenParen()
-        {
-            return Line("{").IncreaseIndent();
-        }
-
-        public IndentedWriter CloseParen()
-        {
-            return DecreaseIndent().Line("}");
-        }
+        public IndentedWriter OpenParen() => Line("{").IncreaseIndent();
+        public IndentedWriter CloseParen()=> DecreaseIndent().Line("}");
 
         public IndentedWriter Line(string line)
         {
-            _builder.Append(CurrentIndent);
-            _builder.AppendLine(line);
+            _writer.WriteLine(CurrentIndent + line);
             return this;
         }
 
         public IndentedWriter Line()
         {
-            _builder.AppendLine();
+            _writer.WriteLine();
             return this;
         }
 
-        public string GetString()
+        public void Dispose()
         {
             if (IndentionLevel != 0)
             {
                 throw new InvalidOperationException("Indention level is screwed up.");
             }
-            return _builder.ToString();
         }
     }
 }

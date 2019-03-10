@@ -2,45 +2,45 @@
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System;
+using System.IO;
 using System.Linq;
 
 namespace SectorDirector.DataModelGenerator
 {
     public static class UdmfParserGenerator
     {
-        public static string GetText()
+        public static void WriteTo(StreamWriter stream)
         {
-            var output = new IndentedWriter();
-            output.Line(
-$@"// Copyright (c) {DateTime.Today.Year}, David Aramant
+            using (var output = new IndentedWriter(stream))
+            {
+                output.Line(
+                        $@"// Copyright (c) {DateTime.Today.Year}, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System.CodeDom.Compiler;
 using SectorDirector.Core.FormatModels.Common;
 
-namespace SectorDirector.Core.FormatModels.Udmf.Parsing").
-OpenParen().
-Line($"[GeneratedCodeAttribute(\"{CurrentLibraryInfo.Name}\", \"{CurrentLibraryInfo.Version}\")]").
-Line("public static partial class UdmfParser").
-OpenParen();
+namespace SectorDirector.Core.FormatModels.Udmf.Parsing").OpenParen()
+                    .Line($"[GeneratedCodeAttribute(\"{CurrentLibraryInfo.Name}\", \"{CurrentLibraryInfo.Version}\")]")
+                    .Line("public static partial class UdmfParser").OpenParen();
 
-            WriteGlobalAssignmentParsing(output);
-            WriteBlockParsing(output);
+                WriteGlobalAssignmentParsing(output);
+                WriteBlockParsing(output);
 
-            foreach (var block in UdmfDefinitions.Blocks.Where(_ => _.NormalParsing))
-            {
-                output.
-                    Line($"public static {block.ClassName.ToPascalCase()} Parse{block.ClassName.ToPascalCase()}(IHaveAssignments block)").
-                    OpenParen().
-                    Line($"var parsedBlock = new {block.ClassName.ToPascalCase()}();");
+                foreach (var block in UdmfDefinitions.Blocks.Where(_ => _.NormalParsing))
+                {
+                    output.Line(
+                            $"public static {block.ClassName.ToPascalCase()} Parse{block.ClassName.ToPascalCase()}(IHaveAssignments block)")
+                        .OpenParen().Line($"var parsedBlock = new {block.ClassName.ToPascalCase()}();");
 
-                WritePropertyAssignments(block, output, assignmentHolder: "block", owner: "parsedBlock");
+                    WritePropertyAssignments(block, output, assignmentHolder: "block", owner: "parsedBlock");
 
-                output.Line("return parsedBlock;").CloseParen();
+                    output.Line("return parsedBlock;").CloseParen();
+                }
+
+                output.CloseParen();
+                output.CloseParen();
             }
-
-            output.CloseParen();
-            return output.CloseParen().GetString();
         }
 
         private static void WritePropertyAssignments(Block block, IndentedWriter output, string assignmentHolder, string owner)

@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace SectorDirector.Core.FormatModels.Udmf
 {
-    [GeneratedCodeAttribute("DataModelGenerator", "1.0.7008.21977")]
+    [GeneratedCodeAttribute("DataModelGenerator", "1.0.7008.22564")]
     public sealed partial class LineDef : BaseUdmfBlock, IWriteableUdmfBlock
     {
         private bool _v1HasBeenSet = false;
@@ -183,7 +183,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         }
     }
 
-    [GeneratedCodeAttribute("DataModelGenerator", "1.0.7008.21977")]
+    [GeneratedCodeAttribute("DataModelGenerator", "1.0.7008.22564")]
     public sealed partial class SideDef : BaseUdmfBlock, IWriteableUdmfBlock
     {
         private bool _sectorHasBeenSet = false;
@@ -266,7 +266,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         }
     }
 
-    [GeneratedCodeAttribute("DataModelGenerator", "1.0.7008.21977")]
+    [GeneratedCodeAttribute("DataModelGenerator", "1.0.7008.22564")]
     public sealed partial class Vertex : BaseUdmfBlock, IWriteableUdmfBlock
     {
         private bool _xHasBeenSet = false;
@@ -340,7 +340,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         }
     }
 
-    [GeneratedCodeAttribute("DataModelGenerator", "1.0.7008.21977")]
+    [GeneratedCodeAttribute("DataModelGenerator", "1.0.7008.22564")]
     public sealed partial class Sector : BaseUdmfBlock, IWriteableUdmfBlock
     {
         private bool _textureFloorHasBeenSet = false;
@@ -439,7 +439,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         }
     }
 
-    [GeneratedCodeAttribute("DataModelGenerator", "1.0.7008.21977")]
+    [GeneratedCodeAttribute("DataModelGenerator", "1.0.7008.22564")]
     public sealed partial class Thing : BaseUdmfBlock, IWriteableUdmfBlock
     {
         private bool _xHasBeenSet = false;
@@ -589,7 +589,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         }
     }
 
-    [GeneratedCodeAttribute("DataModelGenerator", "1.0.7008.21977")]
+    [GeneratedCodeAttribute("DataModelGenerator", "1.0.7008.22564")]
     public sealed partial class MapData : BaseUdmfBlock, IWriteableUdmfBlock
     {
         private bool _nameSpaceHasBeenSet = false;

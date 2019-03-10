@@ -6,7 +6,7 @@ using SectorDirector.Core.FormatModels.Common;
 
 namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 {
-    [GeneratedCodeAttribute("DataModelGenerator", "1.0.7008.21977")]
+    [GeneratedCodeAttribute("DataModelGenerator", "1.0.7008.22564")]
     public static partial class UdmfParser
     {
         static partial void SetGlobalAssignments(MapData map, UdmfSyntaxTree tree)

@@ -2,17 +2,19 @@
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System;
+using System.IO;
 using System.Linq;
 
 namespace SectorDirector.DataModelGenerator
 {
     public static class UdmfModelGenerator
     {
-        public static string GetText()
+        public static void WriteTo(StreamWriter stream)
         {
-            var output = new IndentedWriter();
-            output.Line(
-$@"// Copyright (c) {DateTime.Today.Year}, David Aramant
+            using (var output = new IndentedWriter(stream))
+            {
+                output.Line(
+                    $@"// Copyright (c) {DateTime.Today.Year}, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System.CodeDom.Compiler;
@@ -22,26 +24,28 @@ using System.Linq;
 
 namespace SectorDirector.Core.FormatModels.Udmf");
 
-            output.OpenParen();
-            foreach (var block in UdmfDefinitions.Blocks)
-            {
-                var normalWriteInheritance = block.NormalWriting ? ", IWriteableUdmfBlock" : String.Empty;
-                output.Line($"[GeneratedCodeAttribute(\"{CurrentLibraryInfo.Name}\", \"{CurrentLibraryInfo.Version}\")]");
-                output.Line($"public sealed partial class {block.ClassName.ToPascalCase()} : BaseUdmfBlock{normalWriteInheritance}");
                 output.OpenParen();
+                foreach (var block in UdmfDefinitions.Blocks)
+                {
+                    var normalWriteInheritance = block.NormalWriting ? ", IWriteableUdmfBlock" : String.Empty;
+                    output.Line(
+                        $"[GeneratedCodeAttribute(\"{CurrentLibraryInfo.Name}\", \"{CurrentLibraryInfo.Version}\")]");
+                    output.Line(
+                        $"public sealed partial class {block.ClassName.ToPascalCase()} : BaseUdmfBlock{normalWriteInheritance}");
+                    output.OpenParen();
 
-                WriteProperties(block, output);
-                WriteConstructors(output, block);
-                WriteWriteToMethod(block, output);
-                WriteSemanticValidityMethods(output, block);
-                WriteCloneMethod(output, block);
+                    WriteProperties(block, output);
+                    WriteConstructors(output, block);
+                    WriteWriteToMethod(block, output);
+                    WriteSemanticValidityMethods(output, block);
+                    WriteCloneMethod(output, block);
 
-                output.CloseParen();
-                output.Line();
-            } // end classes
-            output.CloseParen(); // End namespace
+                    output.CloseParen();
+                    output.Line();
+                } // end classes
 
-            return output.GetString();
+                output.CloseParen(); // End namespace
+            }
         }
 
         private static void WriteCloneMethod(IndentedWriter output, Block block)
