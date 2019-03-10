@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2016, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
+using System;
 using System.Linq;
 
 namespace SectorDirector.DataModelGenerator
@@ -11,7 +12,7 @@ namespace SectorDirector.DataModelGenerator
         {
             var output = new IndentedWriter();
             output.Line(
-@"// Copyright (c) 2016, David Aramant
+$@"// Copyright (c) {DateTime.Today.Year}, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using SectorDirector.Core.FormatModels.Common;
