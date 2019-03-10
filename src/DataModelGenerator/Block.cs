@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using Functional.Maybe;
 
-namespace SectorDirector.Metadata
+namespace SectorDirector.DataModelGenerator
 {
     public enum Parsing
     {

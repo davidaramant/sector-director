@@ -4,7 +4,7 @@
 using System;
 using System.Text;
 
-namespace SectorDirector.Metadata
+namespace SectorDirector.DataModelGenerator
 {
     public sealed class IndentedWriter
     {

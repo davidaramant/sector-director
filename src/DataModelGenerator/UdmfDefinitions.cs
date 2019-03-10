@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 
-namespace SectorDirector.Metadata
+namespace SectorDirector.DataModelGenerator
 {
     public static class UdmfDefinitions
     {

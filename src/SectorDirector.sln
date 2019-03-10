@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestLauncher", "TestLaunche
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{A724C349-D0D5-469C-A8D6-E42A8F7BC32F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metadata", "Metadata\Metadata.csproj", "{F8DE0162-2FF5-4C06-98E7-2B2DD780C4ED}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Tests", "Core.Tests\Core.Tests.csproj", "{737FFEBF-4312-4535-B950-DF7E414FAF47}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapGeneration", "MapGeneration\MapGeneration.csproj", "{54069491-F7C5-456B-897E-8DA66A0AF8D3}"
@@ -26,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine.Tests", "Engine.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{3E4430E7-6E79-4C02-8579-55643E6611C7}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataModelGenerator", "DataModelGenerator\DataModelGenerator.csproj", "{B82E7F4E-C652-46DA-A49E-75FC564BB059}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -40,10 +40,6 @@ Global
 		{A724C349-D0D5-469C-A8D6-E42A8F7BC32F}.Debug|x64.Build.0 = Debug|x64
 		{A724C349-D0D5-469C-A8D6-E42A8F7BC32F}.Release|x64.ActiveCfg = Release|x64
 		{A724C349-D0D5-469C-A8D6-E42A8F7BC32F}.Release|x64.Build.0 = Release|x64
-		{F8DE0162-2FF5-4C06-98E7-2B2DD780C4ED}.Debug|x64.ActiveCfg = Debug|x86
-		{F8DE0162-2FF5-4C06-98E7-2B2DD780C4ED}.Debug|x64.Build.0 = Debug|x86
-		{F8DE0162-2FF5-4C06-98E7-2B2DD780C4ED}.Release|x64.ActiveCfg = Release|x86
-		{F8DE0162-2FF5-4C06-98E7-2B2DD780C4ED}.Release|x64.Build.0 = Release|x86
 		{737FFEBF-4312-4535-B950-DF7E414FAF47}.Debug|x64.ActiveCfg = Debug|x64
 		{737FFEBF-4312-4535-B950-DF7E414FAF47}.Debug|x64.Build.0 = Debug|x64
 		{737FFEBF-4312-4535-B950-DF7E414FAF47}.Release|x64.ActiveCfg = Release|x64
@@ -64,6 +60,10 @@ Global
 		{3E4430E7-6E79-4C02-8579-55643E6611C7}.Debug|x64.Build.0 = Debug|x64
 		{3E4430E7-6E79-4C02-8579-55643E6611C7}.Release|x64.ActiveCfg = Release|x64
 		{3E4430E7-6E79-4C02-8579-55643E6611C7}.Release|x64.Build.0 = Release|x64
+		{B82E7F4E-C652-46DA-A49E-75FC564BB059}.Debug|x64.ActiveCfg = Debug|x64
+		{B82E7F4E-C652-46DA-A49E-75FC564BB059}.Debug|x64.Build.0 = Debug|x64
+		{B82E7F4E-C652-46DA-A49E-75FC564BB059}.Release|x64.ActiveCfg = Release|x64
+		{B82E7F4E-C652-46DA-A49E-75FC564BB059}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

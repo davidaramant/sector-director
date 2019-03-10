@@ -4,7 +4,7 @@
 using System;
 using Functional.Maybe;
 
-namespace SectorDirector.Metadata
+namespace SectorDirector.DataModelGenerator
 {
     public enum PropertyType
     {
