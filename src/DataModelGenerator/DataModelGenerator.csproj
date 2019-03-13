@@ -7,7 +7,6 @@
     <LangVersion>latest</LangVersion>
     <Platforms>x64</Platforms>
     <RootNamespace>SectorDirector.DataModelGenerator</RootNamespace>
-    <Deterministic>False</Deterministic>
   </PropertyGroup>
 
   <ItemGroup>
