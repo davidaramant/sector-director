@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace SectorDirector.Core.FormatModels.Udmf
 {
-    [GeneratedCodeAttribute("DataModelGenerator", "1.0.7008.22712")]
+    [GeneratedCodeAttribute("DataModelGenerator", "1.0.0.0")]
     public sealed partial class Thing : BaseUdmfBlock, IWriteableUdmfBlock
     {
         private bool _xHasBeenSet = false;
