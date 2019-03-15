@@ -332,3 +332,6 @@ ASALocalRun/
 # Doom Builder files
 src/TestMaps/*.dbs
 src/TestMaps/*.backup*
+
+# Hime parser generator
+hime/
