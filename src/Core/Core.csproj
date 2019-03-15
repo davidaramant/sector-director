@@ -231,6 +231,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <EmbeddedResource Include="FormatModels\Udmf\Parsing\UdmfLexer.bin" />
+    <EmbeddedResource Include="FormatModels\Udmf\Parsing\UdmfParser.bin" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

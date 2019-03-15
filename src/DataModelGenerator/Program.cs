@@ -13,23 +13,45 @@ namespace SectorDirector.DataModelGenerator
         static void Main(string[] args)
         {
             var solutionBasePath = Path.Combine(Enumerable.Repeat("..", 5).ToArray());
-            var udmfPath = Path.Combine(solutionBasePath, "Core", "FormatModels", "Udmf");
+            var corePath = Path.Combine(solutionBasePath, "Core");
+            var udmfPath = Path.Combine(corePath, "FormatModels", "Udmf");
+            var udmfParsingPath = Path.Combine(udmfPath, "Parsing");
 
-            UdmfModelGenerator.WriteToPath(udmfPath);
-
-            using (var parserStream = File.CreateText(Path.Combine(udmfPath, "Parsing", "UdmfParser.Generated.cs")))
+            // Generate HIME lexer / parser
+            using (var himeProcess = Process.Start(
+                Path.Combine(solutionBasePath, "..", "hime", "himecc.bat"),
+                "Udmf.gram"))
             {
-                UdmfParserGenerator.WriteTo(parserStream);
+                // Create data model
+                UdmfModelGenerator.WriteToPath(udmfPath);
+
+                // Generate mapping of HIME output to data model
+                //using (var parserStream = File.CreateText(Path.Combine(udmfParsingPath, "UdmfParser.Generated.cs")))
+                //{
+                //    UdmfParserGenerator.WriteTo(parserStream);
+                //}
+
+
+                himeProcess.WaitForExit();
+                if (himeProcess.ExitCode != 0)
+                {
+                    Console.ReadLine();
+                }
+                else
+                {
+                    void CopyFileToParsingPath(string fileName)
+                    {
+                        File.Copy(fileName, Path.Combine(udmfParsingPath, fileName), overwrite:true);
+                    }
+
+                    CopyFileToParsingPath("UdmfLexer.cs");
+                    CopyFileToParsingPath("UdmfParser.cs");
+                    CopyFileToParsingPath("UdmfLexer.bin");
+                    CopyFileToParsingPath("UdmfParser.bin");
+                }
             }
 
-            // Generate HIME grammar
-            Process.Start(
-                Path.Combine(solutionBasePath, "..", "hime", "himecc.bat"), 
-                "Udmf.gram");
 
-            // TODO: Copy artifacts to source directory
-
-            Console.ReadLine();
         }
     }
 }

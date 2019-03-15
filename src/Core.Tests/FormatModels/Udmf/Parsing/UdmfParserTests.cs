@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using System.Text;
+using Hime.Redist;
 using NUnit.Framework;
 using SectorDirector.Core.FormatModels.Udmf;
 using SectorDirector.Core.FormatModels.Udmf.Parsing;
@@ -14,6 +15,17 @@ namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
     [TestFixture]
     public sealed class UdmfParserTests
     {
+        [Test]
+        public void ShouldParseNumber()
+        {
+            var lexer = new UdmfLexer("2");
+            var parser = new UdmfParser(lexer);
+            // Executes the parsing
+            ParseResult result = parser.Parse();
+            
+            
+        }
+
         [Test]
         public void ShouldRoundTripDemoMap()
         {
