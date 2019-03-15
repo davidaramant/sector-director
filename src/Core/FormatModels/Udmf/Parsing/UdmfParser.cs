@@ -1,23 +1,23 @@
-﻿// Copyright (c) 2018, David Aramant
-// Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
+﻿//// Copyright (c) 2018, David Aramant
+//// Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
-namespace SectorDirector.Core.FormatModels.Udmf.Parsing
-{
-    public static partial class UdmfParser
-    {
-        public static MapData Parse(UdmfSyntaxTree syntaxTree)
-        {
-            var map = new MapData();
+//namespace SectorDirector.Core.FormatModels.Udmf.Parsing
+//{
+//    public static partial class UdmfParser
+//    {
+//        public static MapData Parse(UdmfSyntaxTree syntaxTree)
+//        {
+//            var map = new MapData();
 
-            SetGlobalAssignments(map, syntaxTree);
-            SetBlocks(map, syntaxTree);
+//            SetGlobalAssignments(map, syntaxTree);
+//            SetBlocks(map, syntaxTree);
 
-            map.CheckSemanticValidity();
+//            map.CheckSemanticValidity();
 
-            return map;
-        }
+//            return map;
+//        }
 
-        static partial void SetGlobalAssignments(MapData mapData, UdmfSyntaxTree tree);
-        static partial void SetBlocks(MapData mapData, UdmfSyntaxTree tree);
-    }
-}
+//        static partial void SetGlobalAssignments(MapData mapData, UdmfSyntaxTree tree);
+//        static partial void SetBlocks(MapData mapData, UdmfSyntaxTree tree);
+//    }
+//}

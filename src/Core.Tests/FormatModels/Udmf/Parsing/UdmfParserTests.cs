@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2016, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
+using System;
 using System.IO;
 using System.Text;
 using NUnit.Framework;
@@ -27,9 +28,10 @@ namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
                 using (var textReader = new StreamReader(stream, Encoding.ASCII))
                 {
                     var sa = new UdmfSyntaxAnalyzer();
-                    var roundTripped = UdmfParser.Parse(sa.Analyze(new UdmfLexer(textReader)));
+                    //var roundTripped = UdmfParser.Parse(sa.Analyze(new UdmfLexer(textReader)));
 
-                    Assert.That(roundTripped, Is.DeepEqualTo(map));                   
+                    //Assert.That(roundTripped, Is.DeepEqualTo(map));                   
+                    throw new NotImplementedException("Switch over to new parser");
                 }
             }
         }
@@ -41,7 +43,8 @@ namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
             using (var textReader = new StreamReader(stream, Encoding.ASCII))
             {
                 var sa = new UdmfSyntaxAnalyzer();
-                var map = UdmfParser.Parse(sa.Analyze(new UdmfLexer(textReader)));
+                //var map = UdmfParser.Parse(sa.Analyze(new UdmfLexer(textReader)));
+                throw new NotImplementedException("Switch over to new parser");
             }
         }
     }

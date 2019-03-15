@@ -1,5 +1,7 @@
 ﻿// Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
@@ -26,8 +28,9 @@ namespace SectorDirector.Engine
                 {
                     using (var textReader = new StreamReader(ms, Encoding.ASCII))
                     {
-                        var map = UdmfParser.Parse(sa.Analyze(new UdmfLexer(textReader)));
-                        maps.Add(map);
+                        throw new NotImplementedException("Switch over to new parser");
+                        //var map = UdmfParser.Parse(sa.Analyze(new UdmfLexer(textReader)));
+                        //maps.Add(map);
                     }
                 }
             }

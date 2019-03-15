@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -62,9 +63,10 @@ namespace SectorDirector.Core.Tests.FormatModels.Wad
                 using (var textReader = new StreamReader(ms, Encoding.ASCII))
                 {
                     var sa = new UdmfSyntaxAnalyzer();
-                    var roundTripped = UdmfParser.Parse(sa.Analyze(new UdmfLexer(textReader)));
+                    throw new NotImplementedException("Switch over to new parser");
+                    //var roundTripped = UdmfParser.Parse(sa.Analyze(new UdmfLexer(textReader)));
 
-                    Assert.That(roundTripped, Is.DeepEqualTo(map));
+                    //Assert.That(roundTripped, Is.DeepEqualTo(map));
                 }
             }
             finally

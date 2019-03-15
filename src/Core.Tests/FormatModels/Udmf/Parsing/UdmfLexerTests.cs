@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2018, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
+using System;
 using System.Linq;
 using NUnit.Framework;
 using SectorDirector.Core.FormatModels.Common;
@@ -138,9 +139,10 @@ namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
 
         private void VerifyLexing(string input, params Token[] expectedTokens)
         {
-            var actualTokens = UdmfLexer.Definition.Tokenize(input).Select(t => t.Item2).ToArray();
+            throw new NotImplementedException("Switch over to new parser");
+            //var actualTokens = UdmfLexer.Definition.Tokenize(input).Select(t => t.Item2).ToArray();
 
-            Assert.That(actualTokens, Is.EqualTo(expectedTokens), $"Did not correct tokenize {input}");
+            //Assert.That(actualTokens, Is.EqualTo(expectedTokens), $"Did not correct tokenize {input}");
         }
     }
 }
