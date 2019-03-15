@@ -56,7 +56,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DemoMap.cs" />
-    <Compile Include="FormatModels\Common\BaseLexerTests.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\UdmfLexerTests.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\UdmfParserTests.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\UdmfSyntaxAnalyzerTests.cs" />
@@ -88,6 +87,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="FormatModels\Common\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
