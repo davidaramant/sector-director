@@ -23,21 +23,25 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 		public class ID
 		{
 			/// <summary>
-			/// The unique identifier for variable exp_atom
+			/// The unique identifier for variable value
 			/// </summary>
-			public const int VariableExpAtom = 0x0008;
+			public const int VariableValue = 0x000A;
 			/// <summary>
-			/// The unique identifier for variable exp_factor
+			/// The unique identifier for variable assignment_expr
 			/// </summary>
-			public const int VariableExpFactor = 0x0009;
+			public const int VariableAssignmentExpr = 0x000B;
 			/// <summary>
-			/// The unique identifier for variable exp_term
+			/// The unique identifier for variable block
 			/// </summary>
-			public const int VariableExpTerm = 0x000A;
+			public const int VariableBlock = 0x000C;
 			/// <summary>
-			/// The unique identifier for variable exp
+			/// The unique identifier for variable global_expr
 			/// </summary>
-			public const int VariableExp = 0x000B;
+			public const int VariableGlobalExpr = 0x000D;
+			/// <summary>
+			/// The unique identifier for variable translation_unit
+			/// </summary>
+			public const int VariableTranslationUnit = 0x000E;
 		}
 		/// <summary>
 		/// The collection of variables matched by this parser
@@ -47,11 +51,14 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 		/// so that variable indices in the automaton can be used to retrieve the variables in this table
 		/// </remarks>
 		private static readonly Symbol[] variables = {
-			new Symbol(0x0008, "exp_atom"), 
-			new Symbol(0x0009, "exp_factor"), 
-			new Symbol(0x000A, "exp_term"), 
-			new Symbol(0x000B, "exp"), 
-			new Symbol(0x0012, "__VAxiom") };
+			new Symbol(0x000A, "value"), 
+			new Symbol(0x000B, "assignment_expr"), 
+			new Symbol(0x000C, "block"), 
+			new Symbol(0x000D, "global_expr"), 
+			new Symbol(0x000E, "translation_unit"), 
+			new Symbol(0x0012, "__V18"), 
+			new Symbol(0x0014, "__V20"), 
+			new Symbol(0x0015, "__VAxiom") };
 		/// <summary>
 		/// The collection of virtuals matched by this parser
 		/// </summary>
@@ -74,13 +81,16 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 		{
 			public virtual void OnTerminalWhiteSpace(ASTNode node) {}
 			public virtual void OnTerminalSeparator(ASTNode node) {}
+			public virtual void OnTerminalKeyword(ASTNode node) {}
+			public virtual void OnTerminalQuotedString(ASTNode node) {}
 			public virtual void OnTerminalInteger(ASTNode node) {}
-			public virtual void OnTerminalReal(ASTNode node) {}
-			public virtual void OnTerminalNumber(ASTNode node) {}
-			public virtual void OnVariableExpAtom(ASTNode node) {}
-			public virtual void OnVariableExpFactor(ASTNode node) {}
-			public virtual void OnVariableExpTerm(ASTNode node) {}
-			public virtual void OnVariableExp(ASTNode node) {}
+			public virtual void OnTerminalFloat(ASTNode node) {}
+			public virtual void OnTerminalIdentifier(ASTNode node) {}
+			public virtual void OnVariableValue(ASTNode node) {}
+			public virtual void OnVariableAssignmentExpr(ASTNode node) {}
+			public virtual void OnVariableBlock(ASTNode node) {}
+			public virtual void OnVariableGlobalExpr(ASTNode node) {}
+			public virtual void OnVariableTranslationUnit(ASTNode node) {}
 		}
 
 		/// <summary>
@@ -102,13 +112,16 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 			{
 				case 0x0003: visitor.OnTerminalWhiteSpace(node); break;
 				case 0x0004: visitor.OnTerminalSeparator(node); break;
-				case 0x0005: visitor.OnTerminalInteger(node); break;
-				case 0x0006: visitor.OnTerminalReal(node); break;
-				case 0x0007: visitor.OnTerminalNumber(node); break;
-				case 0x0008: visitor.OnVariableExpAtom(node); break;
-				case 0x0009: visitor.OnVariableExpFactor(node); break;
-				case 0x000A: visitor.OnVariableExpTerm(node); break;
-				case 0x000B: visitor.OnVariableExp(node); break;
+				case 0x0005: visitor.OnTerminalKeyword(node); break;
+				case 0x0006: visitor.OnTerminalQuotedString(node); break;
+				case 0x0007: visitor.OnTerminalInteger(node); break;
+				case 0x0008: visitor.OnTerminalFloat(node); break;
+				case 0x0009: visitor.OnTerminalIdentifier(node); break;
+				case 0x000A: visitor.OnVariableValue(node); break;
+				case 0x000B: visitor.OnVariableAssignmentExpr(node); break;
+				case 0x000C: visitor.OnVariableBlock(node); break;
+				case 0x000D: visitor.OnVariableGlobalExpr(node); break;
+				case 0x000E: visitor.OnVariableTranslationUnit(node); break;
 			}
 		}
 	}

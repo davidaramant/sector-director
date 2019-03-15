@@ -16,9 +16,9 @@ namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
     public sealed class UdmfParserTests
     {
         [Test]
-        public void ShouldParseNumber()
+        public void ShouldParseExpression()
         {
-            var lexer = new UdmfLexer("2");
+            var lexer = new UdmfLexer("someProperty = 10;");
             var parser = new UdmfParser(lexer);
             // Executes the parsing
             ParseResult result = parser.Parse();

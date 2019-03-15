@@ -32,17 +32,25 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 			/// </summary>
 			public const int TerminalSeparator = 0x0004;
 			/// <summary>
+			/// The unique identifier for terminal KEYWORD
+			/// </summary>
+			public const int TerminalKeyword = 0x0005;
+			/// <summary>
+			/// The unique identifier for terminal QUOTED_STRING
+			/// </summary>
+			public const int TerminalQuotedString = 0x0006;
+			/// <summary>
 			/// The unique identifier for terminal INTEGER
 			/// </summary>
-			public const int TerminalInteger = 0x0005;
+			public const int TerminalInteger = 0x0007;
 			/// <summary>
-			/// The unique identifier for terminal REAL
+			/// The unique identifier for terminal FLOAT
 			/// </summary>
-			public const int TerminalReal = 0x0006;
+			public const int TerminalFloat = 0x0008;
 			/// <summary>
-			/// The unique identifier for terminal NUMBER
+			/// The unique identifier for terminal IDENTIFIER
 			/// </summary>
-			public const int TerminalNumber = 0x0007;
+			public const int TerminalIdentifier = 0x0009;
 		}
 		/// <summary>
 		/// Contains the constant IDs for the contexts for this lexer
@@ -66,15 +74,15 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 			new Symbol(0x0002, "$"),
 			new Symbol(0x0003, "WHITE_SPACE"),
 			new Symbol(0x0004, "SEPARATOR"),
-			new Symbol(0x0005, "INTEGER"),
-			new Symbol(0x0006, "REAL"),
-			new Symbol(0x0007, "NUMBER"),
-			new Symbol(0x000C, "("),
-			new Symbol(0x000D, ")"),
-			new Symbol(0x000E, "*"),
-			new Symbol(0x000F, "/"),
-			new Symbol(0x0010, "+"),
-			new Symbol(0x0011, "-") };
+			new Symbol(0x0005, "KEYWORD"),
+			new Symbol(0x0006, "QUOTED_STRING"),
+			new Symbol(0x0007, "INTEGER"),
+			new Symbol(0x0008, "FLOAT"),
+			new Symbol(0x0009, "IDENTIFIER"),
+			new Symbol(0x000F, "="),
+			new Symbol(0x0010, ";"),
+			new Symbol(0x0011, "{"),
+			new Symbol(0x0013, "}") };
 		/// <summary>
 		/// Initializes a new instance of the lexer
 		/// </summary>

@@ -2,31 +2,38 @@
 {
   options
   {
-    Axiom = "exp"; // the top variable for this grammar
-    Separator = "SEPARATOR"; // the terminal that represent white space
+    Axiom = "translation_unit";
+    Separator = "SEPARATOR";
     Namespace = "SectorDirector.Core.FormatModels.Udmf.Parsing";
     AccessModifier = "Public";
   }
   terminals
   {
-    WHITE_SPACE -> U+0020 | U+0009 | U+000B | U+000C ;
-    SEPARATOR   -> WHITE_SPACE+;
+    WHITE_SPACE   -> U+0020 | U+0009 | U+000B | U+000C ;
+    SEPARATOR     -> WHITE_SPACE+;
 
-    INTEGER     -> [1-9] [0-9]* | '0' ;
-    REAL        -> INTEGER? '.' INTEGER  (('e' | 'E') ('+' | '-')? INTEGER)?
-                |  INTEGER ('e' | 'E') ('+' | '-')? INTEGER ;
-    NUMBER      -> INTEGER | REAL ;
+    KEYWORD       -> 'true' | 'false';
+
+    // This is simplistic but will work for now
+    QUOTED_STRING -> '"'[A-Za-z0-9 .;:]*'"';
+
+    INTEGER       -> [+-]?[1-9]+[0-9]* 
+                  |  '0x'[0-9A-Fa-f]+;
+
+    FLOAT         -> [+-]?[0-9]+'.'[0-9]*([eE][+-]?[0-9]+)?;
+
+    IDENTIFIER    -> [A-Za-z_]+ [A-Za-z0-9_]*;
   }
   rules
   {
-    exp_atom   -> NUMBER
-               | '(' exp ')' ;
-    exp_factor -> exp_atom
-               |  exp_factor '*' exp_atom
-               |  exp_factor '/' exp_atom ;
-    exp_term   -> exp_factor
-               |  exp_term '+' exp_factor
-               |  exp_term '-' exp_factor ;
-    exp        -> exp_term ;
+    value -> INTEGER | FLOAT | QUOTED_STRING | KEYWORD;
+
+    assignment_expr -> IDENTIFIER '=' value ';';
+
+    block -> IDENTIFIER '{' assignment_expr* '}';
+
+    global_expr -> block | assignment_expr;
+
+    translation_unit -> global_expr+;
   }
 }
