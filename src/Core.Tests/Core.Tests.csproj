@@ -59,7 +59,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DemoMap.cs" />
-    <Compile Include="FormatModels\Udmf\Parsing\UdmfLexerTests.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\UdmfParserTests.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\UdmfSyntaxAnalyzerTests.cs" />
     <Compile Include="FormatModels\Wad\LumpNameTests.cs" />

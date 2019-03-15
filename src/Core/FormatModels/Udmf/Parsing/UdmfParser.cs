@@ -81,11 +81,11 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 		{
 			public virtual void OnTerminalWhiteSpace(ASTNode node) {}
 			public virtual void OnTerminalSeparator(ASTNode node) {}
+			public virtual void OnTerminalIdentifier(ASTNode node) {}
 			public virtual void OnTerminalKeyword(ASTNode node) {}
 			public virtual void OnTerminalQuotedString(ASTNode node) {}
 			public virtual void OnTerminalInteger(ASTNode node) {}
 			public virtual void OnTerminalFloat(ASTNode node) {}
-			public virtual void OnTerminalIdentifier(ASTNode node) {}
 			public virtual void OnVariableValue(ASTNode node) {}
 			public virtual void OnVariableAssignmentExpr(ASTNode node) {}
 			public virtual void OnVariableBlock(ASTNode node) {}
@@ -112,11 +112,11 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 			{
 				case 0x0003: visitor.OnTerminalWhiteSpace(node); break;
 				case 0x0004: visitor.OnTerminalSeparator(node); break;
-				case 0x0005: visitor.OnTerminalKeyword(node); break;
-				case 0x0006: visitor.OnTerminalQuotedString(node); break;
-				case 0x0007: visitor.OnTerminalInteger(node); break;
-				case 0x0008: visitor.OnTerminalFloat(node); break;
-				case 0x0009: visitor.OnTerminalIdentifier(node); break;
+				case 0x0005: visitor.OnTerminalIdentifier(node); break;
+				case 0x0006: visitor.OnTerminalKeyword(node); break;
+				case 0x0007: visitor.OnTerminalQuotedString(node); break;
+				case 0x0008: visitor.OnTerminalInteger(node); break;
+				case 0x0009: visitor.OnTerminalFloat(node); break;
 				case 0x000A: visitor.OnVariableValue(node); break;
 				case 0x000B: visitor.OnVariableAssignmentExpr(node); break;
 				case 0x000C: visitor.OnVariableBlock(node); break;

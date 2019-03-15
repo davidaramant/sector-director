@@ -9,20 +9,20 @@
   }
   terminals
   {
-    WHITE_SPACE   -> U+0020 | U+0009 | U+000B | U+000C ;
+    WHITE_SPACE   -> U+0020 | U+0009 | U+000A | U+000B | U+000C | U+000D ;
     SEPARATOR     -> WHITE_SPACE+;
 
+    IDENTIFIER    -> [A-Za-z_]+ [A-Za-z0-9_]*;
+
+    // These two are too simplistic but they seem to work for real-world scenarios
+    // NOTE: Keyword must come after Identifier, otherwise they get confused for each other
     KEYWORD       -> 'true' | 'false';
+    QUOTED_STRING -> '"'[A-Za-z0-9_ .;:]*'"';
 
-    // This is simplistic but will work for now
-    QUOTED_STRING -> '"'[A-Za-z0-9 .;:]*'"';
-
-    INTEGER       -> [+-]?[1-9]+[0-9]* 
+    INTEGER       -> [+-]?[0-9]+ 
                   |  '0x'[0-9A-Fa-f]+;
 
     FLOAT         -> [+-]?[0-9]+'.'[0-9]*([eE][+-]?[0-9]+)?;
-
-    IDENTIFIER    -> [A-Za-z_]+ [A-Za-z0-9_]*;
   }
   rules
   {

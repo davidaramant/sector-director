@@ -16,14 +16,25 @@ namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
     public sealed class UdmfParserTests
     {
         [Test]
-        public void ShouldParseExpression()
+        public void ShouldHandleParsingDemoMap()
         {
-            var lexer = new UdmfLexer("someProperty = 10;");
-            var parser = new UdmfParser(lexer);
-            // Executes the parsing
-            ParseResult result = parser.Parse();
-            
-            
+            var map = DemoMap.Create();
+
+            using (var stream = new MemoryStream())
+            {
+                map.WriteTo(stream);
+
+                stream.Position = 0;
+
+                using (var textReader = new StreamReader(stream, Encoding.ASCII))
+                {
+                    var lexer = new UdmfLexer(textReader);
+                    var parser = new UdmfParser(lexer);
+
+                    var result = parser.Parse();
+                    Assert.That(result.IsSuccess, Is.True);
+                }
+            }
         }
 
         [Test]
