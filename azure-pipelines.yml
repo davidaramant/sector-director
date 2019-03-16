@@ -24,12 +24,11 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-- task: VSTest@2
+- task: DotNetCoreCLI@2
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: '**\*Core.Tests.dll'
+    command: test
+    projects: '**/*Core.Tests.csproj'
+    arguments: '--configuration $(buildConfiguration)'
 
 - task: VSTest@2
   inputs:
