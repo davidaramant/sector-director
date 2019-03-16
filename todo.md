@@ -23,7 +23,9 @@
 - [x] Text rendering (MonoGame)
 - [x] Take another pass at input system (enum for discrete input?)
 - [x] Benchmarks...
-- [ ] Convert projects to .NET Standard
+- [x] Convert projects to .NET Standard
+- [ ] Upgrade to Core 3 when it's released and MonoGame support Core
+- [ ] Deal with problematic Clipper dependency (not netstandard compliant)
 
 # 2D Renderer
 
