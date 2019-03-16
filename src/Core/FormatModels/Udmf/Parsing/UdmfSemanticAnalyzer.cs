@@ -41,12 +41,12 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
         {
             var unknownBlock = new UnknownBlock(blockName);
 
-            foreach (var assignment in block.Children.Skip(2).Take(block.Children.Count - 3))
-            {
-                var id = GetAssignmentIdentifier(assignment);
-                var value = ReadRawValue(assignment);
-                unknownBlock.Properties.Add(new UnknownProperty(id, value));
-            }
+            var allAssignments = block.Children.Skip(2).Take(block.Children.Count - 3);
+            unknownBlock.Properties.AddRange(
+                from assignment in allAssignments
+                let id = GetAssignmentIdentifier(assignment)
+                let value = ReadRawValue(assignment)
+                select new UnknownProperty(id, value));
 
             return unknownBlock;
         }
@@ -55,7 +55,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 
         static string ReadRawValue(ASTNode assignment) => assignment.Children[2].Children[0].Value;
 
-        static int ReadInt(ASTNode assignment, string context = null)
+        static int ReadInt(ASTNode assignment, string context)
         {
             var valueChild = assignment.Children[2].Children[0];
             var type = valueChild.Symbol.Name;
@@ -68,7 +68,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
             return int.Parse(valueChild.Value);
         }
 
-        static double ReadDouble(ASTNode assignment, string context = null)
+        static double ReadDouble(ASTNode assignment, string context)
         {
             var valueChild = assignment.Children[2].Children[0];
             var type = valueChild.Symbol.Name;
@@ -81,7 +81,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
             return double.Parse(valueChild.Value);
         }
 
-        static bool ReadBool(ASTNode assignment, string context = null)
+        static bool ReadBool(ASTNode assignment, string context)
         {
             var valueChild = assignment.Children[2].Children[0];
             var type = valueChild.Symbol.Name;
@@ -94,7 +94,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
             return bool.Parse(valueChild.Value);
         }
 
-        static string ReadString(ASTNode assignment, string context = null)
+        static string ReadString(ASTNode assignment, string context)
         {
             var valueChild = assignment.Children[2].Children[0];
             var type = valueChild.Symbol.Name;
