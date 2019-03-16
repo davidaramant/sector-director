@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016, David Aramant
+﻿// Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System;
@@ -7,44 +7,44 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace SectorDirector.Core.FormatModels.Udmf
+namespace SectorDirector.Core.FormatModels.Udmf.WritingExtensions
 {
-    public abstract class BaseUdmfBlock
+    public static class StreamExtensions
     {
-        protected static void WriteLine(Stream stream, string value)
+        public static void WriteLine(this Stream stream, string value)
         {
             var textBytes = Encoding.ASCII.GetBytes(value + "\n");
 
             stream.Write(textBytes, 0, textBytes.Length);
         }
 
-        protected static void WritePropertyVerbatim(Stream stream, string name, string value, bool indent)
+        public static void WritePropertyVerbatim(this Stream stream, string name, string value, bool indent)
         {
             var indention = indent ? "\t" : String.Empty;
             WriteLine(stream, $"{indention}{name} = {value};");
         }
 
-        protected static void WriteProperty(Stream stream, string name, string value, bool indent)
+        public static void WriteProperty(this Stream stream, string name, string value, bool indent)
         {
             WritePropertyVerbatim(stream, name, $"\"{value}\"", indent);
         }
 
-        protected static void WriteProperty(Stream stream, string name, int value, bool indent)
+        public static void WriteProperty(this Stream stream, string name, int value, bool indent)
         {
             WritePropertyVerbatim(stream, name, value.ToString(CultureInfo.InvariantCulture), indent);
         }
 
-        protected static void WriteProperty(Stream stream, string name, double value, bool indent)
+        public static void WriteProperty(this Stream stream, string name, double value, bool indent)
         {
             WritePropertyVerbatim(stream, name, value.ToString(CultureInfo.InvariantCulture), indent);
         }
 
-        protected static void WriteProperty(Stream stream, string name, bool value, bool indent)
+        public static void WriteProperty(this Stream stream, string name, bool value, bool indent)
         {
             WritePropertyVerbatim(stream, name, value.ToString().ToLowerInvariant(), indent);
         }
 
-        protected static void WriteBlocks(Stream stream, IEnumerable<IWriteableUdmfBlock> blocks)
+        public static void WriteBlocks(this Stream stream, IEnumerable<IWriteableUdmfBlock> blocks)
         {
             foreach (var block in blocks)
             {

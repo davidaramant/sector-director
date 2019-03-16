@@ -5,11 +5,12 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using SectorDirector.Core.FormatModels.Udmf.WritingExtensions;
 
 namespace SectorDirector.Core.FormatModels.Udmf
 {
-    [GeneratedCodeAttribute("DataModelGenerator", "1.0.0.0")]
-    public sealed partial class Thing : BaseUdmfBlock, IWriteableUdmfBlock
+    [GeneratedCode("DataModelGenerator", "1.0.0.0")]
+    public sealed partial class Thing : IWriteableUdmfBlock
     {
         private bool _xHasBeenSet = false;
         private double _x;
@@ -100,29 +101,29 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public Stream WriteTo(Stream stream)
         {
             CheckSemanticValidity();
-            WriteLine(stream, "thing");
-            WriteLine(stream, "{");
-            WriteProperty(stream, "x", _x, indent: true);
-            WriteProperty(stream, "y", _y, indent: true);
-            WriteProperty(stream, "type", _type, indent: true);
-            if (Id != 0) WriteProperty(stream, "id", Id, indent: true);
-            if (Height != 0) WriteProperty(stream, "height", Height, indent: true);
-            if (Angle != 0) WriteProperty(stream, "angle", Angle, indent: true);
-            if (Skill1 != false) WriteProperty(stream, "skill1", Skill1, indent: true);
-            if (Skill2 != false) WriteProperty(stream, "skill2", Skill2, indent: true);
-            if (Skill3 != false) WriteProperty(stream, "skill3", Skill3, indent: true);
-            if (Skill4 != false) WriteProperty(stream, "skill4", Skill4, indent: true);
-            if (Skill5 != false) WriteProperty(stream, "skill5", Skill5, indent: true);
-            if (Ambush != false) WriteProperty(stream, "ambush", Ambush, indent: true);
-            if (Single != false) WriteProperty(stream, "single", Single, indent: true);
-            if (Dm != false) WriteProperty(stream, "dm", Dm, indent: true);
-            if (Coop != false) WriteProperty(stream, "coop", Coop, indent: true);
-            if (Comment != "") WriteProperty(stream, "comment", Comment, indent: true);
+            stream.WriteLine("thing");
+            stream.WriteLine("{");
+            stream.WriteProperty("x", _x, indent: true);
+            stream.WriteProperty("y", _y, indent: true);
+            stream.WriteProperty("type", _type, indent: true);
+            if (Id != 0) stream.WriteProperty("id", Id, indent: true);
+            if (Height != 0) stream.WriteProperty("height", Height, indent: true);
+            if (Angle != 0) stream.WriteProperty("angle", Angle, indent: true);
+            if (Skill1 != false) stream.WriteProperty("skill1", Skill1, indent: true);
+            if (Skill2 != false) stream.WriteProperty("skill2", Skill2, indent: true);
+            if (Skill3 != false) stream.WriteProperty("skill3", Skill3, indent: true);
+            if (Skill4 != false) stream.WriteProperty("skill4", Skill4, indent: true);
+            if (Skill5 != false) stream.WriteProperty("skill5", Skill5, indent: true);
+            if (Ambush != false) stream.WriteProperty("ambush", Ambush, indent: true);
+            if (Single != false) stream.WriteProperty("single", Single, indent: true);
+            if (Dm != false) stream.WriteProperty("dm", Dm, indent: true);
+            if (Coop != false) stream.WriteProperty("coop", Coop, indent: true);
+            if (Comment != "") stream.WriteProperty("comment", Comment, indent: true);
             foreach (var property in UnknownProperties)
             {
-                WritePropertyVerbatim(stream, (string)property.Name, property.Value, indent: true);
+                stream.WritePropertyVerbatim((string)property.Name, property.Value, indent: true);
             }
-            WriteLine(stream, "}");
+            stream.WriteLine("}");
             return stream;
         }
         public void CheckSemanticValidity()

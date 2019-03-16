@@ -5,11 +5,12 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using SectorDirector.Core.FormatModels.Udmf.WritingExtensions;
 
 namespace SectorDirector.Core.FormatModels.Udmf
 {
-    [GeneratedCodeAttribute("DataModelGenerator", "1.0.0.0")]
-    public sealed partial class SideDef : BaseUdmfBlock, IWriteableUdmfBlock
+    [GeneratedCode("DataModelGenerator", "1.0.0.0")]
+    public sealed partial class SideDef : IWriteableUdmfBlock
     {
         private bool _sectorHasBeenSet = false;
         private int _sector;
@@ -53,20 +54,20 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public Stream WriteTo(Stream stream)
         {
             CheckSemanticValidity();
-            WriteLine(stream, "sidedef");
-            WriteLine(stream, "{");
-            WriteProperty(stream, "sector", _sector, indent: true);
-            if (OffsetX != 0) WriteProperty(stream, "offsetX", OffsetX, indent: true);
-            if (OffsetY != 0) WriteProperty(stream, "offsetY", OffsetY, indent: true);
-            if (TextureTop != "-") WriteProperty(stream, "textureTop", TextureTop, indent: true);
-            if (TextureBottom != "-") WriteProperty(stream, "textureBottom", TextureBottom, indent: true);
-            if (TextureMiddle != "-") WriteProperty(stream, "textureMiddle", TextureMiddle, indent: true);
-            if (Comment != "") WriteProperty(stream, "comment", Comment, indent: true);
+            stream.WriteLine("sidedef");
+            stream.WriteLine("{");
+            stream.WriteProperty("sector", _sector, indent: true);
+            if (OffsetX != 0) stream.WriteProperty("offsetX", OffsetX, indent: true);
+            if (OffsetY != 0) stream.WriteProperty("offsetY", OffsetY, indent: true);
+            if (TextureTop != "-") stream.WriteProperty("textureTop", TextureTop, indent: true);
+            if (TextureBottom != "-") stream.WriteProperty("textureBottom", TextureBottom, indent: true);
+            if (TextureMiddle != "-") stream.WriteProperty("textureMiddle", TextureMiddle, indent: true);
+            if (Comment != "") stream.WriteProperty("comment", Comment, indent: true);
             foreach (var property in UnknownProperties)
             {
-                WritePropertyVerbatim(stream, (string)property.Name, property.Value, indent: true);
+                stream.WritePropertyVerbatim((string)property.Name, property.Value, indent: true);
             }
-            WriteLine(stream, "}");
+            stream.WriteLine("}");
             return stream;
         }
         public void CheckSemanticValidity()

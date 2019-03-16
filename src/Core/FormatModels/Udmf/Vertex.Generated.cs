@@ -5,11 +5,12 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using SectorDirector.Core.FormatModels.Udmf.WritingExtensions;
 
 namespace SectorDirector.Core.FormatModels.Udmf
 {
-    [GeneratedCodeAttribute("DataModelGenerator", "1.0.0.0")]
-    public sealed partial class Vertex : BaseUdmfBlock, IWriteableUdmfBlock
+    [GeneratedCode("DataModelGenerator", "1.0.0.0")]
+    public sealed partial class Vertex : IWriteableUdmfBlock
     {
         private bool _xHasBeenSet = false;
         private double _x;
@@ -51,16 +52,16 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public Stream WriteTo(Stream stream)
         {
             CheckSemanticValidity();
-            WriteLine(stream, "vertex");
-            WriteLine(stream, "{");
-            WriteProperty(stream, "x", _x, indent: true);
-            WriteProperty(stream, "y", _y, indent: true);
-            if (Comment != "") WriteProperty(stream, "comment", Comment, indent: true);
+            stream.WriteLine("vertex");
+            stream.WriteLine("{");
+            stream.WriteProperty("x", _x, indent: true);
+            stream.WriteProperty("y", _y, indent: true);
+            if (Comment != "") stream.WriteProperty("comment", Comment, indent: true);
             foreach (var property in UnknownProperties)
             {
-                WritePropertyVerbatim(stream, (string)property.Name, property.Value, indent: true);
+                stream.WritePropertyVerbatim((string)property.Name, property.Value, indent: true);
             }
-            WriteLine(stream, "}");
+            stream.WriteLine("}");
             return stream;
         }
         public void CheckSemanticValidity()

@@ -5,11 +5,12 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using SectorDirector.Core.FormatModels.Udmf.WritingExtensions;
 
 namespace SectorDirector.Core.FormatModels.Udmf
 {
-    [GeneratedCodeAttribute("DataModelGenerator", "1.0.0.0")]
-    public sealed partial class LineDef : BaseUdmfBlock, IWriteableUdmfBlock
+    [GeneratedCode("DataModelGenerator", "1.0.0.0")]
+    public sealed partial class LineDef : IWriteableUdmfBlock
     {
         private bool _v1HasBeenSet = false;
         private int _v1;
@@ -115,34 +116,34 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public Stream WriteTo(Stream stream)
         {
             CheckSemanticValidity();
-            WriteLine(stream, "linedef");
-            WriteLine(stream, "{");
-            WriteProperty(stream, "v1", _v1, indent: true);
-            WriteProperty(stream, "v2", _v2, indent: true);
-            WriteProperty(stream, "sideFront", _sideFront, indent: true);
-            if (Id != -1) WriteProperty(stream, "id", Id, indent: true);
-            if (Blocking != false) WriteProperty(stream, "blocking", Blocking, indent: true);
-            if (BlockMonsters != false) WriteProperty(stream, "blockMonsters", BlockMonsters, indent: true);
-            if (TwoSided != false) WriteProperty(stream, "twoSided", TwoSided, indent: true);
-            if (DontPegTop != false) WriteProperty(stream, "dontPegTop", DontPegTop, indent: true);
-            if (DontPegBottom != false) WriteProperty(stream, "dontPegBottom", DontPegBottom, indent: true);
-            if (Secret != false) WriteProperty(stream, "secret", Secret, indent: true);
-            if (BlockSound != false) WriteProperty(stream, "blockSound", BlockSound, indent: true);
-            if (DontDraw != false) WriteProperty(stream, "dontDraw", DontDraw, indent: true);
-            if (Mapped != false) WriteProperty(stream, "mapped", Mapped, indent: true);
-            if (Special != 0) WriteProperty(stream, "special", Special, indent: true);
-            if (Arg0 != 0) WriteProperty(stream, "arg0", Arg0, indent: true);
-            if (Arg1 != 0) WriteProperty(stream, "arg1", Arg1, indent: true);
-            if (Arg2 != 0) WriteProperty(stream, "arg2", Arg2, indent: true);
-            if (Arg3 != 0) WriteProperty(stream, "arg3", Arg3, indent: true);
-            if (Arg4 != 0) WriteProperty(stream, "arg4", Arg4, indent: true);
-            if (SideBack != -1) WriteProperty(stream, "sideBack", SideBack, indent: true);
-            if (Comment != "") WriteProperty(stream, "comment", Comment, indent: true);
+            stream.WriteLine("linedef");
+            stream.WriteLine("{");
+            stream.WriteProperty("v1", _v1, indent: true);
+            stream.WriteProperty("v2", _v2, indent: true);
+            stream.WriteProperty("sideFront", _sideFront, indent: true);
+            if (Id != -1) stream.WriteProperty("id", Id, indent: true);
+            if (Blocking != false) stream.WriteProperty("blocking", Blocking, indent: true);
+            if (BlockMonsters != false) stream.WriteProperty("blockMonsters", BlockMonsters, indent: true);
+            if (TwoSided != false) stream.WriteProperty("twoSided", TwoSided, indent: true);
+            if (DontPegTop != false) stream.WriteProperty("dontPegTop", DontPegTop, indent: true);
+            if (DontPegBottom != false) stream.WriteProperty("dontPegBottom", DontPegBottom, indent: true);
+            if (Secret != false) stream.WriteProperty("secret", Secret, indent: true);
+            if (BlockSound != false) stream.WriteProperty("blockSound", BlockSound, indent: true);
+            if (DontDraw != false) stream.WriteProperty("dontDraw", DontDraw, indent: true);
+            if (Mapped != false) stream.WriteProperty("mapped", Mapped, indent: true);
+            if (Special != 0) stream.WriteProperty("special", Special, indent: true);
+            if (Arg0 != 0) stream.WriteProperty("arg0", Arg0, indent: true);
+            if (Arg1 != 0) stream.WriteProperty("arg1", Arg1, indent: true);
+            if (Arg2 != 0) stream.WriteProperty("arg2", Arg2, indent: true);
+            if (Arg3 != 0) stream.WriteProperty("arg3", Arg3, indent: true);
+            if (Arg4 != 0) stream.WriteProperty("arg4", Arg4, indent: true);
+            if (SideBack != -1) stream.WriteProperty("sideBack", SideBack, indent: true);
+            if (Comment != "") stream.WriteProperty("comment", Comment, indent: true);
             foreach (var property in UnknownProperties)
             {
-                WritePropertyVerbatim(stream, (string)property.Name, property.Value, indent: true);
+                stream.WritePropertyVerbatim((string)property.Name, property.Value, indent: true);
             }
-            WriteLine(stream, "}");
+            stream.WriteLine("}");
             return stream;
         }
         public void CheckSemanticValidity()

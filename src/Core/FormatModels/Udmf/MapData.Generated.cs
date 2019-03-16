@@ -5,11 +5,12 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using SectorDirector.Core.FormatModels.Udmf.WritingExtensions;
 
 namespace SectorDirector.Core.FormatModels.Udmf
 {
-    [GeneratedCodeAttribute("DataModelGenerator", "1.0.0.0")]
-    public sealed partial class MapData : BaseUdmfBlock, IWriteableUdmfBlock
+    [GeneratedCode("DataModelGenerator", "1.0.0.0")]
+    public sealed partial class MapData : IWriteableUdmfBlock
     {
         private bool _nameSpaceHasBeenSet = false;
         private string _nameSpace;
@@ -56,18 +57,18 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public Stream WriteTo(Stream stream)
         {
             CheckSemanticValidity();
-            WriteProperty(stream, "namespace", _nameSpace, indent: false);
-            if (Comment != "") WriteProperty(stream, "comment", Comment, indent: false);
+            stream.WriteProperty("namespace", _nameSpace, indent: false);
+            if (Comment != "") stream.WriteProperty("comment", Comment, indent: false);
             foreach (var property in UnknownProperties)
             {
-                WritePropertyVerbatim(stream, (string)property.Name, property.Value, indent: false);
+                stream.WritePropertyVerbatim((string)property.Name, property.Value, indent: false);
             }
-            WriteBlocks(stream, LineDefs );
-            WriteBlocks(stream, SideDefs );
-            WriteBlocks(stream, Vertices );
-            WriteBlocks(stream, Sectors );
-            WriteBlocks(stream, Things );
-            WriteBlocks(stream, UnknownBlocks );
+            stream.WriteBlocks(LineDefs );
+            stream.WriteBlocks(SideDefs );
+            stream.WriteBlocks(Vertices );
+            stream.WriteBlocks(Sectors );
+            stream.WriteBlocks(Things );
+            stream.WriteBlocks(UnknownBlocks );
             return stream;
         }
         public void CheckSemanticValidity()

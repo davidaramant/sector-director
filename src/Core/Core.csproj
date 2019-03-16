@@ -196,7 +196,6 @@
     <Compile Include="FormatModels\Udmf\Parsing\UdmfSemanticAnalyzer.Generated.cs" />
     <Compile Include="FormatModels\Common\Identifier.cs" />
     <Compile Include="FormatModels\Pk3\Pk3File.cs" />
-    <Compile Include="FormatModels\Udmf\BaseUdmfBlock.cs" />
     <Compile Include="FormatModels\Udmf\InvalidUdmfException.cs" />
     <Compile Include="FormatModels\Udmf\IWriteableUdmfBlock.cs" />
     <Compile Include="FormatModels\Udmf\LineDef.cs" />
@@ -206,6 +205,7 @@
     <Compile Include="FormatModels\Udmf\UnknownBlock.cs" />
     <Compile Include="FormatModels\Udmf\UnknownProperty.cs" />
     <Compile Include="FormatModels\Udmf\Vertex.Generated.cs" />
+    <Compile Include="FormatModels\Udmf\WritingExtensions\StreamExtensions.cs" />
     <Compile Include="FormatModels\Wad\StreamExtensions\Extensions.cs" />
     <Compile Include="FormatModels\Wad\DataLump.cs" />
     <Compile Include="FormatModels\Wad\ILump.cs" />

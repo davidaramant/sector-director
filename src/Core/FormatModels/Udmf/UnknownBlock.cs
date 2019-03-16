@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using SectorDirector.Core.FormatModels.Common;
+using SectorDirector.Core.FormatModels.Udmf.WritingExtensions;
 
 namespace SectorDirector.Core.FormatModels.Udmf
 {
-    public sealed class UnknownBlock : BaseUdmfBlock, IWriteableUdmfBlock
+    public sealed class UnknownBlock : IWriteableUdmfBlock
     {
         public Identifier Name { get; }
         public List<UnknownProperty> Properties { get; } = new List<UnknownProperty>();
@@ -20,13 +21,13 @@ namespace SectorDirector.Core.FormatModels.Udmf
 
         public Stream WriteTo(Stream stream)
         {
-            WriteLine(stream, (string)Name);
-            WriteLine(stream, "{");
+            stream.WriteLine((string)Name);
+            stream.WriteLine("{");
             foreach (var property in Properties)
             {
-                WritePropertyVerbatim(stream, (string)property.Name, property.Value, indent: true);
+                stream.WritePropertyVerbatim((string)property.Name, property.Value, indent: true);
             }
-            WriteLine(stream, "}");
+            stream.WriteLine("}");
 
             return stream;
         }

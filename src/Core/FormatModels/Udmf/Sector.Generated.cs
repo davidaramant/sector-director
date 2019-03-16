@@ -5,11 +5,12 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using SectorDirector.Core.FormatModels.Udmf.WritingExtensions;
 
 namespace SectorDirector.Core.FormatModels.Udmf
 {
-    [GeneratedCodeAttribute("DataModelGenerator", "1.0.0.0")]
-    public sealed partial class Sector : BaseUdmfBlock, IWriteableUdmfBlock
+    [GeneratedCode("DataModelGenerator", "1.0.0.0")]
+    public sealed partial class Sector : IWriteableUdmfBlock
     {
         private bool _textureFloorHasBeenSet = false;
         private string _textureFloor;
@@ -66,21 +67,21 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public Stream WriteTo(Stream stream)
         {
             CheckSemanticValidity();
-            WriteLine(stream, "sector");
-            WriteLine(stream, "{");
-            WriteProperty(stream, "textureFloor", _textureFloor, indent: true);
-            WriteProperty(stream, "textureCeiling", _textureCeiling, indent: true);
-            if (HeightFloor != 0) WriteProperty(stream, "heightFloor", HeightFloor, indent: true);
-            if (HeightCeiling != 0) WriteProperty(stream, "heightCeiling", HeightCeiling, indent: true);
-            if (LightLevel != 160) WriteProperty(stream, "lightLevel", LightLevel, indent: true);
-            if (Special != 0) WriteProperty(stream, "special", Special, indent: true);
-            if (Id != 0) WriteProperty(stream, "id", Id, indent: true);
-            if (Comment != "") WriteProperty(stream, "comment", Comment, indent: true);
+            stream.WriteLine("sector");
+            stream.WriteLine("{");
+            stream.WriteProperty("textureFloor", _textureFloor, indent: true);
+            stream.WriteProperty("textureCeiling", _textureCeiling, indent: true);
+            if (HeightFloor != 0) stream.WriteProperty("heightFloor", HeightFloor, indent: true);
+            if (HeightCeiling != 0) stream.WriteProperty("heightCeiling", HeightCeiling, indent: true);
+            if (LightLevel != 160) stream.WriteProperty("lightLevel", LightLevel, indent: true);
+            if (Special != 0) stream.WriteProperty("special", Special, indent: true);
+            if (Id != 0) stream.WriteProperty("id", Id, indent: true);
+            if (Comment != "") stream.WriteProperty("comment", Comment, indent: true);
             foreach (var property in UnknownProperties)
             {
-                WritePropertyVerbatim(stream, (string)property.Name, property.Value, indent: true);
+                stream.WritePropertyVerbatim((string)property.Name, property.Value, indent: true);
             }
-            WriteLine(stream, "}");
+            stream.WriteLine("}");
             return stream;
         }
         public void CheckSemanticValidity()

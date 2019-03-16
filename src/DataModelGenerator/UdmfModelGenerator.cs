@@ -27,14 +27,15 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using SectorDirector.Core.FormatModels.Udmf.WritingExtensions;
 
 namespace SectorDirector.Core.FormatModels.Udmf");
 
                     output.OpenParen();
                     output.Line(
-                        $"[GeneratedCodeAttribute(\"{CurrentLibraryInfo.Name}\", \"{CurrentLibraryInfo.Version}\")]");
+                        $"[GeneratedCode(\"{CurrentLibraryInfo.Name}\", \"{CurrentLibraryInfo.Version}\")]");
                     output.Line(
-                        $"public sealed partial class {block.CodeName} : BaseUdmfBlock, IWriteableUdmfBlock");
+                        $"public sealed partial class {block.CodeName} : IWriteableUdmfBlock");
                     output.OpenParen();
 
                     WriteProperties(block, output);
@@ -151,38 +152,38 @@ namespace SectorDirector.Core.FormatModels.Udmf");
 
             if (block.IsSubBlock)
             {
-                sb.Line($"WriteLine(stream, \"{block.FormatName}\");");
-                sb.Line("WriteLine(stream, \"{\");");
+                sb.Line($"stream.WriteLine(\"{block.FormatName}\");");
+                sb.Line("stream.WriteLine(\"{\");");
             }
 
             // WRITE ALL REQUIRED PROPERTIES
             foreach (var field in block.Fields.Where(_ => _.IsRequired))
             {
                 sb.Line(
-                    $"WriteProperty(stream, \"{field.FormatName}\", {field.FieldName}, indent: {indent});");
+                    $"stream.WriteProperty(\"{field.FormatName}\", {field.FieldName}, indent: {indent});");
             }
             // WRITE OPTIONAL PROPERTIES
             foreach (var field in block.Fields.Where(_ => !_.IsRequired))
             {
                 sb.Line(
-                    $"if ({field.PropertyName} != {field.DefaultValue}) WriteProperty(stream, \"{field.FormatName}\", {field.PropertyName}, indent: {indent});");
+                    $"if ({field.PropertyName} != {field.DefaultValue}) stream.WriteProperty(\"{field.FormatName}\", {field.PropertyName}, indent: {indent});");
             }
 
             // WRITE UNKNOWN PROPERTIES
             sb.Line($"foreach (var property in UnknownProperties)").
                 OpenParen().
-                Line($"WritePropertyVerbatim(stream, (string)property.Name, property.Value, indent: {indent});").
+                Line($"stream.WritePropertyVerbatim((string)property.Name, property.Value, indent: {indent});").
                 CloseParen();
 
             // WRITE SUB-BLOCKS
             foreach (var subBlock in block.SubBlocks.Where(b => !(b is UnknownPropertiesList)))
             {
-                sb.Line($"WriteBlocks(stream, {subBlock.PropertyName} );");
+                sb.Line($"stream.WriteBlocks({subBlock.PropertyName} );");
             }
 
             if (block.IsSubBlock)
             {
-                sb.Line("WriteLine(stream, \"}\");");
+                sb.Line("stream.WriteLine(\"}\");");
             }
             sb.Line("return stream;").
                 CloseParen();
