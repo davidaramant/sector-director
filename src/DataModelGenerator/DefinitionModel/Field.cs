@@ -2,8 +2,9 @@
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System;
+using SectorDirector.DataModelGenerator.Utilities;
 
-namespace SectorDirector.DataModelGenerator.PropertyTypes
+namespace SectorDirector.DataModelGenerator.DefinitionModel
 {
     public enum FieldType
     {

@@ -4,7 +4,8 @@
 using System;
 using System.IO;
 using System.Linq;
-using SectorDirector.DataModelGenerator.PropertyTypes;
+using SectorDirector.DataModelGenerator.DefinitionModel;
+using SectorDirector.DataModelGenerator.Utilities;
 
 namespace SectorDirector.DataModelGenerator
 {
@@ -33,7 +34,7 @@ namespace SectorDirector.Core.FormatModels.Udmf");
                     output.Line(
                         $"[GeneratedCodeAttribute(\"{CurrentLibraryInfo.Name}\", \"{CurrentLibraryInfo.Version}\")]");
                     output.Line(
-                        $"public sealed partial class {block.CodeName.ToPascalCase()} : BaseUdmfBlock, IWriteableUdmfBlock");
+                        $"public sealed partial class {block.CodeName} : BaseUdmfBlock, IWriteableUdmfBlock");
                     output.OpenParen();
 
                     WriteProperties(block, output);
@@ -53,9 +54,9 @@ namespace SectorDirector.Core.FormatModels.Udmf");
         {
             output.
                 Line().
-                Line($"public {block.CodeName.ToPascalCase()} Clone()").
+                Line($"public {block.CodeName} Clone()").
                 OpenParen().
-                Line($"return new {block.CodeName.ToPascalCase()}(").IncreaseIndent();
+                Line($"return new {block.CodeName}(").IncreaseIndent();
 
             foreach (var indexed in block.OrderedProperties().Select((param, index) => new { param, index }))
             {
@@ -105,8 +106,8 @@ namespace SectorDirector.Core.FormatModels.Udmf");
 
         private static void WriteConstructors(IndentedWriter sb, Block block)
         {
-            sb.Line($"public {block.CodeName.ToPascalCase()}() {{ }}");
-            sb.Line($"public {block.CodeName.ToPascalCase()}(");
+            sb.Line($"public {block.CodeName}() {{ }}");
+            sb.Line($"public {block.CodeName}(");
             sb.IncreaseIndent();
 
             foreach (var indexed in block.OrderedProperties().Select((param, index) => new { param, index }))

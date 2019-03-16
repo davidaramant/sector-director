@@ -2,7 +2,7 @@
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System.Collections.Generic;
-using SectorDirector.DataModelGenerator.PropertyTypes;
+using SectorDirector.DataModelGenerator.DefinitionModel;
 
 namespace SectorDirector.DataModelGenerator
 {
@@ -11,7 +11,7 @@ namespace SectorDirector.DataModelGenerator
         public static readonly IEnumerable<Block> Blocks = new Block[]
         {
             new Block("linedef",
-                className:"LineDef",
+                codeName:"LineDef",
                 properties:new IProperty[]
                 {
                     new Field("id",FieldType.Integer, defaultValue:-1),
@@ -44,7 +44,7 @@ namespace SectorDirector.DataModelGenerator
                 }),
 
             new Block("sidedef",
-                className:"SideDef",
+                codeName:"SideDef",
                 properties:new IProperty[]
                 {
                     new Field("offsetX",FieldType.Integer, defaultValue:0),

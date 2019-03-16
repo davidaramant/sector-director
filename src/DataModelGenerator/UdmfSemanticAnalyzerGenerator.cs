@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using SectorDirector.DataModelGenerator.Utilities;
 
 namespace SectorDirector.DataModelGenerator
 {

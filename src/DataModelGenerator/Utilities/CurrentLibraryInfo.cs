@@ -4,7 +4,7 @@
 using System;
 using System.Reflection;
 
-namespace SectorDirector.DataModelGenerator
+namespace SectorDirector.DataModelGenerator.Utilities
 {
     public static class CurrentLibraryInfo
     {
