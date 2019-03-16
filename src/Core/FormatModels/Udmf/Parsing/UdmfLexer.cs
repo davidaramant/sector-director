@@ -36,9 +36,9 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 			/// </summary>
 			public const int TerminalIdentifier = 0x0005;
 			/// <summary>
-			/// The unique identifier for terminal KEYWORD
+			/// The unique identifier for terminal BOOLEAN
 			/// </summary>
-			public const int TerminalKeyword = 0x0006;
+			public const int TerminalBoolean = 0x0006;
 			/// <summary>
 			/// The unique identifier for terminal QUOTED_STRING
 			/// </summary>
@@ -75,7 +75,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 			new Symbol(0x0003, "WHITE_SPACE"),
 			new Symbol(0x0004, "SEPARATOR"),
 			new Symbol(0x0005, "IDENTIFIER"),
-			new Symbol(0x0006, "KEYWORD"),
+			new Symbol(0x0006, "BOOLEAN"),
 			new Symbol(0x0007, "QUOTED_STRING"),
 			new Symbol(0x0008, "INTEGER"),
 			new Symbol(0x0009, "FLOAT"),

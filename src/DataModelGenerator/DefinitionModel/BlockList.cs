@@ -19,7 +19,7 @@ namespace SectorDirector.DataModelGenerator.DefinitionModel
 
         public BlockList(string name, string singularName = null)
         {
-            FormatName = name;
+            FormatName = singularName ?? name;
             PropertyName = (singularName == null ) ? name.ToPluralPascalCase() : name.ToPascalCase();
             SingularName = singularName?.ToPascalCase() ?? name.ToPascalCase();
         }

@@ -15,8 +15,8 @@
     IDENTIFIER    -> [A-Za-z_]+ [A-Za-z0-9_]*;
 
     // These two are too simplistic but they seem to work for real-world scenarios
-    // NOTE: Keyword must come after Identifier, otherwise they get confused for each other
-    KEYWORD       -> 'true' | 'false';
+    // NOTE: Boolean must come after Identifier, otherwise they get confused for each other
+    BOOLEAN       -> 'true' | 'false';
     QUOTED_STRING -> '"'[A-Za-z0-9_ .;:]*'"';
 
     INTEGER       -> [+-]?[0-9]+ 
@@ -26,7 +26,7 @@
   }
   rules
   {
-    value -> INTEGER | FLOAT | QUOTED_STRING | KEYWORD;
+    value -> INTEGER | FLOAT | QUOTED_STRING | BOOLEAN;
 
     assignment_expr -> IDENTIFIER '=' value ';';
 

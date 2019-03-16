@@ -39,6 +39,60 @@ namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
         }
 
         [Test]
+        public void ShouldParseBlocks()
+        {
+            var map = new MapData()
+            {
+                NameSpace = "ThisIsRequired",
+                Vertices = { new Vertex(1, 2) }
+            };
+
+            AssertRoundTrip(map);
+        }
+
+        [Test]
+        public void ShouldParseUnknownBlocks()
+        {
+            var map = new MapData()
+            {
+                NameSpace = "ThisIsRequired",
+                UnknownBlocks =
+                {
+                    new UnknownBlock(new Identifier("SomeWeirdBlock"))
+                    {
+                        Properties = 
+                        {
+                            new UnknownProperty(new Identifier("id1"), "1" ),
+                            new UnknownProperty(new Identifier("id2"), "true" ),
+                        }
+                    }
+                }
+            };
+
+            AssertRoundTrip(map);
+        }
+
+        [Test]
+        public void ShouldParseUnknownFieldsInBlock()
+        {
+            var map = new MapData()
+            {
+                NameSpace = "ThisIsRequired",
+                Vertices = { new Vertex(1, 2)
+                {
+                    UnknownProperties =
+                    {
+                        new UnknownProperty(new Identifier("id1"), "1" ),
+                        new UnknownProperty(new Identifier("id2"), "true" ),
+                    }
+                } },
+            };
+
+            AssertRoundTrip(map);
+        }
+
+
+        [Test]
         public void ShouldRoundTripDemoMap()
         {
             AssertRoundTrip(DemoMap.Create());
