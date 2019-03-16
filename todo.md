@@ -17,6 +17,7 @@
 - [ ] Player horizontal clipping (properly taking into account radius)
 - [ ] Sub-sector division
 - [ ] Determine if a sector is convex
+- [ ] Use a cool BMF instead of boring Consolas font (MonoGameExtended)
 
 ## Misc
 
@@ -25,6 +26,7 @@
 - [x] Benchmarks...
 - [x] Convert projects to .NET Standard
 - [ ] Upgrade to Core 3 when it's released and MonoGame support Core
+- [ ] Fix the Azure pipeline file once every is Core.  Mixing Framework and Core is a mess
 - [ ] Deal with problematic Clipper dependency (not netstandard compliant)
 
 # 2D Renderer
