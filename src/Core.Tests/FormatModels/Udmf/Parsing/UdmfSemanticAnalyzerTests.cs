@@ -2,11 +2,9 @@
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System.IO;
-using System.Text;
 using NUnit.Framework;
 using SectorDirector.Core.FormatModels.Common;
 using SectorDirector.Core.FormatModels.Udmf;
-using SectorDirector.Core.FormatModels.Udmf.Parsing;
 using Is = NUnit.DeepObjectCompare.Is;
 
 namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
@@ -113,12 +111,7 @@ namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
 
                 stream.Position = 0;
 
-                using (var textReader = new StreamReader(stream, Encoding.ASCII))
-                {
-                    var lexer = new UdmfLexer(textReader);
-                    var parser = new UdmfParser(lexer);
-                    return UdmfSemanticAnalyzer.Process(parser.Parse());
-                }
+                return MapData.LoadFrom(stream);
             }
         }
 
