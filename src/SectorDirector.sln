@@ -24,7 +24,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Tests", "Core.Tests\Co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapGeneration", "MapGeneration\MapGeneration.csproj", "{AEDBA12A-1760-478F-AF99-78065413F7DA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestLauncher", "TestLauncher\TestLauncher.csproj", "{BC1A804D-1B44-4095-80F2-6085B6BFC714}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapGeneration.Launcher", "MapGeneration.Launcher\MapGeneration.Launcher.csproj", "{BC1A804D-1B44-4095-80F2-6085B6BFC714}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

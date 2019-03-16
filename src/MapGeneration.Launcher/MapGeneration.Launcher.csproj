@@ -6,7 +6,7 @@
     <RuntimeFrameworkVersion>2.2.0</RuntimeFrameworkVersion>
     <LangVersion>latest</LangVersion>
     <Platforms>x64</Platforms>
-    <RootNamespace>SectorDirector.TestLauncher</RootNamespace>
+    <RootNamespace>SectorDirector.MapGeneration.Launcher</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

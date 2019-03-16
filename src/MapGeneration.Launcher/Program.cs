@@ -10,7 +10,7 @@ using SectorDirector.Core.FormatModels.Udmf;
 using SectorDirector.Core.FormatModels.Wad;
 using SectorDirector.MapGeneration;
 
-namespace SectorDirector.TestLauncher
+namespace SectorDirector.MapGeneration.Launcher
 {
     class Program
     {
