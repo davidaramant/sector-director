@@ -9,8 +9,18 @@
   }
   terminals
   {
-    WHITE_SPACE   -> U+0020 | U+0009 | U+000A | U+000B | U+000C | U+000D ;
-    SEPARATOR     -> WHITE_SPACE+;
+    NEW_LINE      -> U+000D /* CR */
+                  |  U+000A /* LF */
+                  |  U+000D U+000A /* CR LF */
+                  |  U+0085 // Next line character
+                  |  U+2028 // Line separator character
+                  |  U+2029 ; //Paragraph separator character (U+2029)
+
+    COMMENT_LINE  -> '//' (.* - (.* NEW_LINE .*)) ;
+    COMMENT_BLOCK -> '/*' (.* - (.* '*/' .*)) '*/' ;
+
+    WHITE_SPACE   -> NEW_LINE | U+0020 | U+0009 | U+000B | U+000C ;
+    SEPARATOR     -> WHITE_SPACE+ | COMMENT_LINE | COMMENT_BLOCK;
 
     IDENTIFIER    -> [A-Za-z_]+ [A-Za-z0-9_]*;
 
