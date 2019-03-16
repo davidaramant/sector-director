@@ -47,9 +47,6 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Piglet, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Piglet.1.4.0\lib\net40\Piglet.dll</HintPath>
-    </Reference>
     <Reference Include="SharpCompress, Version=0.22.0.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpCompress.0.22.0\lib\net45\SharpCompress.dll</HintPath>
     </Reference>
@@ -189,23 +186,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FormatModels\Common\Assignment.cs" />
-    <Compile Include="FormatModels\Common\BaseLexer.cs" />
-    <Compile Include="FormatModels\Common\IHaveAssignments.cs" />
-    <Compile Include="FormatModels\Common\ILexer.cs" />
     <Compile Include="FormatModels\Common\ParsingExtension.cs" />
-    <Compile Include="FormatModels\Common\SyntaxExtensions.cs" />
-    <Compile Include="FormatModels\Common\Token.cs" />
     <Compile Include="FormatModels\Udmf\LineDef.Generated.cs" />
     <Compile Include="FormatModels\Udmf\MapData.cs" />
     <Compile Include="FormatModels\Udmf\MapData.Generated.cs" />
-    <Compile Include="FormatModels\Udmf\Parsing\ArrayBlock.cs" />
-    <Compile Include="FormatModels\Udmf\Parsing\Block.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\UdmfLexer.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\UdmfParser.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\UdmfSemanticAnalyzer.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\UdmfSemanticAnalyzer.Generated.cs" />
-    <Compile Include="FormatModels\Udmf\Parsing\UdmfSyntaxTree.cs" />
     <Compile Include="FormatModels\Common\Identifier.cs" />
     <Compile Include="FormatModels\Pk3\Pk3File.cs" />
     <Compile Include="FormatModels\Udmf\BaseUdmfBlock.cs" />
