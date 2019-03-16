@@ -31,43 +31,9 @@ namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
                     var lexer = new UdmfLexer(textReader);
                     var parser = new UdmfParser(lexer);
 
-                    var result = parser.Parse();
+                    ParseResult result = parser.Parse();
                     Assert.That(result.IsSuccess, Is.True);
                 }
-            }
-        }
-
-        [Test]
-        public void ShouldRoundTripDemoMap()
-        {
-            var map = DemoMap.Create();
-
-            using (var stream = new MemoryStream())
-            {
-                map.WriteTo(stream);
-
-                stream.Position = 0;
-
-                using (var textReader = new StreamReader(stream, Encoding.ASCII))
-                {
-                    var sa = new UdmfSyntaxAnalyzer();
-                    //var roundTripped = UdmfParser.Parse(sa.Analyze(new UdmfLexer(textReader)));
-
-                    //Assert.That(roundTripped, Is.DeepEqualTo(map));                   
-                    throw new NotImplementedException("Switch over to new parser");
-                }
-            }
-        }
-
-        [Test]
-        public void ShouldParseOldDemoMap()
-        {
-            using (var stream = File.OpenRead(Path.Combine(TestContext.CurrentContext.TestDirectory, "FormatModels", "Udmf", "Parsing", "TEXTMAP.txt")))
-            using (var textReader = new StreamReader(stream, Encoding.ASCII))
-            {
-                var sa = new UdmfSyntaxAnalyzer();
-                //var map = UdmfParser.Parse(sa.Analyze(new UdmfLexer(textReader)));
-                throw new NotImplementedException("Switch over to new parser");
             }
         }
     }

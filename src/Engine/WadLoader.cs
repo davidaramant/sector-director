@@ -20,7 +20,6 @@ namespace SectorDirector.Engine
 
             var wad = WadFile.Read(path);
 
-            var sa = new UdmfSyntaxAnalyzer();
 
             foreach (var lump in wad.Where(l => l.Name.ToString() == "TEXTMAP"))
             {

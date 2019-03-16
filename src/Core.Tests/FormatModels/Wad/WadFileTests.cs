@@ -62,7 +62,6 @@ namespace SectorDirector.Core.Tests.FormatModels.Wad
                 using (var ms = new MemoryStream(mapBytes))
                 using (var textReader = new StreamReader(ms, Encoding.ASCII))
                 {
-                    var sa = new UdmfSyntaxAnalyzer();
                     throw new NotImplementedException("Switch over to new parser");
                     //var roundTripped = UdmfParser.Parse(sa.Analyze(new UdmfLexer(textReader)));
 

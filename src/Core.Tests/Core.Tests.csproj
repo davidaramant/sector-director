@@ -60,7 +60,7 @@
   <ItemGroup>
     <Compile Include="DemoMap.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\UdmfParserTests.cs" />
-    <Compile Include="FormatModels\Udmf\Parsing\UdmfSyntaxAnalyzerTests.cs" />
+    <Compile Include="FormatModels\Udmf\Parsing\UdmfSemanticAnalyzerTests.cs" />
     <Compile Include="FormatModels\Wad\LumpNameTests.cs" />
     <Compile Include="FormatModels\Wad\WadFileTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -81,11 +81,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="FormatModels\Udmf\Parsing\TEXTMAP.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

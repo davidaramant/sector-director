@@ -40,9 +40,7 @@ namespace SectorDirector.DataModelGenerator
             private set { _collectionType = value; }
         }
 
-        public bool AllowMultiple { get; }
-
-        public string SingularName => _singularName.OrElse(ClassName);
+        public string SingularName => _singularName.OrElse(CodeName);
 
         public string PropertyTypeString
         {
@@ -67,7 +65,7 @@ namespace SectorDirector.DataModelGenerator
                     case PropertyType.Set:
                         return $"HashSet<{CollectionType}>";
                     case PropertyType.Block:
-                        return CollectionType ?? ClassName.ToPascalCase();
+                        return CollectionType ?? CodeName.ToPascalCase();
                     case PropertyType.List:
                         return $"List<{CollectionType}>";
                     case PropertyType.ImmutableList:
@@ -137,12 +135,12 @@ namespace SectorDirector.DataModelGenerator
                     case PropertyType.String:
                     case PropertyType.Block:
                     case PropertyType.Identifier:
-                        return ClassName.ToCamelCase();
+                        return CodeName.ToCamelCase();
                     case PropertyType.List:
                     case PropertyType.Set:
                     case PropertyType.ImmutableList:
                     case PropertyType.MappedBlockList:
-                        return _singularName.HasValue ? ClassName.ToCamelCase() : ClassName.ToPluralCamelCase();
+                        return _singularName.HasValue ? CodeName.ToCamelCase() : CodeName.ToPluralCamelCase();
                     case PropertyType.UnknownProperties:
                         return "unknownProperties";
                     case PropertyType.UnknownBlocks:
@@ -168,12 +166,12 @@ namespace SectorDirector.DataModelGenerator
                     case PropertyType.String:
                     case PropertyType.Block:
                     case PropertyType.Identifier:
-                        return ClassName.ToPascalCase();
+                        return CodeName.ToPascalCase();
                     case PropertyType.Set:
                     case PropertyType.List:
                     case PropertyType.ImmutableList:
                     case PropertyType.MappedBlockList:
-                        return _singularName.HasValue ? ClassName.ToPascalCase() : ClassName.ToPluralPascalCase();
+                        return _singularName.HasValue ? CodeName.ToPascalCase() : CodeName.ToPluralPascalCase();
                     case PropertyType.UnknownProperties:
                         return "UnknownProperties";
                     case PropertyType.UnknownBlocks:
@@ -385,18 +383,16 @@ namespace SectorDirector.DataModelGenerator
                 string formatName = null,
                 string singularName = null,
                 object defaultValue = null,
-                string collectionType = null,
-                bool allowMultiple = false) :
+                string collectionType = null) :
                     base(
                         formatName: formatName ?? name,
-                        className: name)
+                        codeName: name)
         {
             Type = type;
             IsMetaData = isMetaData;
             _singularName = singularName.ToMaybe();
             _defaultValue = defaultValue;
             CollectionType = collectionType;
-            AllowMultiple = allowMultiple;
         }
     }
 }

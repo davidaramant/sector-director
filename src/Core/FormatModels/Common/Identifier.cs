@@ -11,25 +11,10 @@ namespace SectorDirector.Core.FormatModels.Common
     {
         private readonly string _name;
 
-        public Identifier(string name)
-        {
-            _name = name;
-        }
-
-        public string ToLower()
-        {
-            return _name.ToLowerInvariant();
-        }
-
-        public override string ToString()
-        {
-            return _name;
-        }
-
-        public static explicit operator string(Identifier id)
-        {
-            return id._name;
-        }
+        public Identifier(string name) => _name = name;
+        public string ToLower() => _name.ToLowerInvariant();
+        public override string ToString() => _name;
+        public static explicit operator string(Identifier id) => id._name;
 
         #region Equality members
 

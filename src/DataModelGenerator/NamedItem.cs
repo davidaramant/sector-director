@@ -5,13 +5,13 @@ namespace SectorDirector.DataModelGenerator
 {
     public class NamedItem
     {
-        public NamedItem(string formatName, string className)
+        public NamedItem(string formatName, string codeName)
         {
             FormatName = formatName;
-            ClassName = className;
+            CodeName = codeName;
         }
 
         public string FormatName { get; }
-        public string ClassName { get; }
+        public string CodeName { get; }
     }
 }

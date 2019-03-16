@@ -26,10 +26,10 @@ namespace SectorDirector.DataModelGenerator
                 UdmfModelGenerator.WriteToPath(udmfPath);
 
                 // Generate mapping of HIME output to data model
-                //using (var parserStream = File.CreateText(Path.Combine(udmfParsingPath, "UdmfParser.Generated.cs")))
-                //{
-                //    UdmfParserGenerator.WriteTo(parserStream);
-                //}
+                using (var analyzerStream = File.CreateText(Path.Combine(udmfParsingPath, "UdmfSemanticAnalyzer.Generated.cs")))
+                {
+                    UdmfSemanticAnalyzerGenerator.WriteTo(analyzerStream);
+                }
 
 
                 himeProcess.WaitForExit();

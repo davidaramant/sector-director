@@ -13,7 +13,7 @@ namespace SectorDirector.DataModelGenerator
         {
             foreach (var block in UdmfDefinitions.Blocks)
             {
-                using(var blockStream = File.CreateText(Path.Combine(basePath, block.ClassName.ToPascalCase() + ".Generated.cs")))
+                using (var blockStream = File.CreateText(Path.Combine(basePath, block.CodeName.ToPascalCase() + ".Generated.cs")))
                 using (var output = new IndentedWriter(blockStream))
                 {
                     output.Line(
@@ -28,11 +28,10 @@ using System.Linq;
 namespace SectorDirector.Core.FormatModels.Udmf");
 
                     output.OpenParen();
-                    var normalWriteInheritance = block.NormalWriting ? ", IWriteableUdmfBlock" : String.Empty;
                     output.Line(
                         $"[GeneratedCodeAttribute(\"{CurrentLibraryInfo.Name}\", \"{CurrentLibraryInfo.Version}\")]");
                     output.Line(
-                        $"public sealed partial class {block.ClassName.ToPascalCase()} : BaseUdmfBlock{normalWriteInheritance}");
+                        $"public sealed partial class {block.CodeName.ToPascalCase()} : BaseUdmfBlock, IWriteableUdmfBlock");
                     output.OpenParen();
 
                     WriteProperties(block, output);
@@ -44,7 +43,7 @@ namespace SectorDirector.Core.FormatModels.Udmf");
                     output.CloseParen();
                     output.Line();
                     output.CloseParen(); // End namespace
-                } 
+                }
             }
         }
 
@@ -52,9 +51,9 @@ namespace SectorDirector.Core.FormatModels.Udmf");
         {
             output.
                 Line().
-                Line($"public {block.ClassName.ToPascalCase()} Clone()").
+                Line($"public {block.CodeName.ToPascalCase()} Clone()").
                 OpenParen().
-                Line($"return new {block.ClassName.ToPascalCase()}(").IncreaseIndent();
+                Line($"return new {block.CodeName.ToPascalCase()}(").IncreaseIndent();
 
             foreach (var indexed in block.OrderedProperties().Select((param, index) => new { param, index }))
             {
@@ -77,15 +76,15 @@ namespace SectorDirector.Core.FormatModels.Udmf");
         {
             foreach (var property in block.Properties.Where(_ => _.IsScalarField && _.IsRequired))
             {
-                sb.Line($"private bool {property.ClassName.ToFieldName()}HasBeenSet = false;").
-                    Line($"private {property.PropertyTypeString} {property.ClassName.ToFieldName()};").
-                    Line($"public {property.PropertyTypeString} {property.ClassName.ToPascalCase()}").
+                sb.Line($"private bool {property.CodeName.ToFieldName()}HasBeenSet = false;").
+                    Line($"private {property.PropertyTypeString} {property.CodeName.ToFieldName()};").
+                    Line($"public {property.PropertyTypeString} {property.CodeName.ToPascalCase()}").
                     OpenParen().
-                    Line($"get {{ return {property.ClassName.ToFieldName()}; }}").
+                    Line($"get {{ return {property.CodeName.ToFieldName()}; }}").
                     Line($"set").
                     OpenParen().
-                    Line($"{property.ClassName.ToFieldName()}HasBeenSet = true;").
-                    Line($"{property.ClassName.ToFieldName()} = value;").
+                    Line($"{property.CodeName.ToFieldName()}HasBeenSet = true;").
+                    Line($"{property.CodeName.ToFieldName()} = value;").
                     CloseParen().
                     CloseParen();
             }
@@ -98,8 +97,8 @@ namespace SectorDirector.Core.FormatModels.Udmf");
 
         private static void WriteConstructors(IndentedWriter sb, Block block)
         {
-            sb.Line($"public {block.ClassName.ToPascalCase()}() {{ }}");
-            sb.Line($"public {block.ClassName.ToPascalCase()}(");
+            sb.Line($"public {block.CodeName.ToPascalCase()}() {{ }}");
+            sb.Line($"public {block.CodeName.ToPascalCase()}(");
             sb.IncreaseIndent();
 
             foreach (var indexed in block.OrderedProperties().Select((param, index) => new { param, index }))
@@ -121,8 +120,6 @@ namespace SectorDirector.Core.FormatModels.Udmf");
 
         private static void WriteWriteToMethod(Block block, IndentedWriter sb)
         {
-            if (!block.NormalWriting) return;
-
             sb.Line(@"public Stream WriteTo(Stream stream)").
                 OpenParen().
                 Line("CheckSemanticValidity();");
@@ -139,23 +136,20 @@ namespace SectorDirector.Core.FormatModels.Udmf");
             foreach (var property in block.Properties.Where(_ => _.IsScalarField && _.IsRequired))
             {
                 sb.Line(
-                    $"WriteProperty(stream, \"{property.FormatName}\", {property.ClassName.ToFieldName()}, indent: {indent});");
+                    $"WriteProperty(stream, \"{property.FormatName}\", {property.CodeName.ToFieldName()}, indent: {indent});");
             }
             // WRITE OPTIONAL PROPERTIES
             foreach (var property in block.Properties.Where(_ => _.IsScalarField && !_.IsRequired))
             {
                 sb.Line(
-                    $"if ({property.ClassName.ToPascalCase()} != {property.DefaultAsString}) WriteProperty(stream, \"{property.FormatName}\", {property.ClassName.ToPascalCase()}, indent: {indent});");
+                    $"if ({property.CodeName.ToPascalCase()} != {property.DefaultAsString}) WriteProperty(stream, \"{property.FormatName}\", {property.CodeName.ToPascalCase()}, indent: {indent});");
             }
 
             // WRITE UNKNOWN PROPERTES
-            if (block.SupportsUnknownProperties)
-            {
-                sb.Line($"foreach (var property in UnknownProperties)").
-                    OpenParen().
-                    Line($"WritePropertyVerbatim(stream, (string)property.Name, property.Value, indent: {indent});").
-                    CloseParen();
-            }
+            sb.Line($"foreach (var property in UnknownProperties)").
+                OpenParen().
+                Line($"WritePropertyVerbatim(stream, (string)property.Name, property.Value, indent: {indent});").
+                CloseParen();
 
             // WRITE SUBBLOCKS
             foreach (var subBlock in block.Properties.Where(p => p.IsUdmfSubBlockList))
@@ -180,7 +174,7 @@ namespace SectorDirector.Core.FormatModels.Udmf");
             foreach (var property in block.Properties.Where(_ => _.IsScalarField && _.IsRequired))
             {
                 output.Line(
-                    $"if (!{property.ClassName.ToFieldName()}HasBeenSet) throw new InvalidUdmfException(\"Did not set {property.ClassName.ToPascalCase()} on {block.ClassName.ToPascalCase()}\");");
+                    $"if (!{property.CodeName.ToFieldName()}HasBeenSet) throw new InvalidUdmfException(\"Did not set {property.CodeName.ToPascalCase()} on {block.CodeName.ToPascalCase()}\");");
             }
 
             output.Line(@"AdditionalSemanticChecks();").

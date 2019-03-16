@@ -112,7 +112,6 @@ namespace SectorDirector.DataModelGenerator
                 }),
 
             new Block("mapData",
-                parsing:Parsing.Manual,
                 isSubBlock:false,
                 properties:new []
                 {

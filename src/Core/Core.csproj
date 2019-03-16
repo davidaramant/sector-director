@@ -202,9 +202,9 @@
     <Compile Include="FormatModels\Udmf\Parsing\Block.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\UdmfLexer.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\UdmfParser.cs" />
-    <Compile Include="FormatModels\Udmf\Parsing\UdmfSyntaxAnalyzer.cs" />
+    <Compile Include="FormatModels\Udmf\Parsing\UdmfSemanticAnalyzer.cs" />
+    <Compile Include="FormatModels\Udmf\Parsing\UdmfSemanticAnalyzer.Generated.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\UdmfSyntaxTree.cs" />
-    <Compile Include="FormatModels\Udmf\Parsing\UdmfParser.Generated.cs" />
     <Compile Include="FormatModels\Common\Identifier.cs" />
     <Compile Include="FormatModels\Pk3\Pk3File.cs" />
     <Compile Include="FormatModels\Udmf\BaseUdmfBlock.cs" />
