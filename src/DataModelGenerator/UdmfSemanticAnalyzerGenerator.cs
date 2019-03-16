@@ -44,20 +44,20 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing").OpenParen()
             }
         }
 
-        private static void WritePropertyAssignments(Block block, IndentedWriter output, string assignmentHolder, string owner)
-        {
-            foreach (var property in block.Properties.Where(p => p.IsScalarField))
-            {
-                var level = property.IsRequired ? "Required" : "Optional";
+        //private static void WritePropertyAssignments(Block block, IndentedWriter output, string assignmentHolder, string owner)
+        //{
+        //    foreach (var property in block.Properties.of)
+        //    {
+        //        var level = property.IsRequired ? "Required" : "Optional";
 
-                output.Line(
-                    $"{assignmentHolder}.GetValueFor(\"{property.CodeName.ToPascalCase()}\")" +
-                    $".Set{level}{property.Type}(" +
-                    $"value => {owner}.{property.CodeName.ToPascalCase()} = value, " +
-                    $"\"{block.CodeName.ToPascalCase()}\", " +
-                    $"\"{property.CodeName.ToPascalCase()}\");");
-            }
-        }
+        //        output.Line(
+        //            $"{assignmentHolder}.GetValueFor(\"{property.CodeName.ToPascalCase()}\")" +
+        //            $".Set{level}{property.Type}(" +
+        //            $"value => {owner}.{property.CodeName.ToPascalCase()} = value, " +
+        //            $"\"{block.CodeName.ToPascalCase()}\", " +
+        //            $"\"{property.CodeName.ToPascalCase()}\");");
+        //    }
+        //}
 
         private static void WriteGlobalFieldParsing(IndentedWriter output)
         {
@@ -68,12 +68,12 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing").OpenParen()
                 Line("switch (identifier.ToLower())").
                 OpenParen();
 
-            foreach (var field in UdmfDefinitions.Blocks.Single(b => b.CodeName.ToPascalCase() == "MapData").Properties)
+            foreach (var field in UdmfDefinitions.Blocks.Single(b => b.CodeName.ToPascalCase() == "MapData").Fields)
             {
                 output.
                     Line($"case \"{field.FormatName.ToLowerInvariant()}\":").
                     IncreaseIndent().
-                    Line($"map.{field.PropertyName} = Read{field.PropertyTypeString}(assignment);").
+                    Line($"map.{field.PropertyName} = Read{field.PropertyType}(assignment);").
                     Line("break;").
                     DecreaseIndent();
             }
@@ -88,33 +88,33 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing").OpenParen()
                 CloseParen();
         }
 
-        private static void WriteBlockParsing(IndentedWriter output)
-        {
-            output.
-                Line("static void SetBlocks(MapData map, ASTNode tree)").
-                OpenParen();
+        //private static void WriteBlockParsing(IndentedWriter output)
+        //{
+        //    output.
+        //        Line("static void SetBlocks(MapData map, ASTNode tree)").
+        //        OpenParen();
 
-            output.
-                Line("foreach (var block in tree.Blocks)").
-                OpenParen();
+        //    output.
+        //        Line("foreach (var block in tree.Blocks)").
+        //        OpenParen();
 
-            output.Line("switch(block.Name.ToLower())");
-            output.OpenParen();
+        //    output.Line("switch(block.Name.ToLower())");
+        //    output.OpenParen();
 
-            // HACK: Get around the vertex/vertices problem
-            foreach (var block in UdmfDefinitions.Blocks.Single(_ => !_.IsSubBlock).Properties.Where(p => p.IsUdmfSubBlockList && p.Type != PropertyType.UnknownBlocks))
-            {
-                output.
-                    Line($"case \"{block.SingularName.ToLower()}\":").
-                    IncreaseIndent().
-                    Line($"map.{block.PropertyName}.Add(Parse{block.CollectionType}(block));").
-                    Line("break;").
-                    DecreaseIndent();
-            }
+        //    // HACK: Get around the vertex/vertices problem
+        //    foreach (var block in UdmfDefinitions.Blocks.Single(_ => !_.IsSubBlock).Properties.Where(p => p.IsUdmfSubBlockList && p.Type != PropertyType.UnknownBlocks))
+        //    {
+        //        output.
+        //            Line($"case \"{block.SingularName.ToLower()}\":").
+        //            IncreaseIndent().
+        //            Line($"map.{block.PropertyName}.Add(Parse{block.CollectionType}(block));").
+        //            Line("break;").
+        //            DecreaseIndent();
+        //    }
 
-            output.CloseParen();
+        //    output.CloseParen();
 
-            output.CloseParen().CloseParen();
-        }
+        //    output.CloseParen().CloseParen();
+        //}
     }
 }

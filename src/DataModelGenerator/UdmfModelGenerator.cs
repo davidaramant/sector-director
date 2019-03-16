@@ -4,11 +4,13 @@
 using System;
 using System.IO;
 using System.Linq;
+using SectorDirector.DataModelGenerator.PropertyTypes;
 
 namespace SectorDirector.DataModelGenerator
 {
     public static class UdmfModelGenerator
     {
+
         public static void WriteToPath(string basePath)
         {
             foreach (var block in UdmfDefinitions.Blocks)
@@ -59,12 +61,12 @@ namespace SectorDirector.Core.FormatModels.Udmf");
             {
                 var postfix = indexed.index == block.Properties.Count() - 1 ? ");" : ",";
 
-                if (!indexed.param.IsScalarField)
+                if (indexed.param is BlockList)
                 {
                     postfix = ".Select(item => item.Clone())" + postfix;
 
                 }
-                output.Line(indexed.param.ArgumentName + ": " + indexed.param.PropertyName + postfix);
+                output.Line(indexed.param.ConstructorArgumentName + ": " + indexed.param.PropertyName + postfix);
             }
 
             output.
@@ -74,24 +76,30 @@ namespace SectorDirector.Core.FormatModels.Udmf");
 
         private static void WriteProperties(Block block, IndentedWriter sb)
         {
-            foreach (var property in block.Properties.Where(_ => _.IsScalarField && _.IsRequired))
+            foreach (var property in block.Fields.Where(_ => _.IsRequired))
             {
-                sb.Line($"private bool {property.CodeName.ToFieldName()}HasBeenSet = false;").
-                    Line($"private {property.PropertyTypeString} {property.CodeName.ToFieldName()};").
-                    Line($"public {property.PropertyTypeString} {property.CodeName.ToPascalCase()}").
+                sb.Line($"private bool {property.FieldName}HasBeenSet = false;").
+                    Line($"private {property.PropertyType} {property.FieldName};").
+                    Line($"public {property.PropertyType} {property.PropertyName}").
                     OpenParen().
-                    Line($"get {{ return {property.CodeName.ToFieldName()}; }}").
+                    Line($"get {{ return {property.FieldName}; }}").
                     Line($"set").
                     OpenParen().
-                    Line($"{property.CodeName.ToFieldName()}HasBeenSet = true;").
-                    Line($"{property.CodeName.ToFieldName()} = value;").
+                    Line($"{property.FieldName}HasBeenSet = true;").
+                    Line($"{property.FieldName} = value;").
                     CloseParen().
                     CloseParen();
             }
 
-            foreach (var property in block.Properties.Where(_ => !(_.IsScalarField && _.IsRequired)))
+            foreach (var field in block.Fields.Where(_ => !_.IsRequired))
             {
-                sb.Line(property.PropertyDefinition);
+                sb.Line($"public {field.PropertyType} {field.PropertyName} {{ get; set; }} = {field.DefaultValue};");
+            }
+
+            foreach (var subBlock in block.SubBlocks)
+            {
+                sb.Line(
+                    $"public {subBlock.PropertyType} {subBlock.PropertyName} {{ get; }} = new {subBlock.PropertyType}();");
             }
         }
 
@@ -103,7 +111,10 @@ namespace SectorDirector.Core.FormatModels.Udmf");
 
             foreach (var indexed in block.OrderedProperties().Select((param, index) => new { param, index }))
             {
-                sb.Line(indexed.param.ArgumentDefinition + (indexed.index == block.Properties.Count() - 1 ? ")" : ","));
+                var property = indexed.param;
+                var argument = $"{property.ConstructorArgumentType} {property.ConstructorArgumentName}" +
+                               (property.IsRequired ? string.Empty : $" = {property.DefaultValue}");
+                sb.Line(argument + (indexed.index == block.Properties.Count() - 1 ? ")" : ","));
             }
 
             sb.DecreaseIndent();
@@ -111,7 +122,18 @@ namespace SectorDirector.Core.FormatModels.Udmf");
 
             foreach (var property in block.OrderedProperties())
             {
-                sb.Line(property.SetProperty);
+                switch (property)
+                {
+                    case Field field:
+                        sb.Line($"{field.PropertyName} = {field.ConstructorArgumentName};");
+                        break;
+                    case BlockList requiredBlockList when requiredBlockList.IsRequired:
+                        sb.Line($"{requiredBlockList.PropertyName}.AddRange({requiredBlockList.ConstructorArgumentName});");
+                        break;
+                    case BlockList blockList:
+                        sb.Line($"{blockList.PropertyName}.AddRange({blockList.ConstructorArgumentName} ?? Enumerable.Empty<{blockList.SingularName}>());");
+                        break;
+                }
             }
 
             sb.Line(@"AdditionalSemanticChecks();");
@@ -133,26 +155,26 @@ namespace SectorDirector.Core.FormatModels.Udmf");
             }
 
             // WRITE ALL REQUIRED PROPERTIES
-            foreach (var property in block.Properties.Where(_ => _.IsScalarField && _.IsRequired))
+            foreach (var field in block.Fields.Where(_ => _.IsRequired))
             {
                 sb.Line(
-                    $"WriteProperty(stream, \"{property.FormatName}\", {property.CodeName.ToFieldName()}, indent: {indent});");
+                    $"WriteProperty(stream, \"{field.FormatName}\", {field.FieldName}, indent: {indent});");
             }
             // WRITE OPTIONAL PROPERTIES
-            foreach (var property in block.Properties.Where(_ => _.IsScalarField && !_.IsRequired))
+            foreach (var field in block.Fields.Where(_ => !_.IsRequired))
             {
                 sb.Line(
-                    $"if ({property.CodeName.ToPascalCase()} != {property.DefaultAsString}) WriteProperty(stream, \"{property.FormatName}\", {property.CodeName.ToPascalCase()}, indent: {indent});");
+                    $"if ({field.PropertyName} != {field.DefaultValue}) WriteProperty(stream, \"{field.FormatName}\", {field.PropertyName}, indent: {indent});");
             }
 
-            // WRITE UNKNOWN PROPERTES
+            // WRITE UNKNOWN PROPERTIES
             sb.Line($"foreach (var property in UnknownProperties)").
                 OpenParen().
                 Line($"WritePropertyVerbatim(stream, (string)property.Name, property.Value, indent: {indent});").
                 CloseParen();
 
-            // WRITE SUBBLOCKS
-            foreach (var subBlock in block.Properties.Where(p => p.IsUdmfSubBlockList))
+            // WRITE SUB-BLOCKS
+            foreach (var subBlock in block.SubBlocks.Where(b => !(b is UnknownPropertiesList)))
             {
                 sb.Line($"WriteBlocks(stream, {subBlock.PropertyName} );");
             }
@@ -171,10 +193,10 @@ namespace SectorDirector.Core.FormatModels.Udmf");
                 OpenParen();
 
             // CHECK THAT ALL REQUIRED PROPERTIES HAVE BEEN SET
-            foreach (var property in block.Properties.Where(_ => _.IsScalarField && _.IsRequired))
+            foreach (var field in block.Fields.Where(_ => _.IsRequired))
             {
                 output.Line(
-                    $"if (!{property.CodeName.ToFieldName()}HasBeenSet) throw new InvalidUdmfException(\"Did not set {property.CodeName.ToPascalCase()} on {block.CodeName.ToPascalCase()}\");");
+                    $"if (!{field.FieldName}HasBeenSet) throw new InvalidUdmfException(\"Did not set {field.PropertyName} on {block.CodeName.ToPascalCase()}\");");
             }
 
             output.Line(@"AdditionalSemanticChecks();").

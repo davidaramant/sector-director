@@ -1,28 +1,30 @@
 ﻿// Copyright (c) 2016, David Aramant
-// Copyright (c) 2017, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using SectorDirector.DataModelGenerator.PropertyTypes;
 
 namespace SectorDirector.DataModelGenerator
 {
     [DebuggerDisplay("{" + nameof(CodeName) + "}")]
     public sealed class Block : NamedItem
     {
-        private readonly List<Property> _properties = new List<Property>();
+        private readonly List<IProperty> _properties = new List<IProperty>();
 
-        public IEnumerable<Property> Properties => _properties;
+        public IEnumerable<IProperty> Properties => _properties;
+        public IEnumerable<Field> Fields => _properties.OfType<Field>();
+        public IEnumerable<BlockList> SubBlocks => _properties.OfType<BlockList>();
         public bool IsSubBlock { get; }
 
-        public IEnumerable<Property> OrderedProperties() => 
+        public IEnumerable<IProperty> OrderedProperties() => 
             Properties.Where(p => p.IsRequired).
             Concat(Properties.Where(p => !p.IsRequired));
 
         public Block(
             string formatName,
-            IEnumerable<Property> properties,
+            IEnumerable<IProperty> properties,
             string className = null,
             bool isSubBlock = true) :
             base(formatName, className ?? formatName)
