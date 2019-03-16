@@ -36,4 +36,4 @@ steps:
     configuration: '$(buildConfiguration)'
     testSelector: 'testAssemblies'
     testAssemblyVer2: '**\*Engine.Tests.dll'
-    otherConsoleOptions: '/framework:framework472'
+    otherConsoleOptions: '/framework:.NETFramework,Version=v4.5.1'
