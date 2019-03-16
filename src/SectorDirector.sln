@@ -3,14 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestLauncher", "TestLauncher\TestLauncher.csproj", "{030FB9A6-7043-4633-AA98-43F3E245E164}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{A724C349-D0D5-469C-A8D6-E42A8F7BC32F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Tests", "Core.Tests\Core.Tests.csproj", "{737FFEBF-4312-4535-B950-DF7E414FAF47}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapGeneration", "MapGeneration\MapGeneration.csproj", "{54069491-F7C5-456B-897E-8DA66A0AF8D3}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F7F24B29-B491-400F-A507-029B8B233C3E}"
 	ProjectSection(SolutionItems) = preProject
 		..\azure-pipelines.yml = ..\azure-pipelines.yml
@@ -26,28 +18,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmarks\Be
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataModelGenerator", "DataModelGenerator\DataModelGenerator.csproj", "{B82E7F4E-C652-46DA-A49E-75FC564BB059}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{6F23FEFC-20D7-4759-AFB4-506353D1C0B9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Tests", "Core.Tests\Core.Tests.csproj", "{2D854D38-8B15-480C-9140-7E49F451423C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapGeneration", "MapGeneration\MapGeneration.csproj", "{AEDBA12A-1760-478F-AF99-78065413F7DA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestLauncher", "TestLauncher\TestLauncher.csproj", "{BC1A804D-1B44-4095-80F2-6085B6BFC714}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{030FB9A6-7043-4633-AA98-43F3E245E164}.Debug|x64.ActiveCfg = Debug|x64
-		{030FB9A6-7043-4633-AA98-43F3E245E164}.Debug|x64.Build.0 = Debug|x64
-		{030FB9A6-7043-4633-AA98-43F3E245E164}.Release|x64.ActiveCfg = Release|x64
-		{030FB9A6-7043-4633-AA98-43F3E245E164}.Release|x64.Build.0 = Release|x64
-		{A724C349-D0D5-469C-A8D6-E42A8F7BC32F}.Debug|x64.ActiveCfg = Debug|x64
-		{A724C349-D0D5-469C-A8D6-E42A8F7BC32F}.Debug|x64.Build.0 = Debug|x64
-		{A724C349-D0D5-469C-A8D6-E42A8F7BC32F}.Release|x64.ActiveCfg = Release|x64
-		{A724C349-D0D5-469C-A8D6-E42A8F7BC32F}.Release|x64.Build.0 = Release|x64
-		{737FFEBF-4312-4535-B950-DF7E414FAF47}.Debug|x64.ActiveCfg = Debug|x64
-		{737FFEBF-4312-4535-B950-DF7E414FAF47}.Debug|x64.Build.0 = Debug|x64
-		{737FFEBF-4312-4535-B950-DF7E414FAF47}.Release|x64.ActiveCfg = Release|x64
-		{737FFEBF-4312-4535-B950-DF7E414FAF47}.Release|x64.Build.0 = Release|x64
-		{54069491-F7C5-456B-897E-8DA66A0AF8D3}.Debug|x64.ActiveCfg = Debug|x64
-		{54069491-F7C5-456B-897E-8DA66A0AF8D3}.Debug|x64.Build.0 = Debug|x64
-		{54069491-F7C5-456B-897E-8DA66A0AF8D3}.Release|x64.ActiveCfg = Release|x64
-		{54069491-F7C5-456B-897E-8DA66A0AF8D3}.Release|x64.Build.0 = Release|x64
 		{9F342DE9-2869-4D82-828C-D0BB6B52A225}.Debug|x64.ActiveCfg = Debug|x64
 		{9F342DE9-2869-4D82-828C-D0BB6B52A225}.Debug|x64.Build.0 = Debug|x64
 		{9F342DE9-2869-4D82-828C-D0BB6B52A225}.Release|x64.ActiveCfg = Release|x64
@@ -64,6 +48,22 @@ Global
 		{B82E7F4E-C652-46DA-A49E-75FC564BB059}.Debug|x64.Build.0 = Debug|x64
 		{B82E7F4E-C652-46DA-A49E-75FC564BB059}.Release|x64.ActiveCfg = Release|x64
 		{B82E7F4E-C652-46DA-A49E-75FC564BB059}.Release|x64.Build.0 = Release|x64
+		{6F23FEFC-20D7-4759-AFB4-506353D1C0B9}.Debug|x64.ActiveCfg = Debug|x64
+		{6F23FEFC-20D7-4759-AFB4-506353D1C0B9}.Debug|x64.Build.0 = Debug|x64
+		{6F23FEFC-20D7-4759-AFB4-506353D1C0B9}.Release|x64.ActiveCfg = Release|x64
+		{6F23FEFC-20D7-4759-AFB4-506353D1C0B9}.Release|x64.Build.0 = Release|x64
+		{2D854D38-8B15-480C-9140-7E49F451423C}.Debug|x64.ActiveCfg = Debug|x64
+		{2D854D38-8B15-480C-9140-7E49F451423C}.Debug|x64.Build.0 = Debug|x64
+		{2D854D38-8B15-480C-9140-7E49F451423C}.Release|x64.ActiveCfg = Release|x64
+		{2D854D38-8B15-480C-9140-7E49F451423C}.Release|x64.Build.0 = Release|x64
+		{AEDBA12A-1760-478F-AF99-78065413F7DA}.Debug|x64.ActiveCfg = Debug|x64
+		{AEDBA12A-1760-478F-AF99-78065413F7DA}.Debug|x64.Build.0 = Debug|x64
+		{AEDBA12A-1760-478F-AF99-78065413F7DA}.Release|x64.ActiveCfg = Release|x64
+		{AEDBA12A-1760-478F-AF99-78065413F7DA}.Release|x64.Build.0 = Release|x64
+		{BC1A804D-1B44-4095-80F2-6085B6BFC714}.Debug|x64.ActiveCfg = Debug|x64
+		{BC1A804D-1B44-4095-80F2-6085B6BFC714}.Debug|x64.Build.0 = Debug|x64
+		{BC1A804D-1B44-4095-80F2-6085B6BFC714}.Release|x64.ActiveCfg = Release|x64
+		{BC1A804D-1B44-4095-80F2-6085B6BFC714}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
