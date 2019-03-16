@@ -10,7 +10,7 @@ using SectorDirector.Core.FormatModels.Udmf.WritingExtensions;
 namespace SectorDirector.Core.FormatModels.Udmf
 {
     [GeneratedCode("DataModelGenerator", "1.0.0.0")]
-    public sealed partial class Thing : IWriteableUdmfBlock
+    public sealed partial class Thing
     {
         private bool _xHasBeenSet = false;
         private double _x;
@@ -59,6 +59,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public bool Coop { get; set; } = false;
         public string Comment { get; set; } = "";
         public List<UnknownProperty> UnknownProperties { get; } = new List<UnknownProperty>();
+
         public Thing() { }
         public Thing(
             double x,
@@ -98,6 +99,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
             UnknownProperties.AddRange(unknownProperties ?? Enumerable.Empty<UnknownProperty>());
             AdditionalSemanticChecks();
         }
+
         public Stream WriteTo(Stream stream)
         {
             CheckSemanticValidity();
@@ -126,6 +128,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
             stream.WriteLine("}");
             return stream;
         }
+
         public void CheckSemanticValidity()
         {
             if (!_xHasBeenSet) throw new InvalidUdmfException("Did not set X on Thing");

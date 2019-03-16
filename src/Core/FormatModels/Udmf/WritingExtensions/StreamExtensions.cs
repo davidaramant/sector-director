@@ -2,7 +2,6 @@
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -42,14 +41,6 @@ namespace SectorDirector.Core.FormatModels.Udmf.WritingExtensions
         public static void WriteProperty(this Stream stream, string name, bool value, bool indent)
         {
             WritePropertyVerbatim(stream, name, value.ToString().ToLowerInvariant(), indent);
-        }
-
-        public static void WriteBlocks(this Stream stream, IEnumerable<IWriteableUdmfBlock> blocks)
-        {
-            foreach (var block in blocks)
-            {
-                block.WriteTo(stream);
-            }
         }
     }
 }

@@ -10,7 +10,7 @@ using SectorDirector.Core.FormatModels.Udmf.WritingExtensions;
 namespace SectorDirector.Core.FormatModels.Udmf
 {
     [GeneratedCode("DataModelGenerator", "1.0.0.0")]
-    public sealed partial class Sector : IWriteableUdmfBlock
+    public sealed partial class Sector
     {
         private bool _textureFloorHasBeenSet = false;
         private string _textureFloor;
@@ -41,6 +41,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public int Id { get; set; } = 0;
         public string Comment { get; set; } = "";
         public List<UnknownProperty> UnknownProperties { get; } = new List<UnknownProperty>();
+
         public Sector() { }
         public Sector(
             string textureFloor,
@@ -64,6 +65,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
             UnknownProperties.AddRange(unknownProperties ?? Enumerable.Empty<UnknownProperty>());
             AdditionalSemanticChecks();
         }
+
         public Stream WriteTo(Stream stream)
         {
             CheckSemanticValidity();
@@ -84,6 +86,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
             stream.WriteLine("}");
             return stream;
         }
+
         public void CheckSemanticValidity()
         {
             if (!_textureFloorHasBeenSet) throw new InvalidUdmfException("Did not set TextureFloor on Sector");

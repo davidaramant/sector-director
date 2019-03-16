@@ -10,7 +10,7 @@ using SectorDirector.Core.FormatModels.Udmf.WritingExtensions;
 namespace SectorDirector.Core.FormatModels.Udmf
 {
     [GeneratedCode("DataModelGenerator", "1.0.0.0")]
-    public sealed partial class MapData : IWriteableUdmfBlock
+    public sealed partial class MapData
     {
         private bool _nameSpaceHasBeenSet = false;
         private string _nameSpace;
@@ -31,6 +31,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public List<Thing> Things { get; } = new List<Thing>();
         public List<UnknownProperty> UnknownProperties { get; } = new List<UnknownProperty>();
         public List<UnknownBlock> UnknownBlocks { get; } = new List<UnknownBlock>();
+
         public MapData() { }
         public MapData(
             string nameSpace,
@@ -54,6 +55,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
             UnknownBlocks.AddRange(unknownBlocks ?? Enumerable.Empty<UnknownBlock>());
             AdditionalSemanticChecks();
         }
+
         public Stream WriteTo(Stream stream)
         {
             CheckSemanticValidity();
@@ -63,14 +65,33 @@ namespace SectorDirector.Core.FormatModels.Udmf
             {
                 stream.WritePropertyVerbatim((string)property.Name, property.Value, indent: false);
             }
-            stream.WriteBlocks(LineDefs );
-            stream.WriteBlocks(SideDefs );
-            stream.WriteBlocks(Vertices );
-            stream.WriteBlocks(Sectors );
-            stream.WriteBlocks(Things );
-            stream.WriteBlocks(UnknownBlocks );
+            foreach(var lineDef in LineDefs)
+            {
+                lineDef.WriteTo(stream);
+            }
+            foreach(var sideDef in SideDefs)
+            {
+                sideDef.WriteTo(stream);
+            }
+            foreach(var vertex in Vertices)
+            {
+                vertex.WriteTo(stream);
+            }
+            foreach(var sector in Sectors)
+            {
+                sector.WriteTo(stream);
+            }
+            foreach(var thing in Things)
+            {
+                thing.WriteTo(stream);
+            }
+            foreach(var unknownBlock in UnknownBlocks)
+            {
+                unknownBlock.WriteTo(stream);
+            }
             return stream;
         }
+
         public void CheckSemanticValidity()
         {
             if (!_nameSpaceHasBeenSet) throw new InvalidUdmfException("Did not set NameSpace on MapData");

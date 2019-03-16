@@ -197,7 +197,6 @@
     <Compile Include="FormatModels\Common\Identifier.cs" />
     <Compile Include="FormatModels\Pk3\Pk3File.cs" />
     <Compile Include="FormatModels\Udmf\InvalidUdmfException.cs" />
-    <Compile Include="FormatModels\Udmf\IWriteableUdmfBlock.cs" />
     <Compile Include="FormatModels\Udmf\LineDef.cs" />
     <Compile Include="FormatModels\Udmf\Sector.Generated.cs" />
     <Compile Include="FormatModels\Udmf\SideDef.Generated.cs" />

@@ -9,7 +9,7 @@ using SectorDirector.Core.FormatModels.Udmf.WritingExtensions;
 
 namespace SectorDirector.Core.FormatModels.Udmf
 {
-    public sealed class UnknownBlock : IWriteableUdmfBlock
+    public sealed class UnknownBlock
     {
         public Identifier Name { get; }
         public List<UnknownProperty> Properties { get; } = new List<UnknownProperty>();

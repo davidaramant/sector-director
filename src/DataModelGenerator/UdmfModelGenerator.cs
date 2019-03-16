@@ -35,12 +35,21 @@ namespace SectorDirector.Core.FormatModels.Udmf");
                     output.Line(
                         $"[GeneratedCode(\"{CurrentLibraryInfo.Name}\", \"{CurrentLibraryInfo.Version}\")]");
                     output.Line(
-                        $"public sealed partial class {block.CodeName} : IWriteableUdmfBlock");
+                        $"public sealed partial class {block.CodeName}");
                     output.OpenParen();
 
                     WriteProperties(block, output);
+
+                    output.Line();
+
                     WriteConstructors(output, block);
+
+                    output.Line();
+
                     WriteWriteToMethod(block, output);
+                    
+                    output.Line();
+
                     WriteSemanticValidityMethods(output, block);
                     WriteCloneMethod(output, block);
 
@@ -178,7 +187,11 @@ namespace SectorDirector.Core.FormatModels.Udmf");
             // WRITE SUB-BLOCKS
             foreach (var subBlock in block.SubBlocks.Where(b => !(b is UnknownPropertiesList)))
             {
-                sb.Line($"stream.WriteBlocks({subBlock.PropertyName} );");
+                var variable = subBlock.FormatName;
+                sb.Line($"foreach(var {variable} in {subBlock.PropertyName})").
+                    OpenParen().
+                    Line($"{variable}.WriteTo(stream);").
+                    CloseParen();                
             }
 
             if (block.IsSubBlock)

@@ -10,7 +10,7 @@ using SectorDirector.Core.FormatModels.Udmf.WritingExtensions;
 namespace SectorDirector.Core.FormatModels.Udmf
 {
     [GeneratedCode("DataModelGenerator", "1.0.0.0")]
-    public sealed partial class SideDef : IWriteableUdmfBlock
+    public sealed partial class SideDef
     {
         private bool _sectorHasBeenSet = false;
         private int _sector;
@@ -30,6 +30,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public string TextureMiddle { get; set; } = "-";
         public string Comment { get; set; } = "";
         public List<UnknownProperty> UnknownProperties { get; } = new List<UnknownProperty>();
+
         public SideDef() { }
         public SideDef(
             int sector,
@@ -51,6 +52,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
             UnknownProperties.AddRange(unknownProperties ?? Enumerable.Empty<UnknownProperty>());
             AdditionalSemanticChecks();
         }
+
         public Stream WriteTo(Stream stream)
         {
             CheckSemanticValidity();
@@ -70,6 +72,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
             stream.WriteLine("}");
             return stream;
         }
+
         public void CheckSemanticValidity()
         {
             if (!_sectorHasBeenSet) throw new InvalidUdmfException("Did not set Sector on SideDef");

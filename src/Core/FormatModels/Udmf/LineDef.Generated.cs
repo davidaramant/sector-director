@@ -10,7 +10,7 @@ using SectorDirector.Core.FormatModels.Udmf.WritingExtensions;
 namespace SectorDirector.Core.FormatModels.Udmf
 {
     [GeneratedCode("DataModelGenerator", "1.0.0.0")]
-    public sealed partial class LineDef : IWriteableUdmfBlock
+    public sealed partial class LineDef
     {
         private bool _v1HasBeenSet = false;
         private int _v1;
@@ -64,6 +64,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
         public int SideBack { get; set; } = -1;
         public string Comment { get; set; } = "";
         public List<UnknownProperty> UnknownProperties { get; } = new List<UnknownProperty>();
+
         public LineDef() { }
         public LineDef(
             int v1,
@@ -113,6 +114,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
             UnknownProperties.AddRange(unknownProperties ?? Enumerable.Empty<UnknownProperty>());
             AdditionalSemanticChecks();
         }
+
         public Stream WriteTo(Stream stream)
         {
             CheckSemanticValidity();
@@ -146,6 +148,7 @@ namespace SectorDirector.Core.FormatModels.Udmf
             stream.WriteLine("}");
             return stream;
         }
+
         public void CheckSemanticValidity()
         {
             if (!_v1HasBeenSet) throw new InvalidUdmfException("Did not set V1 on LineDef");
