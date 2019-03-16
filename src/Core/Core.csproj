@@ -197,6 +197,7 @@
     <Compile Include="FormatModels\Common\SyntaxExtensions.cs" />
     <Compile Include="FormatModels\Common\Token.cs" />
     <Compile Include="FormatModels\Udmf\LineDef.Generated.cs" />
+    <Compile Include="FormatModels\Udmf\MapData.cs" />
     <Compile Include="FormatModels\Udmf\MapData.Generated.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\ArrayBlock.cs" />
     <Compile Include="FormatModels\Udmf\Parsing\Block.cs" />

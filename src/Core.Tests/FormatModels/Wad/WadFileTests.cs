@@ -1,14 +1,11 @@
 ﻿// Copyright (c) 2018, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
-using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
-using SectorDirector.Core.FormatModels.Udmf.Parsing;
+using SectorDirector.Core.FormatModels.Udmf;
 using SectorDirector.Core.FormatModels.Wad;
-using SectorDirector.Core.Tests.FormatModels.Udmf.Parsing;
 using Is = NUnit.DeepObjectCompare.Is;
 
 namespace SectorDirector.Core.Tests.FormatModels.Wad
@@ -60,12 +57,10 @@ namespace SectorDirector.Core.Tests.FormatModels.Wad
 
                 var mapBytes = wad[1].GetData();
                 using (var ms = new MemoryStream(mapBytes))
-                using (var textReader = new StreamReader(ms, Encoding.ASCII))
                 {
-                    throw new NotImplementedException("Switch over to new parser");
-                    //var roundTripped = UdmfParser.Parse(sa.Analyze(new UdmfLexer(textReader)));
+                    var roundTripped = MapData.LoadFrom(ms);
 
-                    //Assert.That(roundTripped, Is.DeepEqualTo(map));
+                    Assert.That(roundTripped, Is.DeepEqualTo(map));
                 }
             }
             finally

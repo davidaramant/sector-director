@@ -1,11 +1,8 @@
 ﻿// Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Hime.Redist;
-using Piglet.Parser;
 using SectorDirector.Core.FormatModels.Common;
 
 namespace SectorDirector.Core.FormatModels.Udmf.Parsing
@@ -16,7 +13,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
         {
             if (!result.IsSuccess)
             {
-                throw new ParseException("Error parsing UDMF");
+                throw new ParsingException("Error parsing UDMF");
             }
 
             var map = new MapData();
@@ -65,7 +62,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 
             if (type != "INTEGER")
             {
-                throw new ParseException($"Expected INTEGER for {context} but got {type}.");
+                throw new ParsingException($"Expected INTEGER for {context} but got {type}.");
             }
 
             return int.Parse(valueChild.Value);
@@ -78,7 +75,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 
             if (type != "FLOAT" && type != "INTEGER")
             {
-                throw new ParseException($"Expected FLOAT for {context} but got {type}.");
+                throw new ParsingException($"Expected FLOAT for {context} but got {type}.");
             }
 
             return double.Parse(valueChild.Value);
@@ -91,7 +88,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 
             if (type != "BOOLEAN")
             {
-                throw new ParseException($"Expected BOOLEAN for {context} but got {type}.");
+                throw new ParsingException($"Expected BOOLEAN for {context} but got {type}.");
             }
 
             return bool.Parse(valueChild.Value);
@@ -104,7 +101,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 
             if (type != "QUOTED_STRING")
             {
-                throw new ParseException($"Expected QUOTED_STRING for {context} but got {type}.");
+                throw new ParsingException($"Expected QUOTED_STRING for {context} but got {type}.");
             }
 
             var quotedString = valueChild.Value;
