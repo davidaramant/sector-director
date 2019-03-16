@@ -13,17 +13,17 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
     {
         static partial void ProcessGlobalExpression(MapData map, ASTNode assignment)
         {
-            var identifier = GetAssignmentIdentifier(assignment);
-            switch (identifier.ToLower())
+            var id = GetAssignmentIdentifier(assignment);
+            switch (id.ToLower())
             {
                 case "namespace":
-                    map.NameSpace = ReadString(assignment);
+                    map.NameSpace = ReadString(assignment, "MapData.NameSpace");
                     break;
                 case "comment":
-                    map.Comment = ReadString(assignment);
+                    map.Comment = ReadString(assignment, "MapData.Comment");
                     break;
                 default:
-                    map.UnknownProperties.Add(new UnknownProperty(identifier, ReadRawValue(assignment)));
+                    map.UnknownProperties.Add(new UnknownProperty(id, ReadRawValue(assignment)));
                     break;
             }
         }

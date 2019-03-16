@@ -50,28 +50,13 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing").OpenParen()
         {
             output.
                 Line("static partial void ProcessGlobalExpression(MapData map, ASTNode assignment)").
-                OpenParen().
-                Line("var identifier = GetAssignmentIdentifier(assignment);").
-                Line("switch (identifier.ToLower())").
                 OpenParen();
 
-            foreach (var field in UdmfDefinitions.Blocks.Single(b => b.CodeName.ToPascalCase() == "MapData").Fields)
-            {
-                output.
-                    Line($"case \"{field.FormatName.ToLowerInvariant()}\":").
-                    IncreaseIndent().
-                    Line($"map.{field.PropertyName} = Read{field.PropertyType.ToPascalCase()}(assignment);").
-                    Line("break;").
-                    DecreaseIndent();
-            }
+            var block = UdmfDefinitions.Blocks.Single(b => b.CodeName.ToPascalCase() == "MapData");
+
+            WriteFieldSwitch(output, block, "map");
 
             output.
-                Line("default:").
-                IncreaseIndent().
-                Line("map.UnknownProperties.Add(new UnknownProperty(identifier, ReadRawValue(assignment)));").
-                Line("break;").
-                DecreaseIndent().
-                CloseParen().
                 CloseParen();
         }
 
@@ -107,12 +92,6 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing").OpenParen()
 
         private static void WriteBlockParser(Block block, IndentedWriter output)
         {
-            //foreach (var assignment in block.Children.Skip(2).Take(block.Children.Count - 3))
-            //{
-            //    var id = GetAssignmentIdentifier(assignment);
-            //    var value = ReadRawValue(assignment);
-            //    unknownBlock.Properties.Add(new UnknownProperty(id, value));
-            //}
             var variable = block.CodeName.ToCamelCase();
 
             output.
@@ -120,10 +99,24 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing").OpenParen()
                 OpenParen().
                 Line($"var {variable} = new {block.CodeName}();").
                 Line("foreach (var assignment in block.Children.Skip(2).Take(block.Children.Count - 3))").
-                OpenParen().
+                OpenParen();
+
+            WriteFieldSwitch(output, block, variable);
+            
+            output.
+                CloseParen().
+                Line($"return {variable};").
+                CloseParen().
+                Line();
+        }
+
+        private static void WriteFieldSwitch(IndentedWriter output, Block block, string variable)
+        {
+            output.
                 Line("var id = GetAssignmentIdentifier(assignment);").
                 Line("switch (id.ToLower())").
                 OpenParen();
+
 
             foreach (var field in block.Fields)
             {
@@ -134,18 +127,14 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing").OpenParen()
                     Line("break;").
                     DecreaseIndent();
             }
-            
+
             output.
                 Line("default:").
                 IncreaseIndent().
                 Line($"{variable}.UnknownProperties.Add(new UnknownProperty(id, ReadRawValue(assignment)));").
                 Line("break;").
                 DecreaseIndent().
-                CloseParen().
-                CloseParen().
-                Line($"return {variable};").
-                CloseParen().
-                Line();
+                CloseParen();
         }
     }
 }
