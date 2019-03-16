@@ -26,7 +26,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing").OpenParen()
                     .Line($"[GeneratedCode(\"{CurrentLibraryInfo.Name}\", \"{CurrentLibraryInfo.Version}\")]")
                     .Line("public static partial class UdmfSemanticAnalyzer").OpenParen();
 
-                //WriteGlobalFieldParsing(output);
+                WriteGlobalFieldParsing(output);
                 //WriteBlockParsing(output);
 
                 //foreach (var block in UdmfDefinitions.Blocks.Where(_ => _.NormalParsing))
@@ -74,7 +74,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing").OpenParen()
                 output.
                     Line($"case \"{field.FormatName.ToLowerInvariant()}\":").
                     IncreaseIndent().
-                    Line($"map.{field.PropertyName} = Read{field.PropertyType}(assignment);").
+                    Line($"map.{field.PropertyName} = Read{field.PropertyType.ToPascalCase()}(assignment);").
                     Line("break;").
                     DecreaseIndent();
             }

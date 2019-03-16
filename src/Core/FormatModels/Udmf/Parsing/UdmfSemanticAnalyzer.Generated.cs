@@ -10,5 +10,21 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
     [GeneratedCode("DataModelGenerator", "1.0.0.0")]
     public static partial class UdmfSemanticAnalyzer
     {
+        static partial void ProcessGlobalExpression(MapData map, ASTNode assignment)
+        {
+            var identifier = new Identifier(assignment.Children[0].Value);
+            switch (identifier.ToLower())
+            {
+                case "namespace":
+                    map.NameSpace = ReadString(assignment);
+                    break;
+                case "comment":
+                    map.Comment = ReadString(assignment);
+                    break;
+                default:
+                    map.UnknownProperties.Add(new UnknownProperty(identifier, ReadRawValue(assignment)));
+                    break;
+            }
+        }
     }
 }
