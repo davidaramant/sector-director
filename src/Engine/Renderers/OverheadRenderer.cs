@@ -151,9 +151,10 @@ namespace SectorDirector.Engine.Renderers
 
             void DrawLineFromScreenCoordinates(Point sc1, Point sc2, Color c)
             {
-                if (LineClipping.CouldAppearOnScreen(screen, sc1, sc2))
+                var result = LineClipping.ClipToScreen(screen, sc1, sc2);
+                if (result.shouldDraw)
                 {
-                    _drawLine(screen, sc1, sc2, c);
+                    _drawLine(screen, result.p0, result.p1, c);
                 }
             }
 

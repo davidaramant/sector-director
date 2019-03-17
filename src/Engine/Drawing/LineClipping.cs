@@ -29,31 +29,29 @@ namespace SectorDirector.Engine.Drawing
             Top = 1 << 3,
         }
 
-        static OutCode ComputeOutCode(int x, int y, Point bounds)
+        static OutCode ComputeOutCode(Point p, Point bounds)
         {
             OutCode code = OutCode.Inside;
 
-            if (x < 0)
+            if (p.X < 0)
                 code |= OutCode.Left;
-            else if (x > bounds.X)
+            else if (p.X > bounds.X)
                 code |= OutCode.Right;
-            if (y < 0)
+            if (p.Y < 0)
                 code |= OutCode.Bottom;
-            else if (y > bounds.Y)
+            else if (p.Y > bounds.Y)
                 code |= OutCode.Top;
 
             return code;
         }
 
-        public static (bool shouldDraw, int x0, int y0, int x1, int y1) ClipToScreen(
+        public static (bool shouldDraw, Point p0, Point p1) ClipToScreen(
             ScreenBuffer buffer,
-            int x0,
-            int y0,
-            int x1,
-            int y1)
+            Point p0,
+            Point p1)
         {
-            OutCode outCode0 = ComputeOutCode(x0, y0, buffer.Dimensions);
-            OutCode outCode1 = ComputeOutCode(x1, y1, buffer.Dimensions);
+            OutCode outCode0 = ComputeOutCode(p0, buffer.Dimensions);
+            OutCode outCode1 = ComputeOutCode(p1, buffer.Dimensions);
             bool accept = false;
 
             while (true)
@@ -75,39 +73,37 @@ namespace SectorDirector.Engine.Drawing
 
                 if ((outCodeOut & OutCode.Top) == OutCode.Top)
                 { 
-                    x = (int)(x0 + (x1 - x0) * (buffer.Dimensions.Y - y0) / ((double)y1 - y0));
+                    x = (int)(p0.X + (p1.X - p0.X) * (buffer.Dimensions.Y - p0.Y) / ((double)p1.Y - p0.Y));
                     y = buffer.Dimensions.Y;
                 }
                 else if ((outCodeOut & OutCode.Bottom) == OutCode.Bottom)
                 {
-                    x = (int)(x0 + (x1 - x0) * -y0 / ((double)y1 - y0));
+                    x = (int)(p0.X + (p1.X - p0.X) * -p0.Y / ((double)p1.Y - p0.Y));
                     y = 0;
                 }
                 else if ((outCodeOut & OutCode.Right) == OutCode.Right)
                 {
-                    y = (int)(y0 + (y1 - y0) * (buffer.Dimensions.X - x0) / ((double)x1 - x0));
+                    y = (int)(p0.Y + (p1.Y - p0.Y) * (buffer.Dimensions.X - p0.X) / ((double)p1.X - p0.X));
                     x = buffer.Dimensions.X;
                 }
                 else if ((outCodeOut & OutCode.Left) == OutCode.Left)
                 {
-                    y = (int)(y0 + (y1 - y0) * -x0 / ((double)x1 - x0));
+                    y = (int)(p0.Y + (p1.Y - p0.Y) * -p0.X / ((double)p1.X - p0.X));
                     x = 0;
                 }
 
                 if (outCodeOut == outCode0)
                 {
-                    x0 = x;
-                    y0 = y;
-                    outCode0 = ComputeOutCode(x0, y0, buffer.Dimensions);
+                    p0 = new Point(x,y);
+                    outCode0 = ComputeOutCode(p0, buffer.Dimensions);
                 }
                 else
                 {
-                    x1 = x;
-                    y1 = y;
-                    outCode1 = ComputeOutCode(x1, y1, buffer.Dimensions);
+                    p1 = new Point(x,y);
+                    outCode1 = ComputeOutCode(p1, buffer.Dimensions);
                 }
             }
-            return (accept, x0, y0, x1, y1);
+            return (accept, p0, p1);
         }
 
         #endregion

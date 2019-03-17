@@ -122,10 +122,10 @@ namespace Benchmarks
                 var sc1 = _points[i];
                 var sc2 = _points[i + 1];
 
-                var result = LineClipping.ClipToScreen(_buffer, sc1.X, sc1.Y, sc2.X, sc2.Y);
+                var result = LineClipping.ClipToScreen(_buffer, sc1, sc2);
                 if (result.shouldDraw)
                 {
-                    _buffer.PlotLineSmooth(result.x0,result.y0,result.x1,result.y1,Color.Red);
+                    _buffer.PlotLineSmooth(result.p0, result.p1, Color.Red);
                 }
             }
         }
