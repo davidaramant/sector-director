@@ -4,7 +4,7 @@
 using Microsoft.Xna.Framework;
 using static System.Math;
 
-namespace SectorDirector.Engine
+namespace SectorDirector.Engine.Drawing
 {
     public static class ScreenBufferExtensions
     {

@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.Xna.Framework;
+using SectorDirector.Engine.Drawing;
 using SectorDirector.Engine.Input;
 
 namespace SectorDirector.Engine.Renderers

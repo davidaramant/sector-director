@@ -6,6 +6,7 @@ using System.Linq;
 using BenchmarkDotNet.Attributes;
 using Microsoft.Xna.Framework;
 using SectorDirector.Engine;
+using SectorDirector.Engine.Drawing;
 
 namespace Benchmarks
 {
