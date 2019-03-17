@@ -74,4 +74,61 @@ namespace Benchmarks
             }
         }
     }
+
+    [InProcess]
+    public class ScreenBufferClipping
+    {
+        private const int Margin = 500;
+        readonly ScreenBuffer _buffer = new ScreenBuffer(new Point(2000, 2000));
+        private const int NumberOfPoints = 2000;
+        private readonly Point[] _points = new Point[NumberOfPoints];
+
+        [GlobalSetup]
+        public void PickLineEndPoints()
+        {
+            var random = new Random();
+
+            foreach (var pointIndex in Enumerable.Range(0, NumberOfPoints))
+            {
+                _points[pointIndex] = new Point(
+                    random.Next(-Margin, _buffer.Width + Margin),
+                    random.Next(-Margin, _buffer.Height + Margin));
+            }
+        }
+
+        [IterationSetup]
+        public void ClearBuffer() => _buffer.Clear();
+
+        [Benchmark(Baseline = true)]
+        public void SimpleClipping()
+        {
+            for (int i = 0; i < NumberOfPoints - 1; i++)
+            {
+                var sc1 = _points[i];
+                var sc2 = _points[i + 1];
+
+                if (LineClipping.CouldAppearOnScreen(_buffer, sc1, sc2))
+                {
+                    _buffer.PlotLineSmooth(sc1, sc2, Color.Red);
+                }
+            }
+        }
+
+        [Benchmark]
+        public void CohenSutherlandClipping()
+        {
+            for (int i = 0; i < NumberOfPoints - 1; i++)
+            {
+                var sc1 = _points[i];
+                var sc2 = _points[i + 1];
+
+                var result = LineClipping.ClipToScreen(_buffer, sc1.X, sc1.Y, sc2.X, sc2.Y);
+                if (result.shouldDraw)
+                {
+                    _buffer.PlotLineSmooth(result.x0,result.y0,result.x1,result.y1,Color.Red);
+                }
+            }
+        }
+
+    }
 }

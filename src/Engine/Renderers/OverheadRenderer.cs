@@ -151,16 +151,10 @@ namespace SectorDirector.Engine.Renderers
 
             void DrawLineFromScreenCoordinates(Point sc1, Point sc2, Color c)
             {
-                //Do some rudimentary clipping to eliminate lines that can't possibly show up on screen
-                if ((sc1.X < 0 && sc2.X < 0) ||
-                    (sc1.X >= screen.Width && sc2.X >= screen.Width) ||
-                    (sc1.Y < 0 && sc2.Y < 0) ||
-                    (sc1.Y >= screen.Height && sc2.Y >= screen.Height))
+                if (LineClipping.CouldAppearOnScreen(screen, sc1, sc2))
                 {
-                    return;
+                    _drawLine(screen, sc1, sc2, c);
                 }
-
-                _drawLine(screen, sc1, sc2, c);
             }
 
             void DrawBox(Vector2 center, float halfWidth, Color c)

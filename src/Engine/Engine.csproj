@@ -49,6 +49,7 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Drawing\LineClipping.cs" />
     <Compile Include="FrameTimeAggregator.cs" />
     <Compile Include="GameEngine.cs" />
     <Compile Include="GameSettings.cs" />
