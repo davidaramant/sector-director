@@ -133,7 +133,10 @@ namespace SectorDirector.Engine.Renderers
 
                 shiftedWorldCoordinate += playerCenteringOffset + _viewOffset;
 
-                return (shiftedWorldCoordinate * gameToScreenFactor).ToPoint().InvertY(screen.Height);
+                // This fixes jittering
+                var pixelOffset = new Vector2(0.5f, 0.5f);
+
+                return ((shiftedWorldCoordinate * gameToScreenFactor) + pixelOffset).ToPoint().InvertY(screen.Height);
             }
 
             void DrawLineFromVertices(int v1, int v2, Color c) =>
