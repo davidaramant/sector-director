@@ -43,7 +43,7 @@
 - [x] PSX Fire effect
 - [ ] Ripple effect
 - [ ] Replace clunky math with real linear algebra stuff
-- [ ] Real clipping algorithm for lines
+- [x] Real clipping algorithm for lines
 
 # 3D Renderer
 
