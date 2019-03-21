@@ -83,13 +83,17 @@ namespace SectorDirector.Engine.Renderers
 
             const int numSegments = 5;
             var radianOffset = MathHelper.TwoPi / numSegments / 2;
+            
+            // This fixes jittering
+            var pixelOffset = new Vector2(0.5f, 0.5f);
+            
             foreach (var segment in Enumerable.Range(0, numSegments))
             {
                 var rotation = Matrix.CreateRotationZ(segment * radianOffset + _angle);
                 var direction = Vector2.Transform(Vector2.UnitX, rotation);
 
-                var start = (center - direction * radius).ToPoint();
-                var end = (center + direction * radius).ToPoint();
+                var start = (center - direction * radius + pixelOffset).ToPoint();
+                var end = (center + direction * radius + pixelOffset).ToPoint();
 
                 _drawLine(screen, start, end, Color.Red);
             }
