@@ -13,7 +13,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
         {
             if (!result.IsSuccess)
             {
-                throw new ParsingException("Error parsing UDMF");
+                throw new ParsingException($"{result.Errors.Count} errors found trying to parse UDMF");
             }
 
             var map = new MapData();

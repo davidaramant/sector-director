@@ -2,9 +2,11 @@
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System.IO;
+using System.Text;
 using NUnit.Framework;
 using SectorDirector.Core.FormatModels.Common;
 using SectorDirector.Core.FormatModels.Udmf;
+using SectorDirector.Core.FormatModels.Wad;
 using Is = NUnit.DeepObjectCompare.Is;
 
 namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
@@ -12,6 +14,17 @@ namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
     [TestFixture]
     public sealed class UdmfSemanticAnalyzerTests
     {
+        [TestCase("boring")]
+        [TestCase("With Spaces")]
+        [TestCase("numbers1")]
+        [TestCase("weird chars \\")]
+        public void ShouldHandleQuotedStrings(string text)
+        {
+            var udmf = $"namespace = \"{text}\";";
+            var mapData = Parse(udmf);
+            Assert.That(mapData.NameSpace, Is.EqualTo(text));
+        }
+
         [Test]
         public void ShouldParseGlobalFields()
         {
@@ -58,7 +71,7 @@ namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
                 {
                     new UnknownBlock(new Identifier("SomeWeirdBlock"))
                     {
-                        Properties = 
+                        Properties =
                         {
                             new UnknownProperty(new Identifier("id1"), "1" ),
                             new UnknownProperty(new Identifier("id2"), "true" ),
@@ -96,6 +109,23 @@ namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
             AssertRoundTrip(DemoMap.Create());
         }
 
+        [Test, Explicit]
+        public void ShouldLoadAllTestMaps()
+        {
+            foreach (var wadPath in Directory.GetFiles(".", searchPattern: "*.wad"))
+            {
+                TestContext.WriteLine(Path.GetFileName(wadPath));
+                using (var wadReader = WadReader.Read(wadPath))
+                {
+                    foreach (var mapName in wadReader.GetMapNames())
+                    {
+                        TestContext.WriteLine(" * " + mapName);
+                        MapData.LoadFrom(wadReader.GetMapStream(mapName));
+                    }
+                }
+            }
+        }
+
         static void AssertRoundTrip(MapData map)
         {
             var roundTripped = RoundTrip(map);
@@ -111,6 +141,14 @@ namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
 
                 stream.Position = 0;
 
+                return MapData.LoadFrom(stream);
+            }
+        }
+
+        static MapData Parse(string rawUdmf)
+        {
+            using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(rawUdmf)))
+            {
                 return MapData.LoadFrom(stream);
             }
         }
