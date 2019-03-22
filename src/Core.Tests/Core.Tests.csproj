@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\TestMaps\*.wad" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Update="Microsoft.NETCore.App" Version="2.2.0" />
     <PackageReference Include="Hime.Redist" Version="3.4.0" />
     <PackageReference Include="nunit" Version="3.11.0" />
@@ -21,6 +25,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="..\TestMaps\*.wad">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

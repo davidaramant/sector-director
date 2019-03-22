@@ -39,6 +39,13 @@ namespace SectorDirector.Core.FormatModels.Wad.StreamExtensions
             }
         }
 
+        public static void WriteTo(this LumpInfo metaData, Stream stream)
+        {
+            stream.WriteInt(metaData.Position);
+            stream.WriteInt(metaData.Size);
+            stream.WriteText(metaData.Name.ToString(), totalLength: LumpName.MaxLength);
+        }
+
         public static string ReadText(this Stream stream, int length)
         {
             return Encoding.ASCII.GetString(stream.ReadArray(length));
@@ -54,6 +61,14 @@ namespace SectorDirector.Core.FormatModels.Wad.StreamExtensions
             var data = new byte[length];
             stream.Read(data, 0, length);
             return data;
+        }
+
+        public static LumpInfo ReadLumpMetadata(this Stream stream)
+        {
+            return new LumpInfo(
+                position: stream.ReadInt(),
+                size: stream.ReadInt(),
+                name: stream.ReadText(LumpName.MaxLength).TrimEnd((char)0));
         }
     }
 }

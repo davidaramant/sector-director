@@ -8,7 +8,6 @@ namespace SectorDirector.Core.FormatModels.Wad
     public sealed class Marker : ILump
     {
         public LumpName Name { get; }
-        public bool HasData => false;
 
         public Marker(LumpName name)
         {
@@ -18,11 +17,6 @@ namespace SectorDirector.Core.FormatModels.Wad
         public void WriteTo(Stream stream)
         {
             // Do nothing; no data
-        }
-
-        public byte[] GetData()
-        {
-            return new byte[0];
         }
     }
 }

@@ -19,10 +19,8 @@ namespace SectorDirector.Core.Tests.FormatModels.Wad
             var fileInfo = new FileInfo(Path.GetTempFileName());
             try
             {
-                var wad = new WadFile();
-                wad.Append(new Marker("MAP01"));
-                wad.Append(new UdmfLump("TEXTMAP", DemoMap.Create()));
-                wad.Append(new Marker("ENDMAP"));
+                var wad = new WadWriter();
+                wad.Append("MAP01", DemoMap.Create());
                 wad.SaveTo(fileInfo.FullName);
             }
             finally
@@ -42,23 +40,20 @@ namespace SectorDirector.Core.Tests.FormatModels.Wad
             {
                 var map = DemoMap.Create();
 
-                var wad = new WadFile();
-                wad.Append(new Marker("MAP01"));
-                wad.Append(new UdmfLump("TEXTMAP", map));
-                wad.Append(new Marker("ENDMAP"));
-                wad.SaveTo(fileInfo.FullName);
+                var wadWriter = new WadWriter();
+                wadWriter.Append("MAP01", map);
+                wadWriter.SaveTo(fileInfo.FullName);
 
-                wad = WadFile.Read(fileInfo.FullName);
-                Assert.That(wad.Count, Is.EqualTo(3), "Did not return correct count.");
-                Assert.That(
-                    wad.Select(l => l.Name).ToArray(),
-                    Is.EquivalentTo(new[] { new LumpName("MAP01"), new LumpName("TEXTMAP"), new LumpName("ENDMAP"), }),
-                    "Did not return correct lump names.");
-
-                var mapBytes = wad[1].GetData();
-                using (var ms = new MemoryStream(mapBytes))
+                using (var wadReader = WadReader.Read(fileInfo.FullName))
                 {
-                    var roundTripped = MapData.LoadFrom(ms);
+                    Assert.That(wadReader.Directory.Length, Is.EqualTo(3), "Did not return correct count.");
+                    Assert.That(
+                        wadReader.Directory.Select(l => l.Name).ToArray(),
+                        Is.EquivalentTo(new[]
+                            {new LumpName("MAP01"), new LumpName("TEXTMAP"), new LumpName("ENDMAP"),}),
+                        "Did not return correct lump names.");
+                    
+                    var roundTripped = MapData.LoadFrom(wadReader.GetMapStream("MAP01"));
 
                     Assert.That(roundTripped, Is.DeepEqualTo(map));
                 }

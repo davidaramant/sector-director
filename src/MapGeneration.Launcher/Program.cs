@@ -31,13 +31,13 @@ namespace SectorDirector.MapGeneration.Launcher
 
                 LoadMaps(
                     SimpleExampleMapGenerator.Create()         // M1
-                    //PyramidMap.Create(),               // M2
-                    //IslandTempleMapGeneration.Create() // M3
-                    //MapConverter.Convert(circleMap),   // M4
-                    //MapConverter.Convert(polygonMap),  // M5
-                    //MapConverter.Convert(mixedMap1),   // M6
-                    //MapConverter.Convert(mixedMap2),   // M7
-                    //MapConverter.Convert(bossMap)      // M8
+                   //PyramidMap.Create(),               // M2
+                   //IslandTempleMapGeneration.Create() // M3
+                   //MapConverter.Convert(circleMap),   // M4
+                   //MapConverter.Convert(polygonMap),  // M5
+                   //MapConverter.Convert(mixedMap1),   // M6
+                   //MapConverter.Convert(mixedMap2),   // M7
+                   //MapConverter.Convert(bossMap)      // M8
                 );
             }
             catch (Exception e)
@@ -55,16 +55,14 @@ namespace SectorDirector.MapGeneration.Launcher
 
             var enginePath = GetEngineExePath();
 
-            var wad = new WadFile();
+            var wadWriter = new WadWriter();
 
             foreach (var (map, index) in maps.Select((map, index) => (map, index)))
             {
-                wad.Append(new Marker($"E3M{index + 1}"));
-                wad.Append(new UdmfLump("TEXTMAP", map));
-                wad.Append(new Marker("ENDMAP"));
+                wadWriter.Append($"E3M{index + 1}", map);
             }
 
-            wad.SaveTo(wadFilePath);
+            wadWriter.SaveTo(wadFilePath);
 
             Process.Start(
                 enginePath,

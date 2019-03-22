@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
 using SectorDirector.Core.FormatModels.Wad;
 using SectorDirector.Core.FormatModels.Udmf;
 
@@ -15,15 +14,10 @@ namespace SectorDirector.Engine
         {
             var maps = new List<MapData>();
 
-            var wad = WadFile.Read(path);
-
-
-            foreach (var lump in wad.Where(l => l.Name.ToString() == "TEXTMAP"))
+            using (var wad = WadReader.Read(path))
             {
-                using (var ms = new MemoryStream(lump.GetData()))
-                {
-                    maps.Add(MapData.LoadFrom(ms));
-                }
+                maps.AddRange(
+                    wad.GetMapNames().Select(name => MapData.LoadFrom(wad.GetMapStream(name))));
             }
 
             return maps;
