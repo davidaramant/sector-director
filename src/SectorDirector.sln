@@ -26,6 +26,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapGeneration", "MapGenerat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MapGeneration.Launcher", "MapGeneration.Launcher\MapGeneration.Launcher.csproj", "{BC1A804D-1B44-4095-80F2-6085B6BFC714}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestMaps", "TestMaps", "{949E4B1F-9F7A-430B-8422-158322653DCB}"
+	ProjectSection(SolutionItems) = preProject
+		TestMaps\testmaps.wad = TestMaps\testmaps.wad
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

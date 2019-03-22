@@ -330,8 +330,8 @@ ASALocalRun/
 .mfractor/
 
 # Doom Builder files
-src/TestMaps/*.dbs
-src/TestMaps/*.backup*
+src/TestMaps/*
+!src/TestMaps/testmaps.wad
 
 # Hime parser generator
 hime/
