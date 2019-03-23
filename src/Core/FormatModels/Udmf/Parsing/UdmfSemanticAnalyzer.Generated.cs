@@ -57,7 +57,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
         static LineDef ProcessLineDef(ASTNode block)
         {
             var lineDef = new LineDef();
-            foreach (var assignment in block.Children.Skip(2).Take(block.Children.Count - 3))
+            foreach (var assignment in block.Children.Skip(1))
             {
                 var id = GetAssignmentIdentifier(assignment);
                 switch (id.ToLower())
@@ -136,7 +136,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
         static SideDef ProcessSideDef(ASTNode block)
         {
             var sideDef = new SideDef();
-            foreach (var assignment in block.Children.Skip(2).Take(block.Children.Count - 3))
+            foreach (var assignment in block.Children.Skip(1))
             {
                 var id = GetAssignmentIdentifier(assignment);
                 switch (id.ToLower())
@@ -173,7 +173,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
         static Vertex ProcessVertex(ASTNode block)
         {
             var vertex = new Vertex();
-            foreach (var assignment in block.Children.Skip(2).Take(block.Children.Count - 3))
+            foreach (var assignment in block.Children.Skip(1))
             {
                 var id = GetAssignmentIdentifier(assignment);
                 switch (id.ToLower())
@@ -198,7 +198,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
         static Sector ProcessSector(ASTNode block)
         {
             var sector = new Sector();
-            foreach (var assignment in block.Children.Skip(2).Take(block.Children.Count - 3))
+            foreach (var assignment in block.Children.Skip(1))
             {
                 var id = GetAssignmentIdentifier(assignment);
                 switch (id.ToLower())
@@ -238,7 +238,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
         static Thing ProcessThing(ASTNode block)
         {
             var thing = new Thing();
-            foreach (var assignment in block.Children.Skip(2).Take(block.Children.Count - 3))
+            foreach (var assignment in block.Children.Skip(1))
             {
                 var id = GetAssignmentIdentifier(assignment);
                 switch (id.ToLower())

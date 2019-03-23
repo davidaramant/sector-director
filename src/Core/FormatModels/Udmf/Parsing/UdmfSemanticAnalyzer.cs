@@ -41,7 +41,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
         {
             var unknownBlock = new UnknownBlock(blockName);
 
-            var allAssignments = block.Children.Skip(2).Take(block.Children.Count - 3);
+            var allAssignments = block.Children.Skip(1);
             unknownBlock.Properties.AddRange(
                 from assignment in allAssignments
                 let id = GetAssignmentIdentifier(assignment)
@@ -53,11 +53,11 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 
         static Identifier GetAssignmentIdentifier(ASTNode assignment) => new Identifier(assignment.Children[0].Value);
 
-        static string ReadRawValue(ASTNode assignment) => assignment.Children[2].Children[0].Value;
+        static string ReadRawValue(ASTNode assignment) => assignment.Children[1].Value;
 
         static int ReadInt(ASTNode assignment, string context)
         {
-            var valueChild = assignment.Children[2].Children[0];
+            var valueChild = assignment.Children[1];
             var type = valueChild.Symbol.Name;
 
             if (type != "INTEGER")
@@ -70,7 +70,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 
         static double ReadDouble(ASTNode assignment, string context)
         {
-            var valueChild = assignment.Children[2].Children[0];
+            var valueChild = assignment.Children[1];
             var type = valueChild.Symbol.Name;
 
             if (type != "FLOAT" && type != "INTEGER")
@@ -83,7 +83,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 
         static bool ReadBool(ASTNode assignment, string context)
         {
-            var valueChild = assignment.Children[2].Children[0];
+            var valueChild = assignment.Children[1];
             var type = valueChild.Symbol.Name;
 
             if (type != "BOOLEAN")
@@ -96,7 +96,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 
         static string ReadString(ASTNode assignment, string context)
         {
-            var valueChild = assignment.Children[2].Children[0];
+            var valueChild = assignment.Children[1];
             var type = valueChild.Symbol.Name;
 
             if (type != "QUOTED_STRING")

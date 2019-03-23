@@ -10,11 +10,7 @@
   terminals
   {
     NEW_LINE      -> U+000D /* CR */
-                  |  U+000A /* LF */
-                  |  U+000D U+000A /* CR LF */
-                  |  U+0085 // Next line character
-                  |  U+2028 // Line separator character
-                  |  U+2029 ; //Paragraph separator character (U+2029)
+                  |  U+000A /* LF */; 
 
     COMMENT_LINE  -> '//' (.* - (.* NEW_LINE .*)) ;
     COMMENT_BLOCK -> '/*' (.* - (.* '*/' .*)) '*/' ;
@@ -36,11 +32,11 @@
   }
   rules
   {
-    value -> INTEGER | FLOAT | QUOTED_STRING | BOOLEAN;
+    value -> INTEGER^ | FLOAT^ | QUOTED_STRING^ | BOOLEAN^;
 
-    assignment_expr -> IDENTIFIER '=' value ';';
+    assignment_expr -> IDENTIFIER '='! value ';'!;
 
-    block -> IDENTIFIER '{' assignment_expr* '}';
+    block -> IDENTIFIER '{'! assignment_expr* '}'!;
 
     global_expr -> block | assignment_expr;
 

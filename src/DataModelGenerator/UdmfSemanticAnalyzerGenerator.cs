@@ -98,7 +98,7 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing").OpenParen()
                 Line($"static {block.CodeName} Process{block.CodeName}(ASTNode block)").
                 OpenParen().
                 Line($"var {variable} = new {block.CodeName}();").
-                Line("foreach (var assignment in block.Children.Skip(2).Take(block.Children.Count - 3))").
+                Line("foreach (var assignment in block.Children.Skip(1))").
                 OpenParen();
 
             WriteFieldSwitch(output, block, variable);
