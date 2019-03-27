@@ -18,23 +18,14 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
 
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
   inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: build
+    projects: '**/*.sln'
+    arguments: '--configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: test
-    projects: '**/*Core.Tests.csproj'
+    projects: '**/*Tests.csproj'
     arguments: '--configuration $(buildConfiguration)'
-
-# Ignoring this since I can't get it to work.  Once everything is Core this file will probably get completely replaced
-# - task: VSTest@2
-#   inputs:
-#     platform: '$(buildPlatform)'
-#     configuration: '$(buildConfiguration)'
-#     testSelector: 'testAssemblies'
-#     testAssemblyVer2: '**\*Engine.Tests.dll'
-#     otherConsoleOptions: '/framework:".NETFramework,Version=v4.5.1"'
