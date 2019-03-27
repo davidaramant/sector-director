@@ -20,7 +20,7 @@ namespace SectorDirector.Core.FormatModels.Wad
         public IEnumerable<string> GetMapNames() =>
             from lump in Directory
             let name = lump.Name.ToString()
-            where Regex.IsMatch(@"^(MAP\d{2}|E\dM\d)$", name)
+            where Regex.IsMatch(name, @"^(MAP\d{2}|E\dM\d)$")
             select name;
 
         private WadReader(Stream stream, ImmutableArray<LumpInfo> lumps)
