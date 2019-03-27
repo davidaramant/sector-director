@@ -10,12 +10,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\todo.md = ..\todo.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "Engine\Engine.csproj", "{9F342DE9-2869-4D82-828C-D0BB6B52A225}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine.Tests", "Engine.Tests\Engine.Tests.csproj", "{A12828C8-10E0-404B-8E5F-C59622FF801C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{3E4430E7-6E79-4C02-8579-55643E6611C7}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataModelGenerator", "DataModelGenerator\DataModelGenerator.csproj", "{B82E7F4E-C652-46DA-A49E-75FC564BB059}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{6F23FEFC-20D7-4759-AFB4-506353D1C0B9}"
@@ -31,24 +25,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestMaps", "TestMaps", "{94
 		TestMaps\testmaps.wad = TestMaps\testmaps.wad
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Engine", "Engine\Engine.csproj", "{DA05AC3A-6F6B-42DF-BB9F-AEB348562951}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{8D184D87-5A2F-49A8-A1B3-E1C2BA1EF035}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Engine.Tests", "Engine.Tests\Engine.Tests.csproj", "{42010066-BDB9-4822-A8D1-6EBAA039A18E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9F342DE9-2869-4D82-828C-D0BB6B52A225}.Debug|x64.ActiveCfg = Debug|x64
-		{9F342DE9-2869-4D82-828C-D0BB6B52A225}.Debug|x64.Build.0 = Debug|x64
-		{9F342DE9-2869-4D82-828C-D0BB6B52A225}.Release|x64.ActiveCfg = Release|x64
-		{9F342DE9-2869-4D82-828C-D0BB6B52A225}.Release|x64.Build.0 = Release|x64
-		{A12828C8-10E0-404B-8E5F-C59622FF801C}.Debug|x64.ActiveCfg = Debug|x64
-		{A12828C8-10E0-404B-8E5F-C59622FF801C}.Debug|x64.Build.0 = Debug|x64
-		{A12828C8-10E0-404B-8E5F-C59622FF801C}.Release|x64.ActiveCfg = Release|x64
-		{A12828C8-10E0-404B-8E5F-C59622FF801C}.Release|x64.Build.0 = Release|x64
-		{3E4430E7-6E79-4C02-8579-55643E6611C7}.Debug|x64.ActiveCfg = Debug|x64
-		{3E4430E7-6E79-4C02-8579-55643E6611C7}.Debug|x64.Build.0 = Debug|x64
-		{3E4430E7-6E79-4C02-8579-55643E6611C7}.Release|x64.ActiveCfg = Release|x64
-		{3E4430E7-6E79-4C02-8579-55643E6611C7}.Release|x64.Build.0 = Release|x64
 		{B82E7F4E-C652-46DA-A49E-75FC564BB059}.Debug|x64.ActiveCfg = Debug|x64
 		{B82E7F4E-C652-46DA-A49E-75FC564BB059}.Debug|x64.Build.0 = Debug|x64
 		{B82E7F4E-C652-46DA-A49E-75FC564BB059}.Release|x64.ActiveCfg = Release|x64
@@ -69,6 +57,18 @@ Global
 		{BC1A804D-1B44-4095-80F2-6085B6BFC714}.Debug|x64.Build.0 = Debug|x64
 		{BC1A804D-1B44-4095-80F2-6085B6BFC714}.Release|x64.ActiveCfg = Release|x64
 		{BC1A804D-1B44-4095-80F2-6085B6BFC714}.Release|x64.Build.0 = Release|x64
+		{DA05AC3A-6F6B-42DF-BB9F-AEB348562951}.Debug|x64.ActiveCfg = Debug|x64
+		{DA05AC3A-6F6B-42DF-BB9F-AEB348562951}.Debug|x64.Build.0 = Debug|x64
+		{DA05AC3A-6F6B-42DF-BB9F-AEB348562951}.Release|x64.ActiveCfg = Release|x64
+		{DA05AC3A-6F6B-42DF-BB9F-AEB348562951}.Release|x64.Build.0 = Release|x64
+		{8D184D87-5A2F-49A8-A1B3-E1C2BA1EF035}.Debug|x64.ActiveCfg = Debug|x64
+		{8D184D87-5A2F-49A8-A1B3-E1C2BA1EF035}.Debug|x64.Build.0 = Debug|x64
+		{8D184D87-5A2F-49A8-A1B3-E1C2BA1EF035}.Release|x64.ActiveCfg = Release|x64
+		{8D184D87-5A2F-49A8-A1B3-E1C2BA1EF035}.Release|x64.Build.0 = Release|x64
+		{42010066-BDB9-4822-A8D1-6EBAA039A18E}.Debug|x64.ActiveCfg = Debug|x64
+		{42010066-BDB9-4822-A8D1-6EBAA039A18E}.Debug|x64.Build.0 = Debug|x64
+		{42010066-BDB9-4822-A8D1-6EBAA039A18E}.Release|x64.ActiveCfg = Release|x64
+		{42010066-BDB9-4822-A8D1-6EBAA039A18E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
