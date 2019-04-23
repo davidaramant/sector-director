@@ -112,7 +112,7 @@ namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
         [Test, Explicit]
         public void ShouldLoadAllTestMaps()
         {
-            foreach (var wadPath in Directory.GetFiles(".", searchPattern: "*.wad"))
+            foreach (var wadPath in Directory.GetFiles(TestContext.CurrentContext.TestDirectory, searchPattern: "*.wad"))
             {
                 TestContext.WriteLine(Path.GetFileName(wadPath));
                 using (var wadReader = WadReader.Read(wadPath))

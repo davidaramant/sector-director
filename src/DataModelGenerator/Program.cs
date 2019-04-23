@@ -1,8 +1,6 @@
 ﻿// Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
-using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -17,41 +15,12 @@ namespace SectorDirector.DataModelGenerator
             var udmfPath = Path.Combine(corePath, "FormatModels", "Udmf");
             var udmfParsingPath = Path.Combine(udmfPath, "Parsing");
 
-            // Generate HIME lexer / parser
-            using (var himeProcess = Process.Start(
-                Path.Combine(solutionBasePath, "..", "hime", "himecc.bat"),
-                "Udmf.gram"))
+            UdmfModelGenerator.WriteToPath(udmfPath);
+
+            using (var analyzerStream = File.CreateText(Path.Combine(udmfParsingPath, "UdmfSemanticAnalyzer.Generated.cs")))
             {
-                // Create data model
-                UdmfModelGenerator.WriteToPath(udmfPath);
-
-                // Generate mapping of HIME output to data model
-                using (var analyzerStream = File.CreateText(Path.Combine(udmfParsingPath, "UdmfSemanticAnalyzer.Generated.cs")))
-                {
-                    UdmfSemanticAnalyzerGenerator.WriteTo(analyzerStream);
-                }
-
-
-                himeProcess.WaitForExit();
-                if (himeProcess.ExitCode != 0)
-                {
-                    Console.ReadLine();
-                }
-                else
-                {
-                    void CopyFileToParsingPath(string fileName)
-                    {
-                        File.Copy(fileName, Path.Combine(udmfParsingPath, fileName), overwrite:true);
-                    }
-
-                    CopyFileToParsingPath("UdmfLexer.cs");
-                    CopyFileToParsingPath("UdmfParser.cs");
-                    CopyFileToParsingPath("UdmfLexer.bin");
-                    CopyFileToParsingPath("UdmfParser.bin");
-                }
+                UdmfSemanticAnalyzerGenerator.WriteTo(analyzerStream);
             }
-
-
         }
     }
 }

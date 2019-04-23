@@ -1,111 +1,62 @@
 ﻿// Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
-using System.Linq;
-using Hime.Redist;
 using SectorDirector.Core.FormatModels.Common;
+using SectorDirector.Core.FormatModels.Udmf.Parsing.AbstractSyntaxTree;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 {
     public static partial class UdmfSemanticAnalyzer
     {
-        public static MapData Process(ParseResult result)
+        public static MapData Process(IEnumerable<IGlobalExpression> result)
         {
-            if (!result.IsSuccess)
-            {
-                throw new ParsingException($"{result.Errors.Count} errors found trying to parse UDMF");
-            }
-
             var map = new MapData();
 
-            foreach (var globalExpression in result.Root.Children)
+            foreach (var globalExpression in result)
             {
-                var child = globalExpression.Children[0];
-                if (child.Symbol.Name == "assignment_expr")
+                switch (globalExpression)
                 {
-                    ProcessGlobalExpression(map, child);
-                }
-                else
-                {
-                    ProcessBlock(map, child);
+                    case Assignment assignment:
+                        ProcessGlobalAssignment(map, assignment);
+                        break;
+
+                    case Block block:
+                        ProcessBlock(map, block);
+                        break;
                 }
             }
 
             return map;
         }
 
-        static partial void ProcessGlobalExpression(MapData map, ASTNode assignment);
-        static partial void ProcessBlock(MapData map, ASTNode block);
+        static partial void ProcessGlobalAssignment(MapData map, Assignment assignment);
+        static partial void ProcessBlock(MapData map, Block block);
 
-        static UnknownBlock ProcessUnknownBlock(Identifier blockName, ASTNode block)
+
+        static UnknownBlock ProcessUnknownBlock(Block block)
         {
-            var unknownBlock = new UnknownBlock(blockName);
+            var unknownBlock = new UnknownBlock(block.Name);
 
-            var allAssignments = block.Children.Skip(1);
-            unknownBlock.Properties.AddRange(
-                from assignment in allAssignments
-                let id = GetAssignmentIdentifier(assignment)
-                let value = ReadRawValue(assignment)
-                select new UnknownProperty(id, value));
+            unknownBlock.Properties.AddRange(block.Fields.Select(a => new UnknownProperty(a.Name, a.ValueAsString())));
 
             return unknownBlock;
         }
 
-        static Identifier GetAssignmentIdentifier(ASTNode assignment) => new Identifier(assignment.Children[0].Value);
+        static int ReadIntValue(Assignment assignment, string context) => ReadValue<int, IntegerToken>(assignment, context);
+        static double ReadDoubleValue(Assignment assignment, string context) => ReadValue<double, FloatToken>(assignment, context);
+        static bool ReadBoolValue(Assignment assignment, string context) => ReadValue<bool, BooleanToken>(assignment, context);
+        static string ReadStringValue(Assignment assignment, string context) => ReadValue<string, StringToken>(assignment, context);
 
-        static string ReadRawValue(ASTNode assignment) => assignment.Children[1].Value;
-
-        static int ReadInt(ASTNode assignment, string context)
+        static T ReadValue<T, TToken>(Assignment assignment, string context) where TToken : ValueToken<T>
         {
-            var valueChild = assignment.Children[1];
-            var type = valueChild.Symbol.Name;
-
-            if (type != "INTEGER")
+            if (assignment.Value is TToken t)
             {
-                throw new ParsingException($"Expected INTEGER for {context} but got {type}.");
+                return t.Value;
             }
 
-            return int.Parse(valueChild.Value);
-        }
-
-        static double ReadDouble(ASTNode assignment, string context)
-        {
-            var valueChild = assignment.Children[1];
-            var type = valueChild.Symbol.Name;
-
-            if (type != "FLOAT" && type != "INTEGER")
-            {
-                throw new ParsingException($"Expected FLOAT for {context} but got {type}.");
-            }
-
-            return double.Parse(valueChild.Value);
-        }
-
-        static bool ReadBool(ASTNode assignment, string context)
-        {
-            var valueChild = assignment.Children[1];
-            var type = valueChild.Symbol.Name;
-
-            if (type != "BOOLEAN")
-            {
-                throw new ParsingException($"Expected BOOLEAN for {context} but got {type}.");
-            }
-
-            return bool.Parse(valueChild.Value);
-        }
-
-        static string ReadString(ASTNode assignment, string context)
-        {
-            var valueChild = assignment.Children[1];
-            var type = valueChild.Symbol.Name;
-
-            if (type != "QUOTED_STRING")
-            {
-                throw new ParsingException($"Expected QUOTED_STRING for {context} but got {type}.");
-            }
-
-            var quotedString = valueChild.Value;
-            return quotedString.Substring(1, quotedString.Length - 2);
+            throw new ParsingException($"Expected {typeof(T)} for {context} but got {assignment.Value} ({assignment.Value.Location}).");
         }
     }
 }

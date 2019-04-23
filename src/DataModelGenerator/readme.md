@@ -16,7 +16,8 @@ Features of the generated UDMF data model:
 
 ## Parser
 
-Parsing happens in two steps:
+Parsing happens in three steps:
 
-1) The [Hime](https://cenotelie.fr/projects/hime/) parser generator framework handles parsing a stream to an abstract syntax tree (that's the `.gram` file).  The generator program assumes that Hime is "installed" in a folder named `hime` at the base of the repo (this is the contents of the zip download from the site).
-2) A custom generated semantic analyzer that maps the Hime AST to the data model.
+1) A custom lexer generates tokens
+2) A [Pidgin](https://github.com/benjamin-hodgson/Pidgin) parser creates an AST from the token stream
+3) A custom generated semantic analyzer maps the AST to the data model.

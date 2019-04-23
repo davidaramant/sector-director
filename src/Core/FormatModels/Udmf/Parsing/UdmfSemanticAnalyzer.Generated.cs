@@ -1,37 +1,33 @@
 // Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
+using SectorDirector.Core.FormatModels.Udmf.Parsing.AbstractSyntaxTree;
 using System.CodeDom.Compiler;
-using System.Linq;
-using Hime.Redist;
-using SectorDirector.Core.FormatModels.Common;
 
 namespace SectorDirector.Core.FormatModels.Udmf.Parsing
 {
     [GeneratedCode("DataModelGenerator", "1.0.0.0")]
     public static partial class UdmfSemanticAnalyzer
     {
-        static partial void ProcessGlobalExpression(MapData map, ASTNode assignment)
+        static partial void ProcessGlobalAssignment(MapData map, Assignment assignment)
         {
-            var id = GetAssignmentIdentifier(assignment);
-            switch (id.ToLower())
+            switch (assignment.Name.ToLower())
             {
                 case "namespace":
-                    map.NameSpace = ReadString(assignment, "MapData.NameSpace");
+                    map.NameSpace = ReadStringValue(assignment, "MapData.NameSpace");
                     break;
                 case "comment":
-                    map.Comment = ReadString(assignment, "MapData.Comment");
+                    map.Comment = ReadStringValue(assignment, "MapData.Comment");
                     break;
                 default:
-                    map.UnknownProperties.Add(new UnknownProperty(id, ReadRawValue(assignment)));
+                    map.UnknownProperties.Add(new UnknownProperty(assignment.Name, assignment.ValueAsString()));
                     break;
             }
         }
 
-        static partial void ProcessBlock(MapData map, ASTNode block)
+        static partial void ProcessBlock(MapData map, Block block)
         {
-            var blockName = new Identifier(block.Children[0].Value);
-            switch (blockName.ToLower())
+            switch (block.Name.ToLower())
             {
                 case "linedef":
                     map.LineDefs.Add(ProcessLineDef(block));
@@ -49,250 +45,245 @@ namespace SectorDirector.Core.FormatModels.Udmf.Parsing
                     map.Things.Add(ProcessThing(block));
                     break;
                 default:
-                    map.UnknownBlocks.Add(ProcessUnknownBlock(blockName, block));
+                    map.UnknownBlocks.Add(ProcessUnknownBlock(block));
                     break;
             }
         }
 
-        static LineDef ProcessLineDef(ASTNode block)
+        static LineDef ProcessLineDef(Block block)
         {
             var lineDef = new LineDef();
-            foreach (var assignment in block.Children.Skip(1))
+            foreach (var assignment in block.Fields)
             {
-                var id = GetAssignmentIdentifier(assignment);
-                switch (id.ToLower())
+                switch (assignment.Name.ToLower())
                 {
                     case "id":
-                        lineDef.Id = ReadInt(assignment, "LineDef.Id");
+                        lineDef.Id = ReadIntValue(assignment, "LineDef.Id");
                         break;
                     case "v1":
-                        lineDef.V1 = ReadInt(assignment, "LineDef.V1");
+                        lineDef.V1 = ReadIntValue(assignment, "LineDef.V1");
                         break;
                     case "v2":
-                        lineDef.V2 = ReadInt(assignment, "LineDef.V2");
+                        lineDef.V2 = ReadIntValue(assignment, "LineDef.V2");
                         break;
                     case "blocking":
-                        lineDef.Blocking = ReadBool(assignment, "LineDef.Blocking");
+                        lineDef.Blocking = ReadBoolValue(assignment, "LineDef.Blocking");
                         break;
                     case "blockmonsters":
-                        lineDef.BlockMonsters = ReadBool(assignment, "LineDef.BlockMonsters");
+                        lineDef.BlockMonsters = ReadBoolValue(assignment, "LineDef.BlockMonsters");
                         break;
                     case "twosided":
-                        lineDef.TwoSided = ReadBool(assignment, "LineDef.TwoSided");
+                        lineDef.TwoSided = ReadBoolValue(assignment, "LineDef.TwoSided");
                         break;
                     case "dontpegtop":
-                        lineDef.DontPegTop = ReadBool(assignment, "LineDef.DontPegTop");
+                        lineDef.DontPegTop = ReadBoolValue(assignment, "LineDef.DontPegTop");
                         break;
                     case "dontpegbottom":
-                        lineDef.DontPegBottom = ReadBool(assignment, "LineDef.DontPegBottom");
+                        lineDef.DontPegBottom = ReadBoolValue(assignment, "LineDef.DontPegBottom");
                         break;
                     case "secret":
-                        lineDef.Secret = ReadBool(assignment, "LineDef.Secret");
+                        lineDef.Secret = ReadBoolValue(assignment, "LineDef.Secret");
                         break;
                     case "blocksound":
-                        lineDef.BlockSound = ReadBool(assignment, "LineDef.BlockSound");
+                        lineDef.BlockSound = ReadBoolValue(assignment, "LineDef.BlockSound");
                         break;
                     case "dontdraw":
-                        lineDef.DontDraw = ReadBool(assignment, "LineDef.DontDraw");
+                        lineDef.DontDraw = ReadBoolValue(assignment, "LineDef.DontDraw");
                         break;
                     case "mapped":
-                        lineDef.Mapped = ReadBool(assignment, "LineDef.Mapped");
+                        lineDef.Mapped = ReadBoolValue(assignment, "LineDef.Mapped");
                         break;
                     case "special":
-                        lineDef.Special = ReadInt(assignment, "LineDef.Special");
+                        lineDef.Special = ReadIntValue(assignment, "LineDef.Special");
                         break;
                     case "arg0":
-                        lineDef.Arg0 = ReadInt(assignment, "LineDef.Arg0");
+                        lineDef.Arg0 = ReadIntValue(assignment, "LineDef.Arg0");
                         break;
                     case "arg1":
-                        lineDef.Arg1 = ReadInt(assignment, "LineDef.Arg1");
+                        lineDef.Arg1 = ReadIntValue(assignment, "LineDef.Arg1");
                         break;
                     case "arg2":
-                        lineDef.Arg2 = ReadInt(assignment, "LineDef.Arg2");
+                        lineDef.Arg2 = ReadIntValue(assignment, "LineDef.Arg2");
                         break;
                     case "arg3":
-                        lineDef.Arg3 = ReadInt(assignment, "LineDef.Arg3");
+                        lineDef.Arg3 = ReadIntValue(assignment, "LineDef.Arg3");
                         break;
                     case "arg4":
-                        lineDef.Arg4 = ReadInt(assignment, "LineDef.Arg4");
+                        lineDef.Arg4 = ReadIntValue(assignment, "LineDef.Arg4");
                         break;
                     case "sidefront":
-                        lineDef.SideFront = ReadInt(assignment, "LineDef.SideFront");
+                        lineDef.SideFront = ReadIntValue(assignment, "LineDef.SideFront");
                         break;
                     case "sideback":
-                        lineDef.SideBack = ReadInt(assignment, "LineDef.SideBack");
+                        lineDef.SideBack = ReadIntValue(assignment, "LineDef.SideBack");
                         break;
                     case "comment":
-                        lineDef.Comment = ReadString(assignment, "LineDef.Comment");
+                        lineDef.Comment = ReadStringValue(assignment, "LineDef.Comment");
                         break;
                     default:
-                        lineDef.UnknownProperties.Add(new UnknownProperty(id, ReadRawValue(assignment)));
+                        lineDef.UnknownProperties.Add(new UnknownProperty(assignment.Name, assignment.ValueAsString()));
                         break;
                 }
             }
             return lineDef;
         }
 
-        static SideDef ProcessSideDef(ASTNode block)
+        static SideDef ProcessSideDef(Block block)
         {
             var sideDef = new SideDef();
-            foreach (var assignment in block.Children.Skip(1))
+            foreach (var assignment in block.Fields)
             {
-                var id = GetAssignmentIdentifier(assignment);
-                switch (id.ToLower())
+                switch (assignment.Name.ToLower())
                 {
                     case "offsetx":
-                        sideDef.OffsetX = ReadInt(assignment, "SideDef.OffsetX");
+                        sideDef.OffsetX = ReadIntValue(assignment, "SideDef.OffsetX");
                         break;
                     case "offsety":
-                        sideDef.OffsetY = ReadInt(assignment, "SideDef.OffsetY");
+                        sideDef.OffsetY = ReadIntValue(assignment, "SideDef.OffsetY");
                         break;
                     case "texturetop":
-                        sideDef.TextureTop = ReadString(assignment, "SideDef.TextureTop");
+                        sideDef.TextureTop = ReadStringValue(assignment, "SideDef.TextureTop");
                         break;
                     case "texturebottom":
-                        sideDef.TextureBottom = ReadString(assignment, "SideDef.TextureBottom");
+                        sideDef.TextureBottom = ReadStringValue(assignment, "SideDef.TextureBottom");
                         break;
                     case "texturemiddle":
-                        sideDef.TextureMiddle = ReadString(assignment, "SideDef.TextureMiddle");
+                        sideDef.TextureMiddle = ReadStringValue(assignment, "SideDef.TextureMiddle");
                         break;
                     case "sector":
-                        sideDef.Sector = ReadInt(assignment, "SideDef.Sector");
+                        sideDef.Sector = ReadIntValue(assignment, "SideDef.Sector");
                         break;
                     case "comment":
-                        sideDef.Comment = ReadString(assignment, "SideDef.Comment");
+                        sideDef.Comment = ReadStringValue(assignment, "SideDef.Comment");
                         break;
                     default:
-                        sideDef.UnknownProperties.Add(new UnknownProperty(id, ReadRawValue(assignment)));
+                        sideDef.UnknownProperties.Add(new UnknownProperty(assignment.Name, assignment.ValueAsString()));
                         break;
                 }
             }
             return sideDef;
         }
 
-        static Vertex ProcessVertex(ASTNode block)
+        static Vertex ProcessVertex(Block block)
         {
             var vertex = new Vertex();
-            foreach (var assignment in block.Children.Skip(1))
+            foreach (var assignment in block.Fields)
             {
-                var id = GetAssignmentIdentifier(assignment);
-                switch (id.ToLower())
+                switch (assignment.Name.ToLower())
                 {
                     case "x":
-                        vertex.X = ReadDouble(assignment, "Vertex.X");
+                        vertex.X = ReadDoubleValue(assignment, "Vertex.X");
                         break;
                     case "y":
-                        vertex.Y = ReadDouble(assignment, "Vertex.Y");
+                        vertex.Y = ReadDoubleValue(assignment, "Vertex.Y");
                         break;
                     case "comment":
-                        vertex.Comment = ReadString(assignment, "Vertex.Comment");
+                        vertex.Comment = ReadStringValue(assignment, "Vertex.Comment");
                         break;
                     default:
-                        vertex.UnknownProperties.Add(new UnknownProperty(id, ReadRawValue(assignment)));
+                        vertex.UnknownProperties.Add(new UnknownProperty(assignment.Name, assignment.ValueAsString()));
                         break;
                 }
             }
             return vertex;
         }
 
-        static Sector ProcessSector(ASTNode block)
+        static Sector ProcessSector(Block block)
         {
             var sector = new Sector();
-            foreach (var assignment in block.Children.Skip(1))
+            foreach (var assignment in block.Fields)
             {
-                var id = GetAssignmentIdentifier(assignment);
-                switch (id.ToLower())
+                switch (assignment.Name.ToLower())
                 {
                     case "heightfloor":
-                        sector.HeightFloor = ReadInt(assignment, "Sector.HeightFloor");
+                        sector.HeightFloor = ReadIntValue(assignment, "Sector.HeightFloor");
                         break;
                     case "heightceiling":
-                        sector.HeightCeiling = ReadInt(assignment, "Sector.HeightCeiling");
+                        sector.HeightCeiling = ReadIntValue(assignment, "Sector.HeightCeiling");
                         break;
                     case "texturefloor":
-                        sector.TextureFloor = ReadString(assignment, "Sector.TextureFloor");
+                        sector.TextureFloor = ReadStringValue(assignment, "Sector.TextureFloor");
                         break;
                     case "textureceiling":
-                        sector.TextureCeiling = ReadString(assignment, "Sector.TextureCeiling");
+                        sector.TextureCeiling = ReadStringValue(assignment, "Sector.TextureCeiling");
                         break;
                     case "lightlevel":
-                        sector.LightLevel = ReadInt(assignment, "Sector.LightLevel");
+                        sector.LightLevel = ReadIntValue(assignment, "Sector.LightLevel");
                         break;
                     case "special":
-                        sector.Special = ReadInt(assignment, "Sector.Special");
+                        sector.Special = ReadIntValue(assignment, "Sector.Special");
                         break;
                     case "id":
-                        sector.Id = ReadInt(assignment, "Sector.Id");
+                        sector.Id = ReadIntValue(assignment, "Sector.Id");
                         break;
                     case "comment":
-                        sector.Comment = ReadString(assignment, "Sector.Comment");
+                        sector.Comment = ReadStringValue(assignment, "Sector.Comment");
                         break;
                     default:
-                        sector.UnknownProperties.Add(new UnknownProperty(id, ReadRawValue(assignment)));
+                        sector.UnknownProperties.Add(new UnknownProperty(assignment.Name, assignment.ValueAsString()));
                         break;
                 }
             }
             return sector;
         }
 
-        static Thing ProcessThing(ASTNode block)
+        static Thing ProcessThing(Block block)
         {
             var thing = new Thing();
-            foreach (var assignment in block.Children.Skip(1))
+            foreach (var assignment in block.Fields)
             {
-                var id = GetAssignmentIdentifier(assignment);
-                switch (id.ToLower())
+                switch (assignment.Name.ToLower())
                 {
                     case "id":
-                        thing.Id = ReadInt(assignment, "Thing.Id");
+                        thing.Id = ReadIntValue(assignment, "Thing.Id");
                         break;
                     case "x":
-                        thing.X = ReadDouble(assignment, "Thing.X");
+                        thing.X = ReadDoubleValue(assignment, "Thing.X");
                         break;
                     case "y":
-                        thing.Y = ReadDouble(assignment, "Thing.Y");
+                        thing.Y = ReadDoubleValue(assignment, "Thing.Y");
                         break;
                     case "height":
-                        thing.Height = ReadDouble(assignment, "Thing.Height");
+                        thing.Height = ReadDoubleValue(assignment, "Thing.Height");
                         break;
                     case "angle":
-                        thing.Angle = ReadInt(assignment, "Thing.Angle");
+                        thing.Angle = ReadIntValue(assignment, "Thing.Angle");
                         break;
                     case "type":
-                        thing.Type = ReadInt(assignment, "Thing.Type");
+                        thing.Type = ReadIntValue(assignment, "Thing.Type");
                         break;
                     case "skill1":
-                        thing.Skill1 = ReadBool(assignment, "Thing.Skill1");
+                        thing.Skill1 = ReadBoolValue(assignment, "Thing.Skill1");
                         break;
                     case "skill2":
-                        thing.Skill2 = ReadBool(assignment, "Thing.Skill2");
+                        thing.Skill2 = ReadBoolValue(assignment, "Thing.Skill2");
                         break;
                     case "skill3":
-                        thing.Skill3 = ReadBool(assignment, "Thing.Skill3");
+                        thing.Skill3 = ReadBoolValue(assignment, "Thing.Skill3");
                         break;
                     case "skill4":
-                        thing.Skill4 = ReadBool(assignment, "Thing.Skill4");
+                        thing.Skill4 = ReadBoolValue(assignment, "Thing.Skill4");
                         break;
                     case "skill5":
-                        thing.Skill5 = ReadBool(assignment, "Thing.Skill5");
+                        thing.Skill5 = ReadBoolValue(assignment, "Thing.Skill5");
                         break;
                     case "ambush":
-                        thing.Ambush = ReadBool(assignment, "Thing.Ambush");
+                        thing.Ambush = ReadBoolValue(assignment, "Thing.Ambush");
                         break;
                     case "single":
-                        thing.Single = ReadBool(assignment, "Thing.Single");
+                        thing.Single = ReadBoolValue(assignment, "Thing.Single");
                         break;
                     case "dm":
-                        thing.Dm = ReadBool(assignment, "Thing.Dm");
+                        thing.Dm = ReadBoolValue(assignment, "Thing.Dm");
                         break;
                     case "coop":
-                        thing.Coop = ReadBool(assignment, "Thing.Coop");
+                        thing.Coop = ReadBoolValue(assignment, "Thing.Coop");
                         break;
                     case "comment":
-                        thing.Comment = ReadString(assignment, "Thing.Comment");
+                        thing.Comment = ReadStringValue(assignment, "Thing.Comment");
                         break;
                     default:
-                        thing.UnknownProperties.Add(new UnknownProperty(id, ReadRawValue(assignment)));
+                        thing.UnknownProperties.Add(new UnknownProperty(assignment.Name, assignment.ValueAsString()));
                         break;
                 }
             }
