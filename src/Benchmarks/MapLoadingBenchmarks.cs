@@ -9,7 +9,6 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 using SectorDirector.Core.FormatModels.Udmf;
 using SectorDirector.Core.FormatModels.Wad;
-using SectorDirector.Engine;
 
 namespace Benchmarks
 {
