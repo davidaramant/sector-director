@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SectorDirector.Engine.Renderers;
+using SectorDirector.Core.FormatModels.Wad;
 
 namespace SectorDirector.Engine
 {
@@ -30,7 +31,6 @@ namespace SectorDirector.Engine
         readonly ScreenMessage _screenMessage = new ScreenMessage();
         readonly FrameTimeAggregator _frameTimeAggregator = new FrameTimeAggregator();
         private readonly GameSettings _settings;
-        OverheadRenderer _overheadRenderer;
         IRenderer _renderer;
 
         private Point CurrentScreenSize => new Point(
@@ -51,7 +51,7 @@ namespace SectorDirector.Engine
             Window.ClientSizeChanged += (s, e) => UpdateScreenBuffer(CurrentScreenSize.DivideBy(_renderScale));
 
             _settings = new GameSettings(_screenMessage);
-            _settings.RendererChanged += Settings_RendererChanged;
+            _settings.RendererChanged += (s, e) => RecreateRenderer();
 
             _keyToggles.DecreaseFidelity += KeyToggled_DecreaseFidelity;
             _keyToggles.IncreaseFidelity += KeyToggled_IncreaseFidelity;
@@ -59,7 +59,7 @@ namespace SectorDirector.Engine
             _keyToggles.LoadMap += KeyToggled_LoadMap;
         }
 
-        private void Settings_RendererChanged(object sender, System.EventArgs e)
+        private void RecreateRenderer()
         {
             switch (_settings.Renderer)
             {
@@ -68,11 +68,15 @@ namespace SectorDirector.Engine
                     break;
 
                 case RendererType.Overhead:
-                    _renderer = _overheadRenderer;
+                    _renderer = new OverheadRenderer(_settings, _currentMap);
                     break;
 
                 case RendererType.Fire:
                     _renderer = new FireRenderer();
+                    break;
+
+                case RendererType.MapHistory:
+                    _renderer = new MapHistoryRenderer(_currentMap, _screenMessage);
                     break;
 
                 default:
@@ -143,6 +147,7 @@ namespace SectorDirector.Engine
 
             _messageFont = Content.Load<SpriteFont>("Fonts/ScreenMessage");
             _maps = WadLoader.Load("testmaps.wad");
+
             SwitchToMap(0);
         }
 
@@ -151,22 +156,15 @@ namespace SectorDirector.Engine
             _screenMessage.ShowMessage($"Switching to map index {index}");
             var map = _maps[index];
             _currentMap = new MapGeometry(map);
-            _overheadRenderer = new OverheadRenderer(_settings, _currentMap);
             _playerInfo = new PlayerInfo(_currentMap);
-            if (_settings.Renderer == RendererType.Overhead)
-            {
-                _renderer = _overheadRenderer;
-            }
+            RecreateRenderer();
         }
 
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
         /// game-specific content.
         /// </summary>
-        protected override void UnloadContent()
-        {
-            Content.Unload();
-        }
+        protected override void UnloadContent() => Content.Unload();
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,

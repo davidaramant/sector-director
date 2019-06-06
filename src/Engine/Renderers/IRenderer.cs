@@ -10,7 +10,8 @@ namespace SectorDirector.Engine.Renderers
     {
         Overhead,
         LineTest,
-        Fire
+        Fire,
+        MapHistory
     }
 
     public static class RendererTypeExtensions
