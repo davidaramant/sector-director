@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using SectorDirector.Core.CollectionExtensions;
 using SectorDirector.Engine.Input;
 
 namespace SectorDirector.Engine
@@ -114,15 +115,7 @@ namespace SectorDirector.Engine
 
         private int PickResultingSector()
         {
-            foreach (var sectorId in _possibleSectorsToEnter)
-            {
-                if (_map.IsInsideSector(sectorId, ref Position))
-                {
-                    return sectorId;
-                }
-            }
-
-            return CurrentSectorId;
+            return _possibleSectorsToEnter.FirstOr(sectorId => _map.IsInsideSector(sectorId, ref Position), CurrentSectorId);
         }
 
         public void Rotate(float rotationRadians)
