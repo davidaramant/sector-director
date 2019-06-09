@@ -34,26 +34,7 @@ namespace SectorDirector.Engine
             Direction = new Vector2(1, 0);
             Rotate(MathHelper.ToRadians(playerThing.Angle));
 
-            CurrentSectorId = Enumerable.Range(0, _map.Sectors.Length).First(sectorId => IsInsideSector(ref Position, sectorId));
-        }
-
-        private bool IsInsideSector(ref Vector2 position, int sectorId)
-        {
-            ref SectorInfo sector = ref _map.Sectors[sectorId];
-            foreach (var lineDefId in sector.LineIds)
-            {
-                ref Line line = ref _map.Lines[lineDefId];
-
-                ref Vector2 v1 = ref _map.Vertices[line.V1];
-                ref Vector2 v2 = ref _map.Vertices[line.V2];
-
-                var d = (position.X - v1.X) * (v2.Y - v1.Y) - (position.Y - v1.Y) * (v2.X - v1.X);
-
-                if (d < 0)
-                    return false;
-            }
-
-            return true;
+            CurrentSectorId = Enumerable.Range(0, _map.Sectors.Length).First(sectorId => map.IsInsideSector(sectorId, ref Position));
         }
 
         public void Update(ContinuousInputs inputs, GameTime gameTime)
@@ -135,7 +116,7 @@ namespace SectorDirector.Engine
         {
             foreach (var sectorId in _possibleSectorsToEnter)
             {
-                if (IsInsideSector(ref Position, sectorId))
+                if (_map.IsInsideSector(sectorId, ref Position))
                 {
                     return sectorId;
                 }

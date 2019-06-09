@@ -36,7 +36,7 @@ namespace SectorDirector.Engine.Tests
             var point = new Vector2(x, y);
             for (int sectorId = 0; sectorId < 2; sectorId++)
             {
-                Assert.That(ConvexMaps[0].IsInsideSector(sectorId, point),
+                Assert.That(ConvexMaps[0].IsInsideSector(sectorId, ref point),
                     Is.EqualTo(indexOfContainingSector == sectorId),
                     $"Did not properly determine containment for sector index {sectorId}");
             }

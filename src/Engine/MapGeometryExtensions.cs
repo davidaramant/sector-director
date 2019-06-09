@@ -7,7 +7,7 @@ namespace SectorDirector.Engine
 {
     public static class MapGeometryExtensions
     {
-        public static bool IsInsideSector(this MapGeometry map, int sectorIndex, Vector2 point)
+        public static bool IsInsideSector(this MapGeometry map, int sectorIndex, ref Vector2 point)
         {
             // https://stackoverflow.com/questions/11716268/point-in-polygon-algorithm
             bool insideSector = false;
