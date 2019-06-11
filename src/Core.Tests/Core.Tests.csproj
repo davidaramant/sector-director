@@ -10,7 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\TestMaps\*.wad" />
+    <None Include="..\TestMaps\testmaps.wad" Link="testmaps.wad">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -22,12 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="..\TestMaps\*.wad">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>
