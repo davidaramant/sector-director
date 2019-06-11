@@ -23,9 +23,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestMaps", "TestMaps", "{949E4B1F-9F7A-430B-8422-158322653DCB}"
 	ProjectSection(SolutionItems) = preProject
 		TestMaps\ConcaveSectors.wad = TestMaps\ConcaveSectors.wad
-		TestMaps\freedoom2-udmf.wad = TestMaps\freedoom2-udmf.wad
 		TestMaps\testmaps.wad = TestMaps\testmaps.wad
-		TestMaps\zdcmp2.wad = TestMaps\zdcmp2.wad
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Engine", "Engine\Engine.csproj", "{DA05AC3A-6F6B-42DF-BB9F-AEB348562951}"

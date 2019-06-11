@@ -35,13 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\TestMaps\freedoom2-udmf.wad" Link="freedoom2-udmf.wad">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="..\TestMaps\testmaps.wad" Link="testmaps.wad">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="..\TestMaps\zdcmp2.wad" Link="zdcmp2.wad">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
