@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\TestMaps\ConvexSectors.wad" Link="ConvexSectors.wad">
+    <None Include="..\TestMaps\ConcaveSectors.wad" Link="ConcaveSectors.wad">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

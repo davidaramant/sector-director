@@ -332,4 +332,4 @@ ASALocalRun/
 # Doom Builder files
 src/TestMaps/*
 !src/TestMaps/testmaps.wad
-!src/TestMaps/ConvexSectors.wad
+!src/TestMaps/ConcaveSectors.wad

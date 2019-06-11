@@ -13,7 +13,7 @@ namespace SectorDirector.Engine.Tests
     [TestFixture]
     public sealed class MapGeometryTests
     {
-        ImmutableList<MapGeometry> ConvexMaps;
+        ImmutableList<MapGeometry> ConcaveMaps;
 
         [OneTimeSetUp]
         public void LoadTestMaps()
@@ -21,9 +21,9 @@ namespace SectorDirector.Engine.Tests
             // Test Maps:
             // MAP01:
             // - Sector 0 - a 256x256 box with the bottom left at (0,0)
-            // - Sector 1 - a jagged convex sector in the middle
-            ConvexMaps =
-                WadLoader.Load(Path.Combine(TestContext.CurrentContext.TestDirectory, "ConvexSectors.wad")).
+            // - Sector 1 - a jagged concave sector in the middle
+            ConcaveMaps =
+                WadLoader.Load(Path.Combine(TestContext.CurrentContext.TestDirectory, "ConcaveSectors.wad")).
                 Select(m => new MapGeometry(m)).
                 ToImmutableList();
         }
@@ -36,7 +36,7 @@ namespace SectorDirector.Engine.Tests
             var point = new Vector2(x, y);
             for (int sectorId = 0; sectorId < 2; sectorId++)
             {
-                Assert.That(ConvexMaps[0].IsInsideSector(sectorId, ref point),
+                Assert.That(ConcaveMaps[0].IsInsideSector(sectorId, ref point),
                     Is.EqualTo(indexOfContainingSector == sectorId),
                     $"Did not properly determine containment for sector index {sectorId}");
             }
