@@ -5,7 +5,7 @@
 - [x] Load UDMF from disk
 - [x] Make test maps
 - [x] Create DataModelGenerator project as replacement for T4 templates
-- [x] Replace Piglet with ~~Superpower~~ Hime
+- [x] Replace Piglet with ~~Superpower~~ ~~Hime~~ a custom lexer/parser
 - [x] Simplify DataModelGenerator
 
 ## Game Related
@@ -13,11 +13,8 @@
 - [x] Move player
 - [x] Rotate player
 - [x] Player horizontal clipping (simple)
-- [ ] Player vertical clipping
-- [ ] Player horizontal clipping (properly taking into account radius)
-- [ ] Sub-sector division
-- [ ] Determine if a sector is convex
-- [ ] Use a cool BMF instead of boring Consolas font (MonoGameExtended)
+- [ ] Redo player movement to project a desired location and prevent invalid moves
+- [x] A working way to detect if the player is in a sector
 
 ## Misc
 
@@ -26,8 +23,9 @@
 - [x] Benchmarks...
 - [x] Convert projects to .NET Standard
 - [ ] Upgrade to Core 3 when it's released and MonoGame support Core
-- [ ] Fix the Azure pipeline file once every is Core.  Mixing Framework and Core is a mess
+- [x] Fix the Azure pipeline file once every is Core.  Mixing Framework and Core is a mess
 - [ ] Deal with problematic Clipper dependency (not netstandard compliant)
+- [ ] Use a cool BMF instead of boring Consolas font (`MonoGameExtended`)
 
 # 2D Renderer
 
@@ -39,7 +37,6 @@
 - [x] Rotate view around player
 - [x] Improve Wu line rendering
 - [x] Don't draw lines that can't show up on screen
-- [ ] Wu circle rendering
 - [x] PSX Fire effect
 - [ ] Ripple effect
 - [ ] Replace clunky math with real linear algebra stuff
