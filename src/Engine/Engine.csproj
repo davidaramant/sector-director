@@ -23,6 +23,7 @@
   <ItemGroup>
     <PackageReference Include="MonoGame.Content.Builder" Version="3.7.0.9" />
     <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.7.1.189" />
+    <PackageReference Include="NetTopologySuite" Version="1.15.2" />
   </ItemGroup>
 
   <ItemGroup>

@@ -30,12 +30,13 @@ namespace SectorDirector.Engine
             _map = map;
             _possibleSectorsToEnter = new List<int>(map.Sectors.Length);
             var playerThing = map.Map.Things.First(t => t.Type == 1);
+            var playerThingIndex = map.Map.Things.IndexOf(playerThing);
 
             Position = new Vector2((float)playerThing.X, (float)playerThing.Y);
             Direction = new Vector2(1, 0);
             Rotate(MathHelper.ToRadians(playerThing.Angle));
 
-            CurrentSectorId = Enumerable.Range(0, _map.Sectors.Length).First(sectorId => map.IsInsideSector(sectorId, ref Position));
+            CurrentSectorId = _map.ThingToSectorId[playerThingIndex];
         }
 
         public void Update(ContinuousInputs inputs, GameTime gameTime)

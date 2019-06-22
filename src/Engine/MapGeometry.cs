@@ -1,28 +1,37 @@
 // Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
-using static System.Math;
+using GeoAPI.Geometries;
+using Microsoft.Xna.Framework;
+using NetTopologySuite.Index.Strtree;
+using SectorDirector.Core.FormatModels.Udmf;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
-using SectorDirector.Core.FormatModels.Udmf;
+using static System.Math;
 
 namespace SectorDirector.Engine
 {
+    // TODO: these structs are probably a stupid idea
+    // just make them classes and put more convenient references in them
+
     public struct Line
     {
         public readonly int LineDefId;
         public readonly int SectorId;
         public readonly int V1;
+        public readonly Vertex Vertex1;
         public readonly int V2;
+        public readonly Vertex Vertex2;
         public readonly int PortalToSectorId;
 
-        public Line(int lineDefId, int sectorId, int v1, int v2, int portalToSectorId = -1)
+        public Line(int lineDefId, int sectorId, int v1, Vertex vertex1, int v2, Vertex vertex2, int portalToSectorId = -1)
         {
             LineDefId = lineDefId;
             SectorId = sectorId;
             V1 = v1;
+            Vertex1 = vertex1;
             V2 = v2;
+            Vertex2 = vertex2;
             PortalToSectorId = portalToSectorId;
         }
 
@@ -75,9 +84,12 @@ namespace SectorDirector.Engine
         public Vector2[] Vertices { get; }
         public Line[] Lines { get; }
         public SectorInfo[] Sectors { get; }
+        public int[] ThingToSectorId { get; }
 
         public Vector2 BottomLeftCorner { get; }
         public Vector2 Area { get; }
+
+        readonly STRtree<int> _sectorIdLookup = new STRtree<int>();
 
         public MapGeometry(MapData map)
         {
@@ -101,13 +113,13 @@ namespace SectorDirector.Engine
 
                 if (!lineDef.TwoSided)
                 {
-                    lines.Add(new Line(lineDefId, frontSide.Sector, lineDef.V1, lineDef.V2));
+                    lines.Add(new Line(lineDefId, frontSide.Sector, lineDef.V1, Map.Vertices[lineDef.V1], lineDef.V2, Map.Vertices[lineDef.V2]));
                 }
                 else
                 {
                     var backSide = Map.SideDefs[lineDef.SideBack];
-                    lines.Add(new Line(lineDefId, frontSide.Sector, lineDef.V1, lineDef.V2, portalToSectorId: backSide.Sector));
-                    lines.Add(new Line(lineDefId, backSide.Sector, lineDef.V2, lineDef.V1, portalToSectorId: frontSide.Sector));
+                    lines.Add(new Line(lineDefId, frontSide.Sector, lineDef.V1, Map.Vertices[lineDef.V1], lineDef.V2, Map.Vertices[lineDef.V2], portalToSectorId: backSide.Sector));
+                    lines.Add(new Line(lineDefId, backSide.Sector, lineDef.V1, Map.Vertices[lineDef.V1], lineDef.V2, Map.Vertices[lineDef.V2], portalToSectorId: frontSide.Sector));
                 }
             }
             Lines = lines.ToArray();
@@ -123,7 +135,70 @@ namespace SectorDirector.Engine
                     .ToArray();
 
                 Sectors[sectorIndex] = new SectorInfo(linesForSector);
+
+                _sectorIdLookup.Insert(GetSectorMinimumBoundingRectangle(sectorIndex), sectorIndex);
             }
+            _sectorIdLookup.Build();
+
+            ThingToSectorId = new int[map.Things.Count];
+
+            foreach (var thingIndex in Enumerable.Range(0, map.Things.Count))
+            {
+                ThingToSectorId[thingIndex] = FindSurroundingSector(map.Things[thingIndex].GetPosition());
+            }
+        }
+
+        public int FindSurroundingSector(Vector2 position)
+        {
+            var envelope = new Envelope(new Coordinate(position.X,position.Y));
+
+            foreach(var sectorId in _sectorIdLookup.Query(envelope))
+            {
+                if(IsInsideSector(sectorId, ref position))
+                {
+                    return sectorId;
+                }
+            }
+
+            return -1;
+        }
+
+        public Envelope GetSectorMinimumBoundingRectangle(int sectorId)
+        {
+            float minX = float.MaxValue;
+            float maxX = float.MinValue;
+            float minY = float.MaxValue;
+            float maxY = float.MinValue;
+
+            foreach (int lineId in Sectors[sectorId].LineIds)
+            {
+                minX = Min(Min(minX, (float)Lines[lineId].Vertex1.X), (float)Lines[lineId].Vertex2.X);
+                maxX = Max(Max(maxX, (float)Lines[lineId].Vertex1.X), (float)Lines[lineId].Vertex2.X);
+                minY = Min(Min(minY, (float)Lines[lineId].Vertex1.Y), (float)Lines[lineId].Vertex2.Y);
+                maxY = Max(Max(maxY, (float)Lines[lineId].Vertex1.Y), (float)Lines[lineId].Vertex2.Y);                
+            }
+
+            return new Envelope(minX, maxX, minY, maxY);
+        }
+
+        public bool IsInsideSector(int sectorIndex, ref Vector2 point)
+        {
+            // https://stackoverflow.com/questions/11716268/point-in-polygon-algorithm
+            bool insideSector = false;
+            foreach (var lineId in Sectors[sectorIndex].LineIds)
+            {
+                var line = Lines[lineId];
+                var vertex1 = Map.Vertices[line.V1];
+                var vertex2 = Map.Vertices[line.V2];
+
+                if (((vertex1.Y >= point.Y) != (vertex2.Y >= point.Y)) &&
+                    (point.X <= (vertex2.X - vertex1.X) * (point.Y - vertex1.Y) / (vertex2.Y - vertex1.Y) + vertex1.X))
+                {
+                    insideSector = !insideSector;
+                }
+            }
+
+            return insideSector;
         }
     }
 }
