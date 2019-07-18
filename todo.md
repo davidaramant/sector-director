@@ -7,6 +7,7 @@
 - [x] Create DataModelGenerator project as replacement for T4 templates
 - [x] Replace Piglet with ~~Superpower~~ ~~Hime~~ a custom lexer/parser
 - [x] Simplify DataModelGenerator
+- [ ] Load binary Doom maps
 
 ## Game Related
 
@@ -15,6 +16,7 @@
 - [x] Player horizontal clipping (simple)
 - [ ] Redo player movement to project a desired location and prevent invalid moves
 - [x] A working way to detect if the player is in a sector
+- [ ] Menu system instead of opaque keyboard commands
 
 ## Misc
 
@@ -39,7 +41,7 @@
 - [x] Don't draw lines that can't show up on screen
 - [x] PSX Fire effect
 - [ ] Ripple effect
-- [ ] Replace clunky math with real linear algebra stuff
+- [x] Replace clunky math with real linear algebra stuff
 - [x] Real clipping algorithm for lines
 
 # 3D Renderer
