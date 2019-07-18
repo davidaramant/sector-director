@@ -164,7 +164,13 @@ namespace SectorDirector.Engine
         /// UnloadContent will be called once per game and is the place to unload
         /// game-specific content.
         /// </summary>
-        protected override void UnloadContent() => Content.Unload();
+        protected override void UnloadContent()
+        {
+            Content.Unload();
+            _graphics.Dispose();
+            _spriteBatch.Dispose();
+            _outputTexture.Dispose();
+        }
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
