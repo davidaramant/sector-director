@@ -18,14 +18,12 @@ namespace SectorDirector.Engine.Renderers
 
         const float VertexHalfWidth = 2f;
         const float FrontSideMarkerLength = 5f;
-        private const float MsToZoomSpeed = 0.001f;
-        private const float MinMapToScreenRatio = 0.2f;
-        private const float MaxMapToScreenRatio = 5f;
-        private const float DefaultMapToScreenRatio = 0.9f;
-        private float _mapToScreenRatio = DefaultMapToScreenRatio;
+        const float MsToZoomSpeed = 0.001f;
+        const float MinMapToScreenRatio = 0.2f;
+        const float MaxMapToScreenRatio = 5f;
+        private readonly Camera2D _camera = new Camera2D();
         DrawLine _drawLine = ScreenBufferExtensions.PlotLine;
         private const float MsToMoveSpeed = 200f / 1000f;
-        Vector2 _viewOffset = Vector2.Zero;
 
         public OverheadRenderer(GameSettings settings, MapGeometry map)
         {
@@ -33,7 +31,7 @@ namespace SectorDirector.Engine.Renderers
             _map = map;
             _verticesInScreenCoords = new Point[map.Vertices.Length];
 
-            _settings.FollowModeChanged += (s, e) => _viewOffset = Vector2.Zero;
+            _settings.FollowModeChanged += (s, e) => _camera.ViewOffset = Vector2.Zero;
             _settings.DrawAntiAliasedModeChanged += (s, e) => PickLineDrawer();
             PickLineDrawer();
         }
@@ -58,36 +56,36 @@ namespace SectorDirector.Engine.Renderers
 
                 if (inputs.Forward)
                 {
-                    _viewOffset -= Vector2.UnitY * distance;
+                    _camera.ViewOffset += Vector2.UnitY * distance;
                 }
                 else if (inputs.Backward)
                 {
-                    _viewOffset += Vector2.UnitY * distance;
+                    _camera.ViewOffset -= Vector2.UnitY * distance;
                 }
 
                 if (inputs.TurnRight || inputs.StrafeRight)
                 {
-                    _viewOffset -= Vector2.UnitX * distance;
+                    _camera.ViewOffset += Vector2.UnitX * distance;
                 }
                 else if (inputs.TurnLeft || inputs.StrafeLeft)
                 {
-                    _viewOffset += Vector2.UnitX * distance;
+                    _camera.ViewOffset -= Vector2.UnitX * distance;
                 }
             }
 
             if (inputs.ZoomIn)
             {
                 var zoomAmount = gameTime.ElapsedGameTime.Milliseconds * MsToZoomSpeed;
-                _mapToScreenRatio = Math.Min(MaxMapToScreenRatio, _mapToScreenRatio * (1f + zoomAmount));
+                _camera.Zoom = Math.Min(MaxMapToScreenRatio, _camera.Zoom * (1f + zoomAmount));
             }
             else if (inputs.ZoomOut)
             {
                 var zoomAmount = gameTime.ElapsedGameTime.Milliseconds * MsToZoomSpeed;
-                _mapToScreenRatio = Math.Max(MinMapToScreenRatio, _mapToScreenRatio / (1f + zoomAmount));
+                _camera.Zoom = Math.Max(MinMapToScreenRatio, _camera.Zoom / (1f + zoomAmount));
             }
             else if (inputs.ResetZoom)
             {
-                _mapToScreenRatio = DefaultMapToScreenRatio;
+                _camera.Zoom = 1;
             }
         }
 
@@ -96,18 +94,19 @@ namespace SectorDirector.Engine.Renderers
             screen.Clear();
 
             // The screen has an origin in the top left.  Positive Y is DOWN
-
             // Maps have an origin in the bottom left.  Positive Y is UP
 
-            // TODO: The scale shouldn't depend on the size of the map...
-            var screenDimensionsV = screen.Dimensions.ToVector2();
-            var desiredMapScreenLength = screen.Dimensions.SmallestSide() * _mapToScreenRatio;
-            var largestMapSide = _map.Area.LargestSide();
+            _camera.ScreenBounds = screen.Dimensions;
+            _camera.Center = player.Position;
 
-            var gameToScreenFactor = desiredMapScreenLength / largestMapSide;
-
-            var screenCenterInMapCoords = screenDimensionsV / gameToScreenFactor / 2;
-            var playerCenteringOffset = screenCenterInMapCoords - player.Position;
+            if (_settings.RotateMode)
+            {
+                _camera.RotationInRadians = (float)Math.Atan2(player.Direction.Y, player.Direction.X) - MathHelper.PiOver2;
+            }
+            else
+            {
+                _camera.RotationInRadians = 0;
+            }
 
             // Transform all vertices
             for (int v = 0; v < _map.Vertices.Length; v++)
@@ -118,26 +117,7 @@ namespace SectorDirector.Engine.Renderers
 
             Point ToScreenCoords(Vector2 worldCoordinate)
             {
-                var shiftedWorldCoordinate = worldCoordinate;
-
-                // TODO: This does not need to happen for every single call
-                if (_settings.RotateMode)
-                {
-                    // translate coordinate to be relative to player
-                    shiftedWorldCoordinate -= player.Position;
-
-                    var rotation = Matrix.CreateRotationZ(-(float)Math.Atan2(player.Direction.Y, player.Direction.X) + MathHelper.PiOver2);
-
-                    var rotatedCoord = Vector2.Transform(shiftedWorldCoordinate, rotation);
-                    shiftedWorldCoordinate = rotatedCoord + player.Position;
-                }
-
-                shiftedWorldCoordinate += playerCenteringOffset + _viewOffset;
-
-                // This fixes jittering
-                var pixelOffset = new Vector2(0.5f, 0.5f);
-
-                return ((shiftedWorldCoordinate * gameToScreenFactor) + pixelOffset).ToPoint().InvertY(screen.Height);
+                return _camera.WorldToScreen(worldCoordinate).ToPoint();
             }
 
             void DrawLineFromVertices(int v1, int v2, Color c) =>

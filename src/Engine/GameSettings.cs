@@ -13,7 +13,7 @@ namespace SectorDirector.Engine
         public bool RotateMode { get; private set; } = false;
         public bool DrawAntiAliased { get; private set; } = true;
         public bool ShowRenderTime { get; private set; } = false;
-        public RendererType Renderer { get; private set; } = RendererType.MapHistory;
+        public RendererType Renderer { get; private set; } = RendererType.Overhead;
 
         public event EventHandler FollowModeChanged;
         public event EventHandler RotateModeChanged;
