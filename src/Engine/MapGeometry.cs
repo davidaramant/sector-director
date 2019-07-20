@@ -16,9 +16,9 @@ namespace SectorDirector.Engine
         public readonly int LineDefId;
         public readonly int SectorId;
         public readonly int V1;
-        public readonly Vertex Vertex1;
+        public readonly Vector2 Vertex1;
         public readonly int V2;
-        public readonly Vertex Vertex2;
+        public readonly Vector2 Vertex2;
         public readonly int PortalToSectorId;
 
         public Line(int lineDefId, int sectorId, int v1, Vertex vertex1, int v2, Vertex vertex2, int portalToSectorId = -1)
@@ -26,9 +26,9 @@ namespace SectorDirector.Engine
             LineDefId = lineDefId;
             SectorId = sectorId;
             V1 = v1;
-            Vertex1 = vertex1;
+            Vertex1 = vertex1.ToVector2();
             V2 = v2;
-            Vertex2 = vertex2;
+            Vertex2 = vertex2.ToVector2();
             PortalToSectorId = portalToSectorId;
         }
 
@@ -69,9 +69,14 @@ namespace SectorDirector.Engine
 
     public sealed class SectorInfo
     {
+        public readonly Sector Info;
         public readonly List<Line> Lines = new List<Line>();
 
-        public SectorInfo(IEnumerable<Line> lines) => Lines.AddRange(lines);
+        public SectorInfo(Sector info, IEnumerable<Line> lines)
+        {
+            Info = info;
+            Lines.AddRange(lines);
+        } 
     }
 
     public sealed class MapGeometry
@@ -127,7 +132,7 @@ namespace SectorDirector.Engine
             {
                 var linesForSector = Lines.Where(line => line.SectorId == sectorIndex);
 
-                Sectors[sectorIndex] = new SectorInfo(linesForSector);
+                Sectors[sectorIndex] = new SectorInfo(map.Sectors[sectorIndex], linesForSector);
 
                 _sectorIdLookup.Insert(GetSectorMinimumBoundingRectangle(sectorIndex), sectorIndex);
             }

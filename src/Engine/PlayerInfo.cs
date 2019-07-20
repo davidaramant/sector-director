@@ -20,6 +20,7 @@ namespace SectorDirector.Engine
         public Matrix RotationTransform { get; private set; }
 
         public float Height { get; } = 56;
+        public float ViewHeight { get; } = 41;
         public float Width { get; } = 32;
         public float Radius { get; } = 16;
         public float ClimbableHeight { get; } = 24;
