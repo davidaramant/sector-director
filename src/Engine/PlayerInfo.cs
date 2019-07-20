@@ -16,6 +16,7 @@ namespace SectorDirector.Engine
     {
         private const float MsToMoveSpeed = 80f / 1000f;
         private const float MsToRotateSpeed = 5f / 1000f;
+        private const float PlayerRadius = 12;
 
         
         public PlayerInfo(MapGeometry map) : base(GetInitialThingValues(map))
@@ -74,7 +75,7 @@ namespace SectorDirector.Engine
 
             var currentSectorId = map.ThingToSectorId[playerThingIndex];
 
-            return new CollidingThingInitializer(map, currentSectorId, position, direction);
+            return new CollidingThingInitializer(map, currentSectorId, position, direction, PlayerRadius);
 
         }
     }

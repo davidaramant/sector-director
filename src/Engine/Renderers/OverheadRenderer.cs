@@ -138,6 +138,24 @@ namespace SectorDirector.Engine.Renderers
                 }
             }
 
+            void DrawCircle(Vector2 center, float radius, Color c)
+            {
+                const int degreeGranularity = 30;
+                Vector2 lastPoint = Vector2.Zero;
+                for (int deg = 0; deg <= 360; deg += degreeGranularity)
+                {
+                    Vector2 newPoint = new Vector2((float)Math.Cos(deg * Math.PI / 180) * radius, (float)Math.Sin(deg * Math.PI / 180) * radius);
+                    Vector2 newPointFromCenter = center + newPoint;
+
+                    if (lastPoint != Vector2.Zero)
+                    {
+                        DrawLineFromWorldCoordinates(lastPoint, newPointFromCenter, c);
+                    }
+
+                    lastPoint = newPointFromCenter;
+                }
+            }
+
             void DrawBox(Vector2 center, float halfWidth, Color c)
             {
                 var topLeft = center + new Vector2(-halfWidth, halfWidth);
@@ -189,7 +207,7 @@ namespace SectorDirector.Engine.Renderers
 
             // Draw player position
             var playerHalfWidth = player.Width / 2;
-            DrawBox(player.Position, halfWidth: playerHalfWidth, Color.Green);
+            DrawCircle(player.Position, player.Radius, Color.Green);
 
             // Draw player direction arrow
             var playerLineStart = player.Position - (playerHalfWidth / 2 * player.Direction);
