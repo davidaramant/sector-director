@@ -6,11 +6,13 @@ using Microsoft.Xna.Framework;
 using NetTopologySuite.Index.Strtree;
 using SectorDirector.Core.FormatModels.Udmf;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using static System.Math;
 
 namespace SectorDirector.Engine
 {
+    [DebuggerDisplay("ID: {LineDefId}")]
     public sealed class Line
     {
         public readonly int LineDefId;

@@ -17,7 +17,6 @@ namespace SectorDirector.Engine
         public Vector2 Position;
         public Vector2 Direction;
         public float Angle { get; private set; }
-        public Matrix RotationTransform { get; private set; }
 
         public float Height { get; } = 56;
         public float ViewHeight { get; } = 41;
@@ -126,9 +125,9 @@ namespace SectorDirector.Engine
         public void Rotate(float rotationRadians)
         {
             Angle += rotationRadians;
-            RotationTransform = Matrix.CreateRotationZ(rotationRadians);
+            var rotationTransform = Matrix.CreateRotationZ(rotationRadians);
 
-            Direction = Vector2.Transform(Direction, RotationTransform);
+            Direction = Vector2.Transform(Direction, rotationTransform);
         }
     }
 }
