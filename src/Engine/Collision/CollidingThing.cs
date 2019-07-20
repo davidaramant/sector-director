@@ -20,19 +20,22 @@ namespace SectorDirector.Engine
                 int currentSectorId = -1, 
                 Vector2 position = new Vector2(), 
                 Vector2 direction = new Vector2(),
-                float radius = 8)
+                float radius = 8,
+                float height = 0)
             {
                 Map = map;
                 CurrentSectorId = currentSectorId;
                 Position = position;
                 Direction = direction;
                 Radius = radius;
+                Height = height;
             }
             public MapGeometry Map;
             public Vector2 Position;
             public Vector2 Direction;
             public int CurrentSectorId;
             public float Radius;
+            public float Height;
         }
 
         private readonly MapGeometry _map;
@@ -41,7 +44,7 @@ namespace SectorDirector.Engine
         public Vector2 Position;
         public Vector2 Direction;
 
-        public float Height { get; } = 56;
+        public float Height { get; private set; } = 56;
         public float Width { get; } = 32;
         public float Radius { get; } = 8;
         public float ClimbableHeight { get; } = 24;
@@ -58,7 +61,7 @@ namespace SectorDirector.Engine
             Direction = data.Direction;
             CurrentSectorId = data.CurrentSectorId;
             Radius = data.Radius;
-            //Height = _map.Sectors[CurrentSectorId].Info.HeightFloor;
+            Height = data.Height;
         }
 
         public void Move(ref Vector2 direction, float desiredDistance)
@@ -72,17 +75,16 @@ namespace SectorDirector.Engine
 
             if (!collides)
             {
-                //TODO find collisoin angle, leftover vector applied to slide
+                //TODO find collision angle, leftover vector applied to slide
             }
             else
             {
                 Position += direction * desiredDistance;
 
                 CurrentSectorId = PickResultingSector();
+                Height = _map.Sectors[CurrentSectorId].Info.HeightFloor;
             }
-
         }
-
 
         public bool FindNearestEdgeCollision(int sector, float distance, ref Vector2 direction, ref Vector2 nearestEdge)
         {
@@ -95,22 +97,59 @@ namespace SectorDirector.Engine
             foreach (Line line in currentSector.Lines)
             {
                 int portalId = line.PortalToSectorId;
+                bool canCollideWithLine = true;
                 if (portalId >= 0)
                 {
-                    if (!_possibleSectorsToEnter.Contains(portalId))
+                    float heightDiff = _map.Sectors[portalId].Info.HeightFloor - Height;
+                    if (heightDiff < ClimbableHeight)
                     {
-                        _possibleSectorsToEnter.Add(portalId);
-                        Vector2 newEdgeCollision = Vector2.One * float.MaxValue;
-                        bool result = FindNearestEdgeCollision(portalId, distance, ref direction, ref newEdgeCollision);
-                        if (result)
+                        canCollideWithLine = false;
+                        if (!_possibleSectorsToEnter.Contains(portalId))
                         {
-                            UpdateNearestEdge(ref nearestEdge, ref nearestEdgeDistance, newEdgeCollision);
+                            _possibleSectorsToEnter.Add(portalId);
+                            Vector2 newEdgeCollision = Vector2.One * float.MaxValue;
+                            bool result = FindNearestEdgeCollision(portalId, distance, ref direction, ref newEdgeCollision);
+                            if (result)
+                            {
+                                UpdateNearestEdge(ref nearestEdge, ref nearestEdgeDistance, newEdgeCollision);
+                            }
                         }
                     }
                 }
-                else
+
+                if (canCollideWithLine)
                 {
-                    /*
+                    float firstX = 0;
+                    float secondX = 0;
+                    bool collidesWithLine = CircleCollidesWithLine(ref firstX, ref secondX, line, potentialPosition, Radius);
+                    if (collidesWithLine)
+                    {
+                        float bsX = 0, bsY = 0;
+                        bool collidesWithLastLine = CircleCollidesWithLine(ref bsX, ref bsY, line, Position, Radius);
+                        // Dont collide with any lines that we are currently inside of (for falling down ledges)
+                        if (!collidesWithLastLine)
+                        {
+                            float collisionPointX = 0;
+                            // If both of these points are less than 0 or greater than 1, the segment does not actually collide
+                            if ((firstX > 0 && firstX < 1) || (secondX > 0 && secondX < 1))
+                            {
+                                collisionPointX = (firstX + secondX) / 2;
+                                Vector2 lineDirection = line.Vertex2 - line.Vertex1;
+                                Vector2 intersectionMidpoint = line.Vertex1 + (lineDirection * collisionPointX);
+
+                                UpdateNearestEdge(ref nearestEdge, ref nearestEdgeDistance, intersectionMidpoint);
+
+                            }
+                        }
+                        
+                    }
+                }
+            }
+            return nearestEdgeDistance == float.MaxValue;
+        }
+        private bool CircleCollidesWithLine(ref float firstX, ref float secondX, Line line, Vector2 circleCenter, float radius)
+        {
+            /*
                     Portal id is -1, we are colliding into the void
                     This is an equation to model the intersection points of a line and a circle
                     a = (x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2
@@ -118,48 +157,32 @@ namespace SectorDirector.Engine
                     c = x3^2 + y3^2 + z3^2 + x1^2 + y1^2 + z1^2 - 2[x3 x1 + y3 y1 + z3 z1] - r^2 
                     */
 
-                    float a = (float)
-                        (
-                        Math.Pow(line.Vertex2.X - line.Vertex1.X, 2) + 
-                        Math.Pow(line.Vertex2.Y - line.Vertex1.Y, 2));
-                    float b = 2 * (float)
-                        (
-                        ((line.Vertex2.X - line.Vertex1.X) * (line.Vertex1.X - potentialPosition.X)) + 
-                        ((line.Vertex2.Y - line.Vertex1.Y) * (line.Vertex1.Y - potentialPosition.Y)));
-                    float c = (float)
-                        (
-                        Math.Pow(potentialPosition.X, 2) + 
-                        Math.Pow(potentialPosition.Y, 2) + 
-                        Math.Pow(line.Vertex1.X, 2) + 
-                        Math.Pow(line.Vertex1.Y, 2) +
-                        (-2 * (potentialPosition.X * line.Vertex1.X + 
-                               potentialPosition.Y * line.Vertex1.Y)) - 
-                        Math.Pow(Radius, 2));
+            float a = (float)
+                (
+                Math.Pow(line.Vertex2.X - line.Vertex1.X, 2) +
+                Math.Pow(line.Vertex2.Y - line.Vertex1.Y, 2));
+            float b = 2 * (float)
+                (
+                ((line.Vertex2.X - line.Vertex1.X) * (line.Vertex1.X - circleCenter.X)) +
+                ((line.Vertex2.Y - line.Vertex1.Y) * (line.Vertex1.Y - circleCenter.Y)));
+            float c = (float)
+                (
+                Math.Pow(circleCenter.X, 2) +
+                Math.Pow(circleCenter.Y, 2) +
+                Math.Pow(line.Vertex1.X, 2) +
+                Math.Pow(line.Vertex1.Y, 2) +
+                (-2 * (circleCenter.X * line.Vertex1.X +
+                       circleCenter.Y * line.Vertex1.Y)) -
+                Math.Pow(radius, 2));
 
-                    // If expression is less than zero, we don't intersect
-                    float expression = b * b - 4 * a * c;
-                    if (expression > 0)
-                    {
-                        float collisionPointX = 0;
-                        // We intersecet a line at two points. Finding the midpoint of these two points is where the tip of the closest circle can get
-                        float firstX = (float)(-b + Math.Sqrt(expression)) / (2 * a);
-                        float secondX = (float)(-b - Math.Sqrt(expression)) / (2 * a);
-                        // If both of these points are less than 0 or greater than 1, the segment does not actually collide
-                        if ((firstX > 0 && firstX < 1) || (secondX > 0 && secondX < 1))
-                        {
-                            collisionPointX = (firstX + secondX) / 2;
-                            Vector2 lineDirection = line.Vertex2 - line.Vertex1;
-                            Vector2 intersectionMidpoint = line.Vertex1 + (lineDirection * collisionPointX);
+            // If expression is less than zero, we don't intersect
+            float expression = b * b - 4 * a * c;
 
-                            UpdateNearestEdge(ref nearestEdge, ref nearestEdgeDistance, intersectionMidpoint);
-                        }
-                    }
-                }
-                
+            // We intersecet a line at two points. Finding the midpoint of these two points is where the tip of the closest circle can get
+            firstX = (float)(-b + Math.Sqrt(expression)) / (2 * a);
+            secondX = (float)(-b - Math.Sqrt(expression)) / (2 * a);
 
-                
-            }
-            return nearestEdgeDistance == float.MaxValue;
+            return expression > 0;
         }
         private void UpdateNearestEdge(ref Vector2 nearestEdge, ref float nearestEdgeDistance, Vector2 firstIntersection)
         {

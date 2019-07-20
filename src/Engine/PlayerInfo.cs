@@ -75,6 +75,8 @@ namespace SectorDirector.Engine
 
             var currentSectorId = map.ThingToSectorId[playerThingIndex];
 
+            var height = map.Sectors[currentSectorId].Info.HeightFloor;
+
             return new CollidingThingInitializer(map, currentSectorId, position, direction, PlayerRadius);
         }
     }
