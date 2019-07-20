@@ -65,25 +65,26 @@ namespace SectorDirector.Engine
             direction.Normalize();
 
             _possibleSectorsToEnter.Clear();
+            Vector2 nearestEdgeCollisionPoint = Vector2.One * float.MaxValue;
 
-            var nearestEdgeCollisionPoint = GetNearestEdgeCollision(CurrentSectorId, desiredDistance, ref direction);
-            var nearestEdgeCollisionPointDistance = Vector2.Distance(nearestEdgeCollisionPoint, Position) - Radius;
+            bool collides = FindNearestEdgeCollision(CurrentSectorId, desiredDistance, ref direction, ref nearestEdgeCollisionPoint);
 
-            float minDistance = Math.Min(nearestEdgeCollisionPointDistance, desiredDistance);
+            if (nearestEdgeCollisionPoint == Vector2.One * float.MaxValue)
+            {
 
-            Position += direction * minDistance;
+                Position += direction * desiredDistance;
 
-            CurrentSectorId = PickResultingSector();
+                CurrentSectorId = PickResultingSector();
+            }
 
         }
 
 
-        public Vector2 GetNearestEdgeCollision(int sector, float distance, ref Vector2 direction)
+        public bool FindNearestEdgeCollision(int sector, float distance, ref Vector2 direction, ref Vector2 nearestEdge)
         {
             ref SectorInfo currentSector = ref _map.Sectors[CurrentSectorId];
 
-            Vector2 nearestEdge = new Vector2(float.MaxValue, float.MaxValue);
-            float nearestEdgeDistance = Vector2.Distance(nearestEdge, Position);
+            float nearestEdgeDistance = float.MaxValue;
 
             Vector2 potentialPosition = Position + (direction * distance);
 
@@ -95,8 +96,12 @@ namespace SectorDirector.Engine
                     if (!_possibleSectorsToEnter.Contains(portalId))
                     {
                         _possibleSectorsToEnter.Add(portalId);
-                        Vector2 newEdgeCollision = GetNearestEdgeCollision(sector, distance, ref direction);
-                        UpdateNearestEdge(ref nearestEdge, ref nearestEdgeDistance, newEdgeCollision);
+                        Vector2 newEdgeCollision = Vector2.One * float.MaxValue;
+                        bool result = FindNearestEdgeCollision(portalId, distance, ref direction, ref newEdgeCollision);
+                        if (result)
+                        {
+                            UpdateNearestEdge(ref nearestEdge, ref nearestEdgeDistance, newEdgeCollision);
+                        }
                     }
                 }
                 else
@@ -109,36 +114,49 @@ namespace SectorDirector.Engine
                     c = x3^2 + y3^2 + z3^2 + x1^2 + y1^2 + z1^2 - 2[x3 x1 + y3 y1 + z3 z1] - r^2 
                     */
 
-                    float a = (float)(Math.Pow(line.Vertex2.X - line.Vertex1.X, 2) + Math.Pow(line.Vertex2.Y - line.Vertex1.Y, 2));
-                    float b = 2 * (float)(((line.Vertex2.X - line.Vertex1.X) * (line.Vertex1.X - potentialPosition.X)) + ((line.Vertex2.Y - line.Vertex1.Y) * (line.Vertex1.Y - potentialPosition.Y)));
-                    float c = (float)(Math.Pow(potentialPosition.X, 2) + Math.Pow(potentialPosition.Y, 2) + Math.Pow(line.Vertex1.X, 2) + Math.Pow(line.Vertex1.Y, 2)
-                                - (2 * (Position.X * line.Vertex1.X + potentialPosition.Y * line.Vertex1.Y)) - Math.Pow(Radius, 2));
+                    float a = (float)
+                        (
+                        Math.Pow(line.Vertex2.X - line.Vertex1.X, 2) + 
+                        Math.Pow(line.Vertex2.Y - line.Vertex1.Y, 2));
+                    float b = 2 * (float)
+                        (
+                        ((line.Vertex2.X - line.Vertex1.X) * (line.Vertex1.X - potentialPosition.X)) + 
+                        ((line.Vertex2.Y - line.Vertex1.Y) * (line.Vertex1.Y - potentialPosition.Y)));
+                    float c = (float)
+                        (
+                        Math.Pow(potentialPosition.X, 2) + 
+                        Math.Pow(potentialPosition.Y, 2) + 
+                        Math.Pow(line.Vertex1.X, 2) + 
+                        Math.Pow(line.Vertex1.Y, 2) +
+                        (-2 * (potentialPosition.X * line.Vertex1.X + 
+                               potentialPosition.Y * line.Vertex1.Y)) - 
+                        Math.Pow(Radius, 2));
 
+                    // If expression is less than zero, we don't intersect
                     float expression = b * b - 4 * a * c;
                     if (expression > 0)
                     {
+                        float collisionPointX = 0;
                         // We intersecet a line at two points. Finding the midpoint of these two points is where the tip of the closest circle can get
                         float firstX = (float)(-b + Math.Sqrt(expression)) / (2 * a);
                         float secondX = (float)(-b - Math.Sqrt(expression)) / (2 * a);
-                        Vector2 lineDirection = line.Vertex2 - line.Vertex1;
-                        Vector2 firstIntersection = lineDirection * firstX;
-                        Vector2 secondIntersection = lineDirection * secondX;
-                        //Vector2 firstIntersection = new Vector2(firstX, (float)(a * Math.Pow(firstX, 2) + (b * firstX) + c));
-                        //Vector2 secondIntersection = new Vector2(secondX, (float)(a * Math.Pow(secondX, 2) + (b * secondX) + c));
+                        // If both of these points are less than 0 or greater than 1, the segment does not actually collide
+                        if ((firstX > 0 && firstX < 1) || (secondX > 0 && secondX < 1))
+                        {
+                            collisionPointX = (firstX + secondX) / 2;
+                            Vector2 lineDirection = line.Vertex2 - line.Vertex1;
+                            Vector2 intersectionMidpoint = line.Vertex1 + (lineDirection * collisionPointX);
 
-                        Vector2 intersectionMidpoint = new Vector2(
-                            (firstIntersection.X + secondIntersection.X) / 2,
-                            (firstIntersection.Y + secondIntersection.Y) / 2);
-                        UpdateNearestEdge(ref nearestEdge, ref nearestEdgeDistance, firstIntersection);
+                            UpdateNearestEdge(ref nearestEdge, ref nearestEdgeDistance, intersectionMidpoint);
+                        }
                     }
                 }
                 
 
                 
             }
-            return nearestEdge;
+            return nearestEdgeDistance == float.MaxValue;
         }
-
         private void UpdateNearestEdge(ref Vector2 nearestEdge, ref float nearestEdgeDistance, Vector2 firstIntersection)
         {
             if (Vector2.Distance(Position, firstIntersection) < nearestEdgeDistance)

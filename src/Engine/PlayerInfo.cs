@@ -16,7 +16,7 @@ namespace SectorDirector.Engine
     {
         private const float MsToMoveSpeed = 80f / 1000f;
         private const float MsToRotateSpeed = 5f / 1000f;
-        private const float PlayerRadius = 12;
+        private const float PlayerRadius = 16;
         public float ViewHeight { get; } = 41;
 
 
