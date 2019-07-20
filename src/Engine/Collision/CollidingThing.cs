@@ -73,7 +73,7 @@ namespace SectorDirector.Engine
 
             bool collides = FindNearestEdgeCollision(CurrentSectorId, desiredDistance, ref direction, ref nearestEdgeCollisionPoint);
 
-            if (!collides)
+            if (collides)
             {
                 //TODO find collision angle, leftover vector applied to slide
             }
@@ -89,8 +89,8 @@ namespace SectorDirector.Engine
         public bool FindNearestEdgeCollision(int sector, float distance, ref Vector2 direction, ref Vector2 nearestEdge)
         {
             ref SectorInfo currentSector = ref _map.Sectors[CurrentSectorId];
-
-            float nearestEdgeDistance = float.MaxValue;
+            bool foundCollision = false;
+            float nearestEdgeDistance = Vector2.Distance(Position, nearestEdge);
 
             Vector2 potentialPosition = Position + (direction * distance);
 
@@ -104,7 +104,9 @@ namespace SectorDirector.Engine
                     if (heightDiff < ClimbableHeight)
                     {
                         canCollideWithLine = false;
-                        if (!_possibleSectorsToEnter.Contains(portalId))
+                        float unusedX = 0, unusedY = 0;
+                        bool collidesWithSectorBoundary = CircleCollidesWithLine(ref unusedX, ref unusedY, line, Position, Radius);
+                        if (!_possibleSectorsToEnter.Contains(portalId) && collidesWithSectorBoundary)
                         {
                             _possibleSectorsToEnter.Add(portalId);
                             Vector2 newEdgeCollision = Vector2.One * float.MaxValue;
@@ -112,6 +114,7 @@ namespace SectorDirector.Engine
                             if (result)
                             {
                                 UpdateNearestEdge(ref nearestEdge, ref nearestEdgeDistance, newEdgeCollision);
+                                foundCollision = true;
                             }
                         }
                     }
@@ -124,28 +127,24 @@ namespace SectorDirector.Engine
                     bool collidesWithLine = CircleCollidesWithLine(ref firstX, ref secondX, line, potentialPosition, Radius);
                     if (collidesWithLine)
                     {
-                        float bsX = 0, bsY = 0;
-                        bool collidesWithLastLine = CircleCollidesWithLine(ref bsX, ref bsY, line, Position, Radius);
+                        float unusedX = 0, unusedY = 0;
+                        bool collidesWithLastLine = CircleCollidesWithLine(ref unusedX, ref unusedY, line, Position, Radius);
                         // Dont collide with any lines that we are currently inside of (for falling down ledges)
                         if (!collidesWithLastLine)
                         {
                             float collisionPointX = 0;
-                            // If both of these points are less than 0 or greater than 1, the segment does not actually collide
-                            if ((firstX > 0 && firstX < 1) || (secondX > 0 && secondX < 1))
-                            {
-                                collisionPointX = (firstX + secondX) / 2;
-                                Vector2 lineDirection = line.Vertex2 - line.Vertex1;
-                                Vector2 intersectionMidpoint = line.Vertex1 + (lineDirection * collisionPointX);
+                            collisionPointX = (firstX + secondX) / 2;
+                            Vector2 lineDirection = line.Vertex2 - line.Vertex1;
+                            Vector2 intersectionMidpoint = line.Vertex1 + (lineDirection * collisionPointX);
 
-                                UpdateNearestEdge(ref nearestEdge, ref nearestEdgeDistance, intersectionMidpoint);
+                            UpdateNearestEdge(ref nearestEdge, ref nearestEdgeDistance, intersectionMidpoint);
+                            foundCollision = true;
 
-                            }
                         }
-                        
                     }
                 }
             }
-            return nearestEdgeDistance == float.MaxValue;
+            return foundCollision;
         }
         private bool CircleCollidesWithLine(ref float firstX, ref float secondX, Line line, Vector2 circleCenter, float radius)
         {
@@ -182,7 +181,8 @@ namespace SectorDirector.Engine
             firstX = (float)(-b + Math.Sqrt(expression)) / (2 * a);
             secondX = (float)(-b - Math.Sqrt(expression)) / (2 * a);
 
-            return expression > 0;
+            return expression > 0 && ((firstX > 0 && firstX < 1) || (secondX > 0 && secondX < 1));
+
         }
         private void UpdateNearestEdge(ref Vector2 nearestEdge, ref float nearestEdgeDistance, Vector2 firstIntersection)
         {
