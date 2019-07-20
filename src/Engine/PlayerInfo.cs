@@ -1,42 +1,26 @@
 ﻿// Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using SectorDirector.Core.CollectionExtensions;
 using SectorDirector.Engine.Input;
+using static SectorDirector.Engine.CollidingThing;
 
 namespace SectorDirector.Engine
 {
-    public sealed class PlayerInfo
+    
+    public sealed class PlayerInfo : CollidingThing
     {
-        private readonly MapGeometry _map;
-        private readonly List<int> _possibleSectorsToEnter;
-        public int CurrentSectorId { get; private set; }
-        public Vector2 Position;
-        public Vector2 Direction;
-
-        public float Height { get; } = 56;
-        public float Width { get; } = 32;
-        public float Radius { get; } = 16;
-        public float ClimbableHeight { get; } = 24;
-
         private const float MsToMoveSpeed = 80f / 1000f;
         private const float MsToRotateSpeed = 5f / 1000f;
 
-        public PlayerInfo(MapGeometry map)
+        
+        public PlayerInfo(MapGeometry map) : base(GetInitialThingValues(map))
         {
-            _map = map;
-            _possibleSectorsToEnter = new List<int>(map.Sectors.Length);
-            var playerThing = map.Map.Things.First(t => t.Type == 1);
-            var playerThingIndex = map.Map.Things.IndexOf(playerThing);
 
-            Position = new Vector2((float)playerThing.X, (float)playerThing.Y);
-            Direction = new Vector2(1, 0);
-            Rotate(MathHelper.ToRadians(playerThing.Angle));
-
-            CurrentSectorId = _map.ThingToSectorId[playerThingIndex];
         }
 
         public void Update(ContinuousInputs inputs, GameTime gameTime)
@@ -77,53 +61,21 @@ namespace SectorDirector.Engine
             }
         }
 
-        public void Move(ref Vector2 direction, float distance)
+        private static CollidingThingInitializer GetInitialThingValues(MapGeometry map)
         {
-            _possibleSectorsToEnter.Clear();
 
-            var movement = direction * distance;
-            var newPlayerEdge = Position + movement + direction * Radius;
+            var playerThing = map.Map.Things.First(t => t.Type == 1);
+            var playerThingIndex = map.Map.Things.IndexOf(playerThing);
 
-            ref SectorInfo currentSector = ref _map.Sectors[CurrentSectorId];
+            var position = new Vector2((float)playerThing.X, (float)playerThing.Y);
+            var angle = MathHelper.ToRadians(playerThing.Angle);
 
-            foreach (var lineId in currentSector.LineIds)
-            {
-                ref Line line = ref _map.Lines[lineId];
-                ref Vector2 v1 = ref _map.Vertices[line.V1];
-                ref Vector2 v2 = ref _map.Vertices[line.V2];
+            var direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
 
-                if (Line.HasCrossed(ref v1, ref v2, ref newPlayerEdge))
-                {
-                    var intersection = Line.Intersection(ref v1, ref v2, ref Position, ref newPlayerEdge);
-                    if (Line.IsPointOnLineSegment(ref v1, ref v2, ref intersection))
-                    {
-                        if (line.PortalToSectorId != -1)
-                        {
-                            _possibleSectorsToEnter.Add(line.PortalToSectorId);
-                        }
-                        else
-                        {
-                            // TODO: vector shearing
-                            movement = new Vector2();
-                        }
-                    }
-                }
-            }
+            var currentSectorId = map.ThingToSectorId[playerThingIndex];
 
-            Position += movement;
-            CurrentSectorId = PickResultingSector();
-        }
+            return new CollidingThingInitializer(map, currentSectorId, position, direction);
 
-        private int PickResultingSector()
-        {
-            return _possibleSectorsToEnter.FirstOr(sectorId => _map.IsInsideSector(sectorId, ref Position), CurrentSectorId);
-        }
-
-        public void Rotate(float rotationRadians)
-        {
-            var rotation = Matrix.CreateRotationZ(rotationRadians);
-
-            Direction = Vector2.Transform(Direction, rotation);
         }
     }
 }
