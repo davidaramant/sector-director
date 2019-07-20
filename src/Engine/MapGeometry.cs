@@ -11,17 +11,14 @@ using static System.Math;
 
 namespace SectorDirector.Engine
 {
-    // TODO: these structs are probably a stupid idea
-    // just make them classes and put more convenient references in them
-
-    public struct Line
+    public sealed class Line
     {
         public readonly int LineDefId;
         public readonly int SectorId;
         public readonly int V1;
-        public readonly Vertex Vertex1;
+        public readonly Vector2 Vertex1;
         public readonly int V2;
-        public readonly Vertex Vertex2;
+        public readonly Vector2 Vertex2;
         public readonly int PortalToSectorId;
 
         public Line(int lineDefId, int sectorId, int v1, Vertex vertex1, int v2, Vertex vertex2, int portalToSectorId = -1)
@@ -29,9 +26,9 @@ namespace SectorDirector.Engine
             LineDefId = lineDefId;
             SectorId = sectorId;
             V1 = v1;
-            Vertex1 = vertex1;
+            Vertex1 = vertex1.ToVector2();
             V2 = v2;
-            Vertex2 = vertex2;
+            Vertex2 = vertex2.ToVector2();
             PortalToSectorId = portalToSectorId;
         }
 
@@ -70,11 +67,16 @@ namespace SectorDirector.Engine
             p.Y <= Max(v1.Y, v2.Y) && p.Y >= Min(v1.Y, v2.Y);
     }
 
-    public struct SectorInfo
+    public sealed class SectorInfo
     {
-        public readonly int[] LineIds;
+        public readonly Sector Info;
+        public readonly List<Line> Lines = new List<Line>();
 
-        public SectorInfo(int[] lineIds) => LineIds = lineIds;
+        public SectorInfo(Sector info, IEnumerable<Line> lines)
+        {
+            Info = info;
+            Lines.AddRange(lines);
+        } 
     }
 
     public sealed class MapGeometry
@@ -128,13 +130,9 @@ namespace SectorDirector.Engine
 
             foreach (var sectorIndex in Enumerable.Range(0, Sectors.Length))
             {
-                var linesForSector =
-                    Lines.Select((line, index) => (line, index))
-                    .Where(indexedLine => indexedLine.line.SectorId == sectorIndex)
-                    .Select(indexedLine => indexedLine.index)
-                    .ToArray();
+                var linesForSector = Lines.Where(line => line.SectorId == sectorIndex);
 
-                Sectors[sectorIndex] = new SectorInfo(linesForSector);
+                Sectors[sectorIndex] = new SectorInfo(map.Sectors[sectorIndex], linesForSector);
 
                 _sectorIdLookup.Insert(GetSectorMinimumBoundingRectangle(sectorIndex), sectorIndex);
             }
@@ -150,11 +148,11 @@ namespace SectorDirector.Engine
 
         public int FindSurroundingSector(Vector2 position)
         {
-            var envelope = new Envelope(new Coordinate(position.X,position.Y));
+            var envelope = new Envelope(new Coordinate(position.X, position.Y));
 
-            foreach(var sectorId in _sectorIdLookup.Query(envelope))
+            foreach (var sectorId in _sectorIdLookup.Query(envelope))
             {
-                if(IsInsideSector(sectorId, ref position))
+                if (IsInsideSector(sectorId, ref position))
                 {
                     return sectorId;
                 }
@@ -170,12 +168,12 @@ namespace SectorDirector.Engine
             float minY = float.MaxValue;
             float maxY = float.MinValue;
 
-            foreach (int lineId in Sectors[sectorId].LineIds)
+            foreach (Line line in Sectors[sectorId].Lines)
             {
-                minX = Min(Min(minX, (float)Lines[lineId].Vertex1.X), (float)Lines[lineId].Vertex2.X);
-                maxX = Max(Max(maxX, (float)Lines[lineId].Vertex1.X), (float)Lines[lineId].Vertex2.X);
-                minY = Min(Min(minY, (float)Lines[lineId].Vertex1.Y), (float)Lines[lineId].Vertex2.Y);
-                maxY = Max(Max(maxY, (float)Lines[lineId].Vertex1.Y), (float)Lines[lineId].Vertex2.Y);                
+                minX = Min(Min(minX, (float)line.Vertex1.X), (float)line.Vertex2.X);
+                maxX = Max(Max(maxX, (float)line.Vertex1.X), (float)line.Vertex2.X);
+                minY = Min(Min(minY, (float)line.Vertex1.Y), (float)line.Vertex2.Y);
+                maxY = Max(Max(maxY, (float)line.Vertex1.Y), (float)line.Vertex2.Y);
             }
 
             return new Envelope(minX, maxX, minY, maxY);
@@ -185,11 +183,10 @@ namespace SectorDirector.Engine
         {
             // https://stackoverflow.com/questions/11716268/point-in-polygon-algorithm
             bool insideSector = false;
-            foreach (var lineId in Sectors[sectorIndex].LineIds)
+            foreach (var line in Sectors[sectorIndex].Lines)
             {
-                var line = Lines[lineId];
-                var vertex1 = Map.Vertices[line.V1];
-                var vertex2 = Map.Vertices[line.V2];
+                var vertex1 = line.Vertex1;
+                var vertex2 = line.Vertex2;
 
                 if (((vertex1.Y >= point.Y) != (vertex2.Y >= point.Y)) &&
                     (point.X <= (vertex2.X - vertex1.X) * (point.Y - vertex1.Y) / (vertex2.Y - vertex1.Y) + vertex1.X))

@@ -32,7 +32,8 @@ namespace SectorDirector.Engine.Input
                 (Keys.R, DiscreteInput.ToggleRotateMode),
                 (Keys.A, DiscreteInput.ToggleShowRenderTime),
                 (Keys.D, DiscreteInput.ToggleLineAntiAliasing),
-                (Keys.T, DiscreteInput.SwitchRenderer)
+                (Keys.T, DiscreteInput.SwitchRenderer),
+                (Keys.Tab, DiscreteInput.ToggleOverheadMap)
             );
         }
 

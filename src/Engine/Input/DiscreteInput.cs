@@ -10,6 +10,7 @@ namespace SectorDirector.Engine.Input
         ToggleRotateMode,
         ToggleShowRenderTime,
         ToggleLineAntiAliasing,
-        SwitchRenderer
+        SwitchRenderer,
+        ToggleOverheadMap,
     }
 }

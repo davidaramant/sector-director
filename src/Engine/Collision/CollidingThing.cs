@@ -45,6 +45,8 @@ namespace SectorDirector.Engine
         public float Width { get; } = 32;
         public float Radius { get; } = 8;
         public float ClimbableHeight { get; } = 24;
+        public float Angle { get; private set; }
+        public Matrix RotationTransform { get; private set; }
 
 
         public CollidingThing(CollidingThingInitializer data)
@@ -85,9 +87,9 @@ namespace SectorDirector.Engine
 
             Vector2 potentialPosition = Position + (direction * distance);
 
-            foreach (int lineId in currentSector.LineIds)
+            foreach (Line line in currentSector.Lines)
             {
-                int portalId = _map.Lines[lineId].PortalToSectorId;
+                int portalId = line.PortalToSectorId;
                 if (portalId >= 0)
                 {
                     if (!_possibleSectorsToEnter.Contains(portalId))
@@ -106,7 +108,6 @@ namespace SectorDirector.Engine
                     b = 2[ (x2 - x1) (x1 - x3) + (y2 - y1) (y1 - y3) + (z2 - z1) (z1 - z3) ]
                     c = x3^2 + y3^2 + z3^2 + x1^2 + y1^2 + z1^2 - 2[x3 x1 + y3 y1 + z3 z1] - r^2 
                     */
-                    var line = _map.Lines[lineId];
 
                     float a = (float)(Math.Pow(line.Vertex2.X - line.Vertex1.X, 2) + Math.Pow(line.Vertex2.Y - line.Vertex1.Y, 2));
                     float b = 2 * (float)(((line.Vertex2.X - line.Vertex1.X) * (line.Vertex1.X - potentialPosition.X)) + ((line.Vertex2.Y - line.Vertex1.Y) * (line.Vertex1.Y - potentialPosition.Y)));
@@ -119,8 +120,9 @@ namespace SectorDirector.Engine
                         // We intersecet a line at two points. Finding the midpoint of these two points is where the tip of the closest circle can get
                         float firstX = (float)(-b + Math.Sqrt(expression)) / (2 * a);
                         float secondX = (float)(-b - Math.Sqrt(expression)) / (2 * a);
-                        Vector2 firstIntersection = new Vector2();
-                        Vector2 secondIntersection = new Vector2();
+                        Vector2 lineDirection = line.Vertex2 - line.Vertex1;
+                        Vector2 firstIntersection = lineDirection * firstX;
+                        Vector2 secondIntersection = lineDirection * secondX;
                         //Vector2 firstIntersection = new Vector2(firstX, (float)(a * Math.Pow(firstX, 2) + (b * firstX) + c));
                         //Vector2 secondIntersection = new Vector2(secondX, (float)(a * Math.Pow(secondX, 2) + (b * secondX) + c));
 
@@ -148,9 +150,10 @@ namespace SectorDirector.Engine
 
         public void Rotate(float rotationRadians)
         {
-            var rotation = Matrix.CreateRotationZ(rotationRadians);
+            Angle += rotationRadians;
+            RotationTransform = Matrix.CreateRotationZ(rotationRadians);
 
-            Direction = Vector2.Transform(Direction, rotation);
+            Direction = Vector2.Transform(Direction, RotationTransform);
         }
 
         private int PickResultingSector()
