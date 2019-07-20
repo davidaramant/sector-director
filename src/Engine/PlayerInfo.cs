@@ -16,6 +16,8 @@ namespace SectorDirector.Engine
         public int CurrentSectorId { get; private set; }
         public Vector2 Position;
         public Vector2 Direction;
+        public float Angle { get; private set; }
+        public Matrix RotationTransform { get; private set; }
 
         public float Height { get; } = 56;
         public float Width { get; } = 32;
@@ -33,8 +35,8 @@ namespace SectorDirector.Engine
             var playerThingIndex = map.Map.Things.IndexOf(playerThing);
 
             Position = new Vector2((float)playerThing.X, (float)playerThing.Y);
-            Direction = new Vector2(1, 0);
-            Rotate(MathHelper.ToRadians(playerThing.Angle));
+            Direction = new Vector2(0, 1);
+            Rotate(MathHelper.ToRadians(playerThing.Angle) - MathHelper.PiOver2);
 
             CurrentSectorId = _map.ThingToSectorId[playerThingIndex];
         }
@@ -121,9 +123,10 @@ namespace SectorDirector.Engine
 
         public void Rotate(float rotationRadians)
         {
-            var rotation = Matrix.CreateRotationZ(rotationRadians);
+            Angle += rotationRadians;
+            RotationTransform = Matrix.CreateRotationZ(rotationRadians);
 
-            Direction = Vector2.Transform(Direction, rotation);
+            Direction = Vector2.Transform(Direction, RotationTransform);
         }
     }
 }

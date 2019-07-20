@@ -101,7 +101,7 @@ namespace SectorDirector.Engine.Renderers
 
             if (_settings.RotateMode)
             {
-                _camera.RotationInRadians = (float)Math.Atan2(player.Direction.Y, player.Direction.X) - MathHelper.PiOver2;
+                _camera.RotationInRadians = player.Angle;
             }
             else
             {
