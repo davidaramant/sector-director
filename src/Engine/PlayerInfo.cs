@@ -84,36 +84,37 @@ namespace SectorDirector.Engine
             _possibleSectorsToEnter.Clear();
 
             var movement = direction * distance;
-            var newPlayerEdge = Position + movement + direction * Radius;
+            //var newPlayerEdge = Position + movement + direction * Radius;
 
-            ref SectorInfo currentSector = ref _map.Sectors[CurrentSectorId];
+            //ref SectorInfo currentSector = ref _map.Sectors[CurrentSectorId];
 
-            foreach (var lineId in currentSector.LineIds)
-            {
-                ref Line line = ref _map.Lines[lineId];
-                ref Vector2 v1 = ref _map.Vertices[line.V1];
-                ref Vector2 v2 = ref _map.Vertices[line.V2];
+            //foreach (var lineId in currentSector.LineIds)
+            //{
+            //    ref Line line = ref _map.Lines[lineId];
+            //    ref Vector2 v1 = ref _map.Vertices[line.V1];
+            //    ref Vector2 v2 = ref _map.Vertices[line.V2];
 
-                if (Line.HasCrossed(ref v1, ref v2, ref newPlayerEdge))
-                {
-                    var intersection = Line.Intersection(ref v1, ref v2, ref Position, ref newPlayerEdge);
-                    if (Line.IsPointOnLineSegment(ref v1, ref v2, ref intersection))
-                    {
-                        if (line.PortalToSectorId != -1)
-                        {
-                            _possibleSectorsToEnter.Add(line.PortalToSectorId);
-                        }
-                        else
-                        {
-                            // TODO: vector shearing
-                            movement = new Vector2();
-                        }
-                    }
-                }
-            }
+            //    if (Line.HasCrossed(ref v1, ref v2, ref newPlayerEdge))
+            //    {
+            //        var intersection = Line.Intersection(ref v1, ref v2, ref Position, ref newPlayerEdge);
+            //        if (Line.IsPointOnLineSegment(ref v1, ref v2, ref intersection))
+            //        {
+            //            if (line.PortalToSectorId != -1)
+            //            {
+            //                _possibleSectorsToEnter.Add(line.PortalToSectorId);
+            //            }
+            //            else
+            //            {
+            //                // TODO: vector shearing
+            //                movement = new Vector2();
+            //            }
+            //        }
+            //    }
+            //}
 
             Position += movement;
-            CurrentSectorId = PickResultingSector();
+            //CurrentSectorId = PickResultingSector();
+            CurrentSectorId = _map.FindSurroundingSector(Position);
         }
 
         private int PickResultingSector()
