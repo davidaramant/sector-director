@@ -71,6 +71,10 @@ namespace SectorDirector.Engine
                     _renderer = new OverheadRenderer(_settings, _currentMap);
                     break;
 
+                case RendererType.FirstPerson:
+                    _renderer = new FirstPersonRenderer(_settings, _currentMap);
+                    break;
+
                 case RendererType.Fire:
                     _renderer = new FireRenderer();
                     break;

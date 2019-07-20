@@ -8,10 +8,11 @@ namespace SectorDirector.Engine.Renderers
 {
     public enum RendererType
     {
+        FirstPerson,
         Overhead,
         LineTest,
         Fire,
-        MapHistory
+        MapHistory,
     }
 
     public static class RendererTypeExtensions

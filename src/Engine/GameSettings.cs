@@ -53,6 +53,18 @@ namespace SectorDirector.Engine
                     Renderer = Renderer.Next();
                     RendererChanged?.Invoke(this, EventArgs.Empty);
                     break;
+                case DiscreteInput.ToggleOverheadMap:
+                    if (Renderer == RendererType.FirstPerson)
+                    {
+                        Renderer = RendererType.Overhead;
+                        RendererChanged?.Invoke(this, EventArgs.Empty);
+                    }
+                    else if (Renderer == RendererType.Overhead)
+                    {
+                        Renderer = RendererType.FirstPerson;
+                        RendererChanged?.Invoke(this, EventArgs.Empty);
+                    }
+                    break;
                 default:
                     break;
             }
