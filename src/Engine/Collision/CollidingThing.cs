@@ -58,6 +58,7 @@ namespace SectorDirector.Engine
             Direction = data.Direction;
             CurrentSectorId = data.CurrentSectorId;
             Radius = data.Radius;
+            //Height = _map.Sectors[CurrentSectorId].Info.HeightFloor;
         }
 
         public void Move(ref Vector2 direction, float desiredDistance)
@@ -69,9 +70,12 @@ namespace SectorDirector.Engine
 
             bool collides = FindNearestEdgeCollision(CurrentSectorId, desiredDistance, ref direction, ref nearestEdgeCollisionPoint);
 
-            if (nearestEdgeCollisionPoint == Vector2.One * float.MaxValue)
+            if (!collides)
             {
-
+                //TODO find collisoin angle, leftover vector applied to slide
+            }
+            else
+            {
                 Position += direction * desiredDistance;
 
                 CurrentSectorId = PickResultingSector();
