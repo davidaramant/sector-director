@@ -1,13 +1,11 @@
-// Copyright (c) 2019, David Aramant
+﻿// Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using SectorDirector.Core.CollectionExtensions;
+using SectorDirector.Engine.Collision;
 using SectorDirector.Engine.Input;
-using static SectorDirector.Engine.CollidingThing;
 
 namespace SectorDirector.Engine
 {
@@ -68,7 +66,7 @@ namespace SectorDirector.Engine
             var playerThing = map.Map.Things.First(t => t.Type == 1);
             var playerThingIndex = map.Map.Things.IndexOf(playerThing);
 
-            var position = new Vector2((float)playerThing.X, (float)playerThing.Y);
+            var position = playerThing.GetPosition();
             var angle = MathHelper.ToRadians(playerThing.Angle);
 
             var direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
