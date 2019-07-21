@@ -20,7 +20,7 @@ namespace Benchmarks
         {
             using (var wad = WadReader.Read("freedoom2-udmf.wad"))
             {
-                return MapData.LoadFrom(wad.GetMapStream("MAP28"));
+                return MapData.LoadFrom(wad.GetTextmapStream("MAP28"));
             }
         }
 

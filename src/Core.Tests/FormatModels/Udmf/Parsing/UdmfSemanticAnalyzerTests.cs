@@ -120,7 +120,7 @@ namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
                     foreach (var mapName in wadReader.GetMapNames())
                     {
                         TestContext.WriteLine(" * " + mapName);
-                        MapData.LoadFrom(wadReader.GetMapStream(mapName));
+                        MapData.LoadFrom(wadReader.GetTextmapStream(mapName));
                     }
                 }
             }

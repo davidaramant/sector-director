@@ -51,12 +51,34 @@ namespace SectorDirector.Core.FormatModels.Wad
 
         public Stream GetLumpStream(LumpInfo info) => new ReadOnlySubStream(_stream, position: info.Position, length: info.Size);
 
-        public Stream GetMapStream(string mapName)
+        public Stream GetTextmapStream(string mapName)
         {
             var indexOfMarker = Directory.Select((info, index) => (info, index))
                 .Single(pair => pair.info.Name == mapName).index;
 
             return GetLumpStream(Directory[indexOfMarker + 1]);
+        }
+
+        public Stream GetNextLumpStreamOfName(string mapName, string lumpName)
+        {
+            var indexOfMarker = Directory.Select((info, index) => (info, index))
+                .Single(pair => pair.info.Name == mapName).index;
+
+            int indexToCheck = indexOfMarker + 1;
+            while (Directory[indexToCheck].Name != lumpName)
+            {
+                indexToCheck++;
+            }
+            
+            return GetLumpStream(Directory[indexToCheck]);
+        }
+
+        public bool IsMapUDMF(string mapName)
+        {
+            var indexOfMarker = Directory.Select((info, index) => (info, index))
+                .Single(pair => pair.info.Name == mapName).index;
+
+            return Directory[indexOfMarker + 1].Name == "TEXTMAP";
         }
 
         public void Dispose() => _stream.Dispose();

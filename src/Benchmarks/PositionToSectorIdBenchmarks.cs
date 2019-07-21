@@ -19,7 +19,7 @@ namespace Benchmarks
         {
             using (var wad = WadReader.Read("freedoom2-udmf.wad"))
             {
-                _map = new MapGeometry(MapData.LoadFrom(wad.GetMapStream("MAP28")));
+                _map = new MapGeometry(MapData.LoadFrom(wad.GetTextmapStream("MAP28")));
             }
 
             _sectorBounds = new STRtree<int>();

@@ -53,7 +53,7 @@ namespace SectorDirector.Core.Tests.FormatModels.Wad
                             {new LumpName("MAP01"), new LumpName("TEXTMAP"), new LumpName("ENDMAP"),}),
                         "Did not return correct lump names.");
                     
-                    var roundTripped = MapData.LoadFrom(wadReader.GetMapStream("MAP01"));
+                    var roundTripped = MapData.LoadFrom(wadReader.GetTextmapStream("MAP01"));
 
                     Assert.That(roundTripped, Is.DeepEqualTo(map));
                 }
