@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019, David Aramant
+// Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System;
@@ -14,7 +14,7 @@ namespace SectorDirector.Engine
     
     public sealed class PlayerInfo : CollidingThing
     {
-        private const float MsToMoveSpeed = 80f / 1000f;
+        private const float MsToMoveSpeed = 180f / 1000f;
         private const float MsToRotateSpeed = 5f / 1000f;
         private const float PlayerRadius = 16;
         public float ViewHeight { get; } = 41;
