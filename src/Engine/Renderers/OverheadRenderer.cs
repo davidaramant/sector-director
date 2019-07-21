@@ -138,22 +138,9 @@ namespace SectorDirector.Engine.Renderers
                 }
             }
 
-            void DrawCircle(Vector2 center, float radius, Color c)
+            void DrawCircle(Vector2 center, float radiusInWorldCoordinates, Color c)
             {
-                const int degreeGranularity = 30;
-                Vector2 lastPoint = Vector2.Zero;
-                for (int deg = 0; deg <= 360; deg += degreeGranularity)
-                {
-                    Vector2 newPoint = new Vector2((float)Math.Cos(deg * Math.PI / 180) * radius, (float)Math.Sin(deg * Math.PI / 180) * radius);
-                    Vector2 newPointFromCenter = center + newPoint;
-
-                    if (lastPoint != Vector2.Zero)
-                    {
-                        DrawLineFromWorldCoordinates(lastPoint, newPointFromCenter, c);
-                    }
-
-                    lastPoint = newPointFromCenter;
-                }
+                screen.PlotCircle(_camera.WorldToScreen(center).ToPoint(), (int)(radiusInWorldCoordinates * _camera.Zoom), c);
             }
 
             void DrawBox(Vector2 center, float halfWidth, Color c)
