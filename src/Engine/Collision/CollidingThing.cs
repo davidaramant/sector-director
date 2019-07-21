@@ -16,26 +16,26 @@ namespace SectorDirector.Engine
         public struct CollidingThingInitializer
         {
             public CollidingThingInitializer(
-                MapGeometry map, 
-                int currentSectorId = -1, 
-                Vector2 position = new Vector2(), 
+                MapGeometry map,
+                int currentSectorId,
+                Vector2 position = new Vector2(),
                 Vector2 direction = new Vector2(),
-                float radius = 8,
-                float height = 0)
+                float radius = 8)
             {
                 Map = map;
                 CurrentSectorId = currentSectorId;
                 Position = position;
                 Direction = direction;
                 Radius = radius;
-                Height = height;
+                VerticalPosition = map.Sectors[currentSectorId].Info.HeightFloor;
+
             }
             public MapGeometry Map;
             public Vector2 Position;
             public Vector2 Direction;
             public int CurrentSectorId;
             public float Radius;
-            public float Height;
+            public float VerticalPosition;
         }
 
         private readonly MapGeometry _map;
@@ -44,7 +44,8 @@ namespace SectorDirector.Engine
         public Vector2 Position;
         public Vector2 Direction;
 
-        public float Height { get; private set; } = 56;
+        public float Height { get; } = 56;
+        public float VerticalPosition { get; private set; } = 0;
         public float Width { get; } = 32;
         public float Radius { get; } = 8;
         public float ClimbableHeight { get; } = 24;
@@ -61,7 +62,7 @@ namespace SectorDirector.Engine
             Direction = data.Direction;
             CurrentSectorId = data.CurrentSectorId;
             Radius = data.Radius;
-            Height = data.Height;
+            VerticalPosition = data.VerticalPosition;
         }
 
         public void Move(ref Vector2 direction, float desiredDistance)
@@ -82,11 +83,11 @@ namespace SectorDirector.Engine
                 Position += direction * desiredDistance;
 
                 CurrentSectorId = PickResultingSector();
-                Height = _map.Sectors[CurrentSectorId].Info.HeightFloor;
+                VerticalPosition = _map.Sectors[CurrentSectorId].Info.HeightFloor;
             }
         }
 
-        public bool FindNearestEdgeCollision(int sector, float distance, ref Vector2 direction, ref Vector2 nearestEdge)
+        public bool FindNearestEdgeCollision(int sectorId, float distance, ref Vector2 direction, ref Vector2 nearestEdge)
         {
             ref SectorInfo currentSector = ref _map.Sectors[CurrentSectorId];
             bool foundCollision = false;
@@ -100,8 +101,9 @@ namespace SectorDirector.Engine
                 bool canCollideWithLine = true;
                 if (portalId >= 0)
                 {
-                    float heightDiff = _map.Sectors[portalId].Info.HeightFloor - Height;
-                    if (heightDiff < ClimbableHeight)
+                    var mapInfo = _map.Sectors[portalId].Info;
+                    float heightDiff = mapInfo.HeightFloor - VerticalPosition;
+                    if (heightDiff < ClimbableHeight && VerticalPosition + Height < mapInfo.HeightCeiling)
                     {
                         canCollideWithLine = false;
                         float unusedX = 0, unusedY = 0;
