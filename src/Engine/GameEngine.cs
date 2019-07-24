@@ -215,6 +215,7 @@ namespace SectorDirector.Engine
             {
                 _frameTimeAggregator.Reset();
                 _screenMessage.ShowMessage($"Changing screen buffer to {renderSize.X}x{renderSize.Y}");
+                _outputTexture.Dispose();
                 _outputTexture = new Texture2D(_graphics.GraphicsDevice, width: renderSize.X, height: renderSize.Y);
                 _screenBuffer = new ScreenBuffer(renderSize);
             }
