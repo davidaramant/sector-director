@@ -23,7 +23,7 @@ namespace SectorDirector.Engine.Renderers
         const float MaxMapToScreenRatio = 5f;
         private readonly Camera2D _camera = new Camera2D();
         DrawLine _drawLine = ScreenBufferExtensions.PlotLine;
-        private const float MsToMoveSpeed = 200f / 1000f;
+        private const float MsToMoveSpeed = 300f / 1000f;
 
         public OverheadRenderer(GameSettings settings, MapGeometry map)
         {
@@ -52,7 +52,7 @@ namespace SectorDirector.Engine.Renderers
         {
             if (!_settings.FollowMode)
             {
-                var distance = gameTime.ElapsedGameTime.Milliseconds * MsToMoveSpeed;
+                var distance = gameTime.ElapsedGameTime.Milliseconds * MsToMoveSpeed / _camera.Zoom;
 
                 if (inputs.Forward)
                 {
@@ -101,7 +101,7 @@ namespace SectorDirector.Engine.Renderers
 
             if (_settings.RotateMode)
             {
-                _camera.RotationInRadians = player.Angle;
+                _camera.RotationInRadians = player.Angle - MathHelper.PiOver4;
             }
             else
             {

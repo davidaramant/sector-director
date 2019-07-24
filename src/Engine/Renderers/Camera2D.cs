@@ -118,8 +118,8 @@ namespace SectorDirector.Engine.Renderers
                 _worldToScreenTransformation =
                     yAxisFlipMatrix *
                     centerTranslationMatrix * 
-                    centerOffsetTranslationMatrix *
                     rotationMatrix *
+                    centerOffsetTranslationMatrix *
                     zoomMatrix *
                     originTranslationMatrix;
 
