@@ -98,15 +98,7 @@ namespace SectorDirector.Engine.Renderers
 
             _camera.ScreenBounds = screen.Dimensions;
             _camera.Center = player.Position;
-
-            if (_settings.RotateMode)
-            {
-                _camera.RotationInRadians = player.Angle - MathHelper.PiOver4;
-            }
-            else
-            {
-                _camera.RotationInRadians = 0;
-            }
+            _camera.RotationInRadians = _settings.RotateMode ? player.Angle : 0;
 
             // Transform all vertices
             for (int v = 0; v < _map.Vertices.Length; v++)
