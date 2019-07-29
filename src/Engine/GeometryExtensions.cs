@@ -13,7 +13,9 @@ namespace SectorDirector.Engine
 
         public static Vector2 PerpendicularClockwise(this Vector2 v) => new Vector2(v.Y, -v.X);
         public static Vector2 PerpendicularCounterClockwise(this Vector2 v) => new Vector2(-v.Y, v.X);
-
+        public static Vector2 Rotate(this Vector2 v, float r) => new Vector2((float)(Cos(r) * v.X) - (float)(Sin(r) * v.Y), (float)(Sin(r) * v.X) + (float)(Cos(r) * v.Y));
+        public static Vector3 ToVector3(this Vector2 v) => new Vector3(v, 0);
+        public static Vector2 ToVector2(this Vector3 v) => new Vector2(v.X, v.Y);
         public static float SmallestSide(this Vector2 p) => Min(p.X, p.Y);
         public static float LargestSide(this Vector2 p) => Max(p.X, p.Y);
 

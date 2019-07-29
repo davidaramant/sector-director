@@ -72,7 +72,7 @@ namespace SectorDirector.Engine
                     break;
 
                 case RendererType.FirstPerson:
-                    _renderer = new FirstPersonRenderer(_settings, _currentMap);
+                    _renderer = new FirstPersonRenderer(_settings, _currentMap, _screenMessage);
                     break;
 
                 case RendererType.Fire:

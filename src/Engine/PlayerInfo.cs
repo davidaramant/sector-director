@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using SectorDirector.Engine.Collision;
 using SectorDirector.Engine.Input;
+using SectorDirector.Engine.Renderers.FirstPerson;
 
 namespace SectorDirector.Engine
 {
@@ -17,6 +18,13 @@ namespace SectorDirector.Engine
         private const float PlayerRadius = 16;
         public float ViewHeight { get; } = 41;
 
+        public FirstPersonCameraSettings CameraSettings { get; } = new FirstPersonCameraSettings
+        {
+            FieldOfView = 60,
+            MinClippingDistance = 1,
+            MaxClippingDistance = 1000,
+            EyeWidth = 100
+        };
 
         public PlayerInfo(MapGeometry map) : base(GetInitialThingValues(map))
         {

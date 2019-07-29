@@ -188,6 +188,11 @@ namespace SectorDirector.Engine.Renderers
             var playerHalfWidth = player.Width / 2;
             DrawCircle(player.Position, player.Radius, Color.Green);
 
+            // Draw player field of view
+
+            DrawLineFromWorldCoordinates(player.Position, player.Position + player.Direction.Rotate(-0.5f * player.CameraSettings.FieldOfView * MathShortcuts.DegToRad) * player.CameraSettings.MaxClippingDistance, Color.AntiqueWhite);
+            DrawLineFromWorldCoordinates(player.Position, player.Position + player.Direction.Rotate(0.5f * player.CameraSettings.FieldOfView * MathShortcuts.DegToRad) * player.CameraSettings.MaxClippingDistance, Color.AntiqueWhite);
+
             // Draw player direction arrow
             var playerLineStart = player.Position - (playerHalfWidth / 2 * player.Direction);
             var playerLineEnd = player.Position + (playerHalfWidth / 2 * player.Direction);
