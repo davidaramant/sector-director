@@ -83,7 +83,7 @@ namespace SectorDirector.Engine
 
             var verticalPosition = map.Sectors[currentSectorId].Info.HeightFloor;
 
-            return new CollidingThingInitializer(map, currentSectorId, position, direction, PlayerRadius);
+            return new CollidingThingInitializer(map, currentSectorId, position, direction, angle, PlayerRadius);
         }
     }
 }

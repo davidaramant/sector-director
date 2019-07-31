@@ -17,12 +17,14 @@ namespace SectorDirector.Engine.Collision
                 int currentSectorId,
                 Vector2 position = new Vector2(),
                 Vector2 direction = new Vector2(),
+                float angle = 0,
                 float radius = 8)
             {
                 Map = map;
                 CurrentSectorId = currentSectorId;
                 Position = position;
                 Direction = direction;
+                Angle = angle;
                 Radius = radius;
                 VerticalPosition = map.Sectors[currentSectorId].Info.HeightFloor;
 
@@ -30,6 +32,7 @@ namespace SectorDirector.Engine.Collision
             public MapGeometry Map;
             public Vector2 Position;
             public Vector2 Direction;
+            public float Angle;
             public int CurrentSectorId;
             public float Radius;
             public float VerticalPosition;
@@ -58,6 +61,7 @@ namespace SectorDirector.Engine.Collision
 
             Position = data.Position;
             Direction = data.Direction;
+            Angle = data.Angle;
             CurrentSectorId = data.CurrentSectorId;
             Radius = data.Radius;
             VerticalPosition = data.VerticalPosition;
