@@ -186,7 +186,13 @@ namespace SectorDirector.Engine
             var keyboard = Keyboard.GetState();
 
             if (keyboard.IsKeyDown(Keys.Escape))
+            {
+                // It randomly crashes if exiting in fullscreen for whatever reason
+                _graphics.IsFullScreen = false;
+                _graphics.ApplyChanges();
+
                 Exit();
+            }
 
             var discreteInput = _keyToggles.Update(keyboard);
             _continuousInputs.Forward = keyboard.IsKeyDown(Keys.Up) || keyboard.IsKeyDown(Keys.W);
