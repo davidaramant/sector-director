@@ -160,7 +160,7 @@ namespace SectorDirector.Engine
             _screenMessage.ShowMessage($"Switching to map index {index}");
             var map = _maps[index];
             _currentMap = new MapGeometry(map);
-            _playerInfo = new PlayerInfo(_currentMap);
+            _playerInfo = PlayerInfo.Create(_currentMap);
             RecreateRenderer();
         }
 

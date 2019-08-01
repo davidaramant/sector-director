@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// Copyright (c) 2019, Andrew Lonsway, David Aramant
+// Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
+
 using Microsoft.Xna.Framework;
 
 namespace SectorDirector.Engine.Collision
@@ -11,6 +9,5 @@ namespace SectorDirector.Engine.Collision
     {
         void Move(ref Vector2 direction, float distance);
         void Rotate(float rotationRadians);
-
     }
 }

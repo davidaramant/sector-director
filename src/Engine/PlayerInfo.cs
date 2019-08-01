@@ -10,7 +10,6 @@ using SectorDirector.Engine.Renderers.FirstPerson;
 
 namespace SectorDirector.Engine
 {
-    
     public sealed class PlayerInfo : CollidingThing
     {
         private const float MsToMoveSpeed = 180f / 1000f;
@@ -26,9 +25,15 @@ namespace SectorDirector.Engine
             EyeWidth = 100
         };
 
-        public PlayerInfo(MapGeometry map) : base(GetInitialThingValues(map))
+        public PlayerInfo(
+            MapGeometry map,
+            int currentSectorId,
+            Vector2 position,
+            Vector2 direction,
+            float angle,
+            float radius) 
+            : base(map, currentSectorId, position, direction, angle, radius)
         {
-
         }
 
         public void Update(ContinuousInputs inputs, GameTime gameTime)
@@ -69,8 +74,8 @@ namespace SectorDirector.Engine
             }
         }
 
-        private static CollidingThingInitializer GetInitialThingValues(MapGeometry map)
-        { 
+        public static PlayerInfo Create(MapGeometry map)
+        {
             var playerThing = map.Map.Things.First(t => t.Type == 1);
             var playerThingIndex = map.Map.Things.IndexOf(playerThing);
 
@@ -83,7 +88,7 @@ namespace SectorDirector.Engine
 
             var verticalPosition = map.Sectors[currentSectorId].Info.HeightFloor;
 
-            return new CollidingThingInitializer(map, currentSectorId, position, direction, angle, PlayerRadius);
+            return new PlayerInfo(map, currentSectorId, position, direction, angle, PlayerRadius);
         }
     }
 }

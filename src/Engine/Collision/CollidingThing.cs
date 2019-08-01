@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019, Andrew Lonsway
+﻿// Copyright (c) 2019, Andrew Lonsway, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using System;
@@ -10,37 +10,9 @@ namespace SectorDirector.Engine.Collision
 {
     public class CollidingThing : IColliding
     {
-        public struct CollidingThingInitializer
-        {
-            public CollidingThingInitializer(
-                MapGeometry map,
-                int currentSectorId,
-                Vector2 position = new Vector2(),
-                Vector2 direction = new Vector2(),
-                float angle = 0,
-                float radius = 8)
-            {
-                Map = map;
-                CurrentSectorId = currentSectorId;
-                Position = position;
-                Direction = direction;
-                Angle = angle;
-                Radius = radius;
-                VerticalPosition = map.Sectors[currentSectorId].Info.HeightFloor;
-
-            }
-            public MapGeometry Map;
-            public Vector2 Position;
-            public Vector2 Direction;
-            public float Angle;
-            public int CurrentSectorId;
-            public float Radius;
-            public float VerticalPosition;
-        }
-
         private readonly MapGeometry _map;
         private readonly List<int> _possibleSectorsToEnter;
-        private int HeightSourceSectorId;
+        private int _heightSourceSectorId;
         public int CurrentSectorId { get; private set; }
         public Vector2 Position;
         public Vector2 Direction;
@@ -54,18 +26,24 @@ namespace SectorDirector.Engine.Collision
         public Matrix RotationTransform { get; private set; }
 
 
-        public CollidingThing(CollidingThingInitializer data)
+        public CollidingThing(
+            MapGeometry map,
+            int currentSectorId,
+            Vector2 position,
+            Vector2 direction,
+            float angle,
+            float radius)
         {
-            _map = data.Map;
+            _map = map;
             _possibleSectorsToEnter = new List<int>(_map.Sectors.Length);
 
-            Position = data.Position;
-            Direction = data.Direction;
-            Angle = data.Angle;
-            CurrentSectorId = data.CurrentSectorId;
-            Radius = data.Radius;
-            VerticalPosition = data.VerticalPosition;
-            HeightSourceSectorId = CurrentSectorId;
+            Position = position;
+            Direction = direction;
+            Angle = angle;
+            CurrentSectorId = currentSectorId;
+            Radius = radius;
+            VerticalPosition = map.Sectors[currentSectorId].Info.HeightFloor;
+            _heightSourceSectorId = CurrentSectorId;
         }
 
         public void Move(ref Vector2 direction, float desiredDistance)
@@ -88,10 +66,10 @@ namespace SectorDirector.Engine.Collision
                 CurrentSectorId = PickResultingSector();
                 // Only reset our height when we have left the previous sector, or if the current sector is higher
                 float newHeight = _map.Sectors[CurrentSectorId].Info.HeightFloor;
-                if (HeightSourceSectorId != CurrentSectorId &&
-                    (!_possibleSectorsToEnter.Contains(HeightSourceSectorId) || newHeight > VerticalPosition))
+                if (_heightSourceSectorId != CurrentSectorId &&
+                    (!_possibleSectorsToEnter.Contains(_heightSourceSectorId) || newHeight > VerticalPosition))
                 {
-                    HeightSourceSectorId = CurrentSectorId;
+                    _heightSourceSectorId = CurrentSectorId;
                     VerticalPosition = newHeight;
                 }
 
