@@ -9,7 +9,7 @@ namespace SectorDirector.Engine.Renderers
 {
     public sealed class LineTestRenderer : IRenderer
     {
-        delegate void DrawLine(ScreenBuffer buffer, Point p0, Point p1, Color c);
+        delegate void DrawLine(IScreenBuffer buffer, Point p0, Point p1, Color c);
         DrawLine _drawLine = ScreenBufferExtensions.PlotLine;
         float _angle = 0;
         private readonly ScreenMessage _message;
@@ -72,7 +72,7 @@ namespace SectorDirector.Engine.Renderers
             _angle += rotationRadians;
         }
 
-        public void Render(ScreenBuffer screen, PlayerInfo player)
+        public void Render(IScreenBuffer screen, PlayerInfo player)
         {
             screen.Clear();
 

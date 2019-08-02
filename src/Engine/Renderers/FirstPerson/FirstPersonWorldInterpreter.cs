@@ -89,7 +89,7 @@ namespace SectorDirector.Engine.Renderers.FirstPerson
         }
 
         public (bool shouldDraw, Point p1, Point p2) ConvertWorldLineToScreenPoints(
-            ScreenBuffer buffer, 
+            IScreenBuffer buffer, 
             Vector3 cameraPosition,
             Vector2 cameraDirection,
             Vector3 vector1, 

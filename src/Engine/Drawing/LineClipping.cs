@@ -46,7 +46,7 @@ namespace SectorDirector.Engine.Drawing
         }
 
         public static (bool shouldDraw, Point p0, Point p1) ClipToScreen(
-            ScreenBuffer buffer,
+            IScreenBuffer buffer,
             Point p0,
             Point p1)
         {

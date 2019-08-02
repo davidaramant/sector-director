@@ -1,13 +1,14 @@
 ﻿// Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 using System;
+using System.Data;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace SectorDirector.Engine
 {
-    public sealed class ScreenBuffer
+    public sealed class ScreenBuffer : IScreenBuffer
     {
         readonly Color[] _buffer;
 
@@ -18,7 +19,6 @@ namespace SectorDirector.Engine
         public Color this[Point p] => _buffer[p.Y * Width + p.X];
         public Color this[int x, int y] => _buffer[y * Width + x];
 
-        public void DrawPixel(Point p, Color c) => DrawPixel(p.X, p.Y, c);
         public void DrawPixel(int x, int y, Color c)
         {
             if (x >= 0 && x < Width && y >= 0 && y < Height)
@@ -27,7 +27,6 @@ namespace SectorDirector.Engine
             }
         }
 
-        public void AddPixel(Point p, Color c) => AddPixel(p.X, p.Y, c);
         public void AddPixel(int x, int y, Color c)
         {
             if (x >= 0 && x < Width && y >= 0 && y < Height)
@@ -55,7 +54,13 @@ namespace SectorDirector.Engine
 
         public void CopyToTexture(Texture2D texture) => texture.SetData(_buffer);
         public void Clear() => Array.Clear(_buffer, 0, _buffer.Length);
-        public ScreenBuffer Clone() => new ScreenBuffer(Dimensions, _buffer.ToArray());
+        public void Clear(Rectangle area)
+        {
+            for (int row = 0; row < area.Height; row++)
+            {
+                Array.Clear(_buffer, (row + area.Y) * Width + area.X, area.Width);
+            }
+        }
         public void CopyFrom(Color[] texture, Point textureSize, Point destination)
         {
             var xMargin = Width - destination.X;

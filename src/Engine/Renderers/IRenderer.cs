@@ -25,6 +25,6 @@ namespace SectorDirector.Engine.Renderers
     {
         void Update(ContinuousInputs inputs, GameTime gameTime);
 
-        void Render(ScreenBuffer screen, PlayerInfo player);
+        void Render(IScreenBuffer screen, PlayerInfo player);
     }
 }

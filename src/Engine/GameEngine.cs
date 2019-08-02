@@ -61,30 +61,19 @@ namespace SectorDirector.Engine
 
         private void RecreateRenderer()
         {
-            switch (_settings.Renderer)
+            _renderer = CreateRenderer(_settings.Renderer);
+        }
+
+        private IRenderer CreateRenderer(RendererType type)
+        {
+            switch (type)
             {
-                case RendererType.LineTest:
-                    _renderer = new LineTestRenderer(_settings, _screenMessage);
-                    break;
-
-                case RendererType.Overhead:
-                    _renderer = new OverheadRenderer(_settings, _currentMap);
-                    break;
-
-                case RendererType.FirstPerson:
-                    _renderer = new FirstPersonRenderer(_settings, _currentMap, _screenMessage);
-                    break;
-
-                case RendererType.Fire:
-                    _renderer = new FireRenderer();
-                    break;
-
-                case RendererType.MapHistory:
-                    _renderer = new MapHistoryRenderer(_currentMap, _screenMessage);
-                    break;
-
-                default:
-                    throw new System.Exception("Unknown renderer type");
+                case RendererType.LineTest: return new LineTestRenderer(_settings, _screenMessage);
+                case RendererType.Overhead: return new OverheadRenderer(_settings, _currentMap);
+                case RendererType.FirstPerson: return new FirstPersonRenderer(_settings, _currentMap, _screenMessage);
+                case RendererType.Fire: return new FireRenderer();
+                case RendererType.MapHistory: return new MapHistoryRenderer(_currentMap, _screenMessage);
+                default: throw new System.Exception("Unknown renderer type");
             }
         }
 
@@ -161,7 +150,10 @@ namespace SectorDirector.Engine
             var map = _maps[index];
             _currentMap = new MapGeometry(map);
             _playerInfo = PlayerInfo.Create(_currentMap);
-            RecreateRenderer();
+            //RecreateRenderer();
+            _renderer = new SplitScreenRenderer(
+                CreateRenderer(RendererType.Overhead), 
+                CreateRenderer(RendererType.FirstPerson));
         }
 
         /// <summary>

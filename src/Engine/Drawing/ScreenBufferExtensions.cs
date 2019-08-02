@@ -8,12 +8,15 @@ namespace SectorDirector.Engine.Drawing
 {
     public static class ScreenBufferExtensions
     {
+        public static void DrawPixel(this IScreenBuffer buffer, Point p, Color c) => buffer.DrawPixel(p.X, p.Y, c);
+        public static void AddPixel(this IScreenBuffer buffer, Point p, Color c) => buffer.AddPixel(p.X, p.Y, c);
+
         #region Bresenham's Line Algorithm
 
-        public static void PlotLine(this ScreenBuffer buffer, Point p0, Point p1, Color color) =>
+        public static void PlotLine(this IScreenBuffer buffer, Point p0, Point p1, Color color) =>
             PlotLine(buffer, p0.X, p0.Y, p1.X, p1.Y, color);
 
-        public static void PlotLine(this ScreenBuffer buffer, int x0, int y0, int x1, int y1, Color color)
+        public static void PlotLine(this IScreenBuffer buffer, int x0, int y0, int x1, int y1, Color color)
         {
             if (Abs(y1 - y0) < Abs(x1 - x0))
             {
@@ -31,7 +34,7 @@ namespace SectorDirector.Engine.Drawing
             }
         }
 
-        private static void PlotLineLow(ScreenBuffer buffer, int x0, int y0, int x1, int y1, Color color)
+        private static void PlotLineLow(IScreenBuffer buffer, int x0, int y0, int x1, int y1, Color color)
         {
             int dx = x1 - x0;
             int dy = y1 - y0;
@@ -58,7 +61,7 @@ namespace SectorDirector.Engine.Drawing
             }
         }
 
-        private static void PlotLineHigh(ScreenBuffer buffer, int x0, int y0, int x1, int y1, Color color)
+        private static void PlotLineHigh(IScreenBuffer buffer, int x0, int y0, int x1, int y1, Color color)
         {
             int dx = x1 - x0;
             int dy = y1 - y0;
@@ -87,10 +90,10 @@ namespace SectorDirector.Engine.Drawing
         #endregion
 
         #region Bresenham's Circle Algorithm
-        public static void PlotCircle(this ScreenBuffer buffer, Point center, int radius, Color color) =>
+        public static void PlotCircle(this IScreenBuffer buffer, Point center, int radius, Color color) =>
             PlotCircle(buffer, center.X, center.Y, radius, color);
 
-        public static void PlotCircle(this ScreenBuffer buffer, int xCenter, int yCenter, int radius, Color color)
+        public static void PlotCircle(this IScreenBuffer buffer, int xCenter, int yCenter, int radius, Color color)
         {
             int x = 0, y = radius;
             int d = 3 - 2 * radius;
@@ -112,7 +115,7 @@ namespace SectorDirector.Engine.Drawing
             }
         }
 
-        private static void PlotCircleSegments(ScreenBuffer buffer, int xc, int yc, int x, int y, Color color)
+        private static void PlotCircleSegments(IScreenBuffer buffer, int xc, int yc, int x, int y, Color color)
         {
             buffer.DrawPixel(xc + x, yc + y, color);
             buffer.DrawPixel(xc - x, yc + y, color);
@@ -133,9 +136,9 @@ namespace SectorDirector.Engine.Drawing
         // Based on the version from his Graphics Programming Black Book http://www.jagregory.com/abrash-black-book/
         // The integer error stuff was removed in favor of floats.
         // It might have worked if I used 'unchecked' but I got frustrated debugging it.  FPUs are considerably faster these days anyway.
-        public static void PlotLineSmooth(this ScreenBuffer buffer, Point p1, Point p2, Color baseColor) =>
+        public static void PlotLineSmooth(this IScreenBuffer buffer, Point p1, Point p2, Color baseColor) =>
             PlotLineSmooth(buffer, p1.X, p1.Y, p2.X, p2.Y, baseColor);
-        public static void PlotLineSmooth(this ScreenBuffer buffer, int x0, int y0, int x1, int y1, Color baseColor)
+        public static void PlotLineSmooth(this IScreenBuffer buffer, int x0, int y0, int x1, int y1, Color baseColor)
         {
             void Swap(ref int a, ref int b)
             {

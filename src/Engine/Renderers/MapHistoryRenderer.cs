@@ -54,7 +54,7 @@ namespace SectorDirector.Engine.Renderers
             _linesToDraw = Math.Min(_map.Lines.Length, _linesToDraw + _msToDrawSpeed * gameTime.ElapsedGameTime.Milliseconds);
         }
 
-        public void Render(ScreenBuffer screen, PlayerInfo player)
+        public void Render(IScreenBuffer screen, PlayerInfo player)
         {
             screen.Clear();
 

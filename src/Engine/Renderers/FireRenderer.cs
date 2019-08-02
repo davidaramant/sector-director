@@ -159,7 +159,7 @@ namespace SectorDirector.Engine.Renderers
             }
         }
 
-        public void Render(ScreenBuffer screen, PlayerInfo player)
+        public void Render(IScreenBuffer screen, PlayerInfo player)
         {
             screen.Clear();
             if (_lastScreenSize != screen.Dimensions)

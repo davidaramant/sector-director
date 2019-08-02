@@ -10,7 +10,7 @@ namespace SectorDirector.Engine.Renderers
 {
     public sealed class FirstPersonRenderer : IRenderer
     {
-        delegate void DrawLine(ScreenBuffer buffer, Point p0, Point p1, Color c);
+        delegate void DrawLine(IScreenBuffer buffer, Point p0, Point p1, Color c);
 
         readonly GameSettings _settings;
         readonly ScreenMessage _screenMessage;
@@ -34,10 +34,19 @@ namespace SectorDirector.Engine.Renderers
 
         }
 
-        public void Render(ScreenBuffer screen, PlayerInfo player)
+        public void Render(IScreenBuffer screen, PlayerInfo player)
         {
             screen.Clear();
             Interpreter = new FirstPersonWorldInterpreter(player.CameraSettings);
+
+            void DrawLineFromScreenCoordinates(Point sc1, Point sc2, Color c)
+            {
+                var result = LineClipping.ClipToScreen(screen, sc1, sc2);
+                if (result.shouldDraw)
+                {
+                    _drawLine(screen, result.p0, result.p1, c);
+                }
+            }
 
             foreach (SectorInfo sector in _map.Sectors)
             {
@@ -54,25 +63,25 @@ namespace SectorDirector.Engine.Renderers
                     var topLineResult = Interpreter.ConvertWorldLineToScreenPoints(screen, cameraPosition, player.Direction, topLeft, topRight);
                     if (topLineResult.shouldDraw)
                     {
-                        _drawLine(screen, topLineResult.p1, topLineResult.p2, Color.Red);
+                        DrawLineFromScreenCoordinates(topLineResult.p1, topLineResult.p2, Color.Red);
                     }
 
                     var bottomLineResult = Interpreter.ConvertWorldLineToScreenPoints(screen, cameraPosition, player.Direction, bottomLeft, bottomRight);
                     if (bottomLineResult.shouldDraw)
                     {
-                        _drawLine(screen, bottomLineResult.p1, bottomLineResult.p2, Color.Red);
+                        DrawLineFromScreenCoordinates(bottomLineResult.p1, bottomLineResult.p2, Color.Red);
                     }
 
                     var leftLineResult = Interpreter.ConvertWorldLineToScreenPoints(screen, cameraPosition, player.Direction, topLeft, bottomLeft);
                     if (leftLineResult.shouldDraw)
                     {
-                        _drawLine(screen, leftLineResult.p1, leftLineResult.p2, Color.Red);
+                        DrawLineFromScreenCoordinates(leftLineResult.p1, leftLineResult.p2, Color.Red);
                     }
 
                     var rightLineResult = Interpreter.ConvertWorldLineToScreenPoints(screen, cameraPosition, player.Direction, topRight, bottomRight);
                     if (rightLineResult.shouldDraw)
                     {
-                        _drawLine(screen, rightLineResult.p1, rightLineResult.p2, Color.Red);
+                        DrawLineFromScreenCoordinates(rightLineResult.p1, rightLineResult.p2, Color.Red);
                     }
 
                 }

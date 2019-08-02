@@ -10,7 +10,7 @@ namespace SectorDirector.Engine.Renderers
 {
     public sealed class OverheadRenderer : IRenderer
     {
-        delegate void DrawLine(ScreenBuffer buffer, Point p0, Point p1, Color c);
+        delegate void DrawLine(IScreenBuffer buffer, Point p0, Point p1, Color c);
 
         readonly GameSettings _settings;
         readonly MapGeometry _map;
@@ -89,7 +89,7 @@ namespace SectorDirector.Engine.Renderers
             }
         }
 
-        public void Render(ScreenBuffer screen, PlayerInfo player)
+        public void Render(IScreenBuffer screen, PlayerInfo player)
         {
             screen.Clear();
 
