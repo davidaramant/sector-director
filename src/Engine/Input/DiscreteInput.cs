@@ -12,5 +12,7 @@ namespace SectorDirector.Engine.Input
         ToggleLineAntiAliasing,
         SwitchRenderer,
         ToggleOverheadMap,
+        DecreaseRenderFidelity,
+        IncreaseRenderFidelity
     }
 }

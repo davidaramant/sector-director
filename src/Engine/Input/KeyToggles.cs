@@ -17,8 +17,6 @@ namespace SectorDirector.Engine.Input
     public sealed class KeyToggles
     {
         readonly KeyboardLatch _toggleFullscreenLatch = new KeyboardLatch(kb => (kb.IsKeyDown(Keys.LeftAlt) || kb.IsKeyDown(Keys.RightAlt)) && kb.IsKeyDown(Keys.Enter));
-        readonly KeyboardLatch _decreaseFidelity = new KeyboardLatch(Keys.OemOpenBrackets);
-        readonly KeyboardLatch _increaseFidelity = new KeyboardLatch(Keys.OemCloseBrackets);
         readonly KeyboardLatch _loadMap1 = new KeyboardLatch(Keys.D1);
         readonly KeyboardLatch _loadMap2 = new KeyboardLatch(Keys.D2);
         readonly KeyboardLatch _loadMap3 = new KeyboardLatch(Keys.D3);
@@ -33,7 +31,9 @@ namespace SectorDirector.Engine.Input
                 (Keys.A, DiscreteInput.ToggleShowRenderTime),
                 (Keys.D, DiscreteInput.ToggleLineAntiAliasing),
                 (Keys.T, DiscreteInput.SwitchRenderer),
-                (Keys.Tab, DiscreteInput.ToggleOverheadMap)
+                (Keys.Tab, DiscreteInput.ToggleOverheadMap),
+                (Keys.OemOpenBrackets, DiscreteInput.DecreaseRenderFidelity),
+                (Keys.OemCloseBrackets, DiscreteInput.IncreaseRenderFidelity)
             );
         }
 
@@ -45,8 +45,6 @@ namespace SectorDirector.Engine.Input
             }
         }
 
-        public event EventHandler DecreaseFidelity;
-        public event EventHandler IncreaseFidelity;
         public event EventHandler FullScreen;
         public event EventHandler<LoadMapArgs> LoadMap;
 
@@ -63,14 +61,6 @@ namespace SectorDirector.Engine.Input
             if (_toggleFullscreenLatch.IsTriggered(keyboardState))
             {
                 FullScreen?.Invoke(this, EventArgs.Empty);
-            }
-            else if (_decreaseFidelity.IsTriggered(keyboardState))
-            {
-                DecreaseFidelity?.Invoke(this, EventArgs.Empty);
-            }
-            else if (_increaseFidelity.IsTriggered(keyboardState))
-            {
-                IncreaseFidelity?.Invoke(this, EventArgs.Empty);
             }
             else if (_loadMap1.IsTriggered(keyboardState))
             {

@@ -1,7 +1,9 @@
 // Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
+using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using SectorDirector.Core.FormatModels.Udmf;
 using SectorDirector.Engine.Input;
 using Microsoft.Xna.Framework;
@@ -20,7 +22,6 @@ namespace SectorDirector.Engine
         readonly GraphicsDeviceManager _graphics;
         SpriteBatch _spriteBatch;
         Texture2D _outputTexture;
-        RenderScale _renderScale = RenderScale.Normal;
         ScreenBuffer _screenBuffer;
         PlayerInfo _playerInfo;
         List<MapData> _maps;
@@ -48,16 +49,18 @@ namespace SectorDirector.Engine
             };
             Content.RootDirectory = "Content";
             Window.AllowUserResizing = true;
-            Window.ClientSizeChanged += (s, e) => UpdateScreenBuffer(CurrentScreenSize.DivideBy(_renderScale));
+            Window.ClientSizeChanged += UpdateScreenBufferWithNewSize;
 
             _settings = new GameSettings(_screenMessage);
             _settings.RendererChanged += (s, e) => RecreateRenderer();
+            _settings.RenderScaleChanged += UpdateScreenBufferWithNewSize;
 
-            _keyToggles.DecreaseFidelity += KeyToggled_DecreaseFidelity;
-            _keyToggles.IncreaseFidelity += KeyToggled_IncreaseFidelity;
             _keyToggles.FullScreen += KeyToggled_FullScreen;
             _keyToggles.LoadMap += KeyToggled_LoadMap;
         }
+
+        private void UpdateScreenBufferWithNewSize(object sender, EventArgs e) => 
+            UpdateScreenBuffer(CurrentScreenSize.DivideBy(_settings.RenderScale));
 
         private void RecreateRenderer()
         {
@@ -75,20 +78,6 @@ namespace SectorDirector.Engine
                 case RendererType.MapHistory: return new MapHistoryRenderer(_currentMap, _screenMessage);
                 default: throw new System.Exception("Unknown renderer type");
             }
-        }
-
-        private void KeyToggled_DecreaseFidelity(object sender, System.EventArgs e)
-        {
-            _renderScale = _renderScale.DecreaseFidelity();
-            var newSize = CurrentScreenSize.DivideBy(_renderScale);
-            UpdateScreenBuffer(newSize);
-        }
-
-        private void KeyToggled_IncreaseFidelity(object sender, System.EventArgs e)
-        {
-            _renderScale = _renderScale.IncreaseFidelity();
-            var newSize = CurrentScreenSize.DivideBy(_renderScale);
-            UpdateScreenBuffer(newSize);
         }
 
         private void KeyToggled_FullScreen(object sender, System.EventArgs e)

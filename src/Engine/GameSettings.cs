@@ -14,12 +14,14 @@ namespace SectorDirector.Engine
         public bool DrawAntiAliased { get; private set; } = true;
         public bool ShowRenderTime { get; private set; } = false;
         public RendererType Renderer { get; private set; } = RendererType.Overhead;
+        public RenderScale RenderScale { get; private set; } = RenderScale.Normal;
 
         public event EventHandler FollowModeChanged;
         public event EventHandler RotateModeChanged;
         public event EventHandler DrawAntiAliasedModeChanged;
         public event EventHandler ShowRenderTimeChanged;
         public event EventHandler RendererChanged;
+        public event EventHandler RenderScaleChanged;
 
         public GameSettings(ScreenMessage message)
         {
@@ -63,6 +65,26 @@ namespace SectorDirector.Engine
                     {
                         Renderer = RendererType.FirstPerson;
                         RendererChanged?.Invoke(this, EventArgs.Empty);
+                    }
+                    break;
+                case DiscreteInput.DecreaseRenderFidelity:
+                    {
+                        var oldScale = RenderScale;
+                        RenderScale = RenderScale.DecreaseFidelity();
+                        if (oldScale != RenderScale)
+                        {
+                            RenderScaleChanged?.Invoke(this, EventArgs.Empty);
+                        }
+                    }
+                    break;
+                case DiscreteInput.IncreaseRenderFidelity:
+                    {
+                        var oldScale = RenderScale;
+                        RenderScale = RenderScale.IncreaseFidelity();
+                        if (oldScale != RenderScale)
+                        {
+                            RenderScaleChanged?.Invoke(this, EventArgs.Empty);
+                        }
                     }
                     break;
                 default:

@@ -13,6 +13,7 @@ namespace SectorDirector.Engine.Renderers
         private Vector2 _center = Vector2.Zero;
         private Vector2 _viewOffset = Vector2.Zero;
         private float _rotationInRadians = 0;
+        private RenderScale _renderScale = RenderScale.Normal;
         private float _zoom = 1;
         private bool _matrixStale;
 
@@ -72,6 +73,21 @@ namespace SectorDirector.Engine.Renderers
             }
         }
 
+        public float TotalZoom => _zoom / (int) _renderScale;
+
+        public RenderScale RenderScale
+        {
+            get => _renderScale;
+            set
+            {
+                if (_renderScale != value)
+                {
+                    _renderScale = value;
+                    _matrixStale = true;
+                }
+            }
+        }
+
         /// <summary>
         /// What the camera is pointed to (in world coordinates) relative to the center
         /// </summary>
@@ -112,12 +128,12 @@ namespace SectorDirector.Engine.Renderers
                 var originTranslationMatrix = Matrix.CreateTranslation(_screenBounds.X / 2, _screenBounds.Y / 2, 0);
                 var centerTranslationMatrix = Matrix.CreateTranslation(-_center.X + 0.5f, _center.Y - 0.5f, 0);
                 var centerOffsetTranslationMatrix = Matrix.CreateTranslation(-_viewOffset.X, _viewOffset.Y, 0);
-                var zoomMatrix = Matrix.CreateScale(_zoom, _zoom, 0);
+                var zoomMatrix = Matrix.CreateScale(TotalZoom, TotalZoom, 0);
                 var rotationMatrix = Matrix.CreateRotationZ(_rotationInRadians);
 
                 _worldToScreenTransformation =
                     yAxisFlipMatrix *
-                    centerTranslationMatrix * 
+                    centerTranslationMatrix *
                     rotationMatrix *
                     centerOffsetTranslationMatrix *
                     zoomMatrix *

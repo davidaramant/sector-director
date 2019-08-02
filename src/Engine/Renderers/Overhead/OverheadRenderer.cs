@@ -31,8 +31,11 @@ namespace SectorDirector.Engine.Renderers
             _map = map;
             _verticesInScreenCoords = new Point[map.Vertices.Length];
 
+            _camera.RenderScale = _settings.RenderScale;
+
             _settings.FollowModeChanged += (s, e) => _camera.ViewOffset = Vector2.Zero;
             _settings.DrawAntiAliasedModeChanged += (s, e) => PickLineDrawer();
+            _settings.RenderScaleChanged += (s, e) => _camera.RenderScale = _settings.RenderScale;
             PickLineDrawer();
         }
 
@@ -132,7 +135,7 @@ namespace SectorDirector.Engine.Renderers
 
             void DrawCircle(Vector2 center, float radiusInWorldCoordinates, Color c)
             {
-                screen.PlotCircle(_camera.WorldToScreen(center).ToPoint(), (int)(radiusInWorldCoordinates * _camera.Zoom), c);
+                screen.PlotCircle(_camera.WorldToScreen(center).ToPoint(), (int)(radiusInWorldCoordinates * _camera.TotalZoom), c);
             }
 
             void DrawBox(Vector2 center, float halfWidth, Color c)
