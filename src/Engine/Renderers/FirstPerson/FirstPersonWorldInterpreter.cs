@@ -11,11 +11,18 @@ namespace SectorDirector.Engine.Renderers.FirstPerson
 {
     public sealed class FirstPersonWorldInterpreter
     {
-        private FirstPersonCameraSettings Settings;
+        private FirstPersonCameraSettings _settings;
+        public FirstPersonCameraSettings Settings
+        {
+            set
+            {
+                _settings = value;
+            }
+        }
         
         public FirstPersonWorldInterpreter()
         {
-            Settings = new FirstPersonCameraSettings
+            _settings = new FirstPersonCameraSettings
             {
                 FieldOfView = 90,
                 MinClippingDistance = 5,
@@ -24,56 +31,46 @@ namespace SectorDirector.Engine.Renderers.FirstPerson
         }
         public FirstPersonWorldInterpreter(FirstPersonCameraSettings settings)
         {
-            Settings = settings;
-        }
-
-        public void SetFieldOfView(float newFieldOfView)
-        {
-            Settings.FieldOfView = newFieldOfView;
+            _settings = settings;
         }
         
         public (bool isInView, bool isFacing, float horizontalDegrees, float verticalDegrees) ConvertWorldPointToScreenDegrees(
-            Vector3 cameraPosition,
-            Vector2 cameraDirection,
             Vector3 point)
         {
-
+            Vector3 normalizedPoint = Vector3.Normalize(point);
+            float distance = point.ToVector2().Length();
             // HORIZONTAL CALCULATIONS 
-            Vector2 rightBoundDirection = cameraDirection.Rotate(-0.5f * Settings.FieldOfView * MathShortcuts.DegToRad);
-            Vector2 leftBoundDirection = cameraDirection.Rotate(0.5f * Settings.FieldOfView * MathShortcuts.DegToRad);
 
-            Vector2 targetedVectorDirection = Vector2.Normalize(point.ToVector2() - cameraPosition.ToVector2());
+            Vector2 targetedVectorDirection = Vector2.Normalize(point.ToVector2());
 
-            float leftAngleDiff = (MathShortcuts.AngleBetween(leftBoundDirection, targetedVectorDirection) * MathShortcuts.RadToDeg);
-            float rightAngleDiff = (MathShortcuts.AngleBetween(rightBoundDirection, targetedVectorDirection) * MathShortcuts.RadToDeg);
-
+            float centerAngleDiff = MathShortcuts.AngleBetween(new Vector2(0, 1), targetedVectorDirection) * MathShortcuts.RadToDeg;
             // Since AngleBetween doesn't give a sign, this calculates it ourselves
-            if (rightAngleDiff > Settings.FieldOfView)
+            // We go from left to right, so clockwise in our angle
+            if (point.X < 0)
             {
-                leftAngleDiff *= -1;
-            }
-            if (leftAngleDiff > Settings.FieldOfView)
-            {
-                rightAngleDiff *= -1;
+                centerAngleDiff *= -1;
             }
 
-            // We only want to not show if we have our back to this object
-            bool isInHorizontalView = rightAngleDiff < Settings.FieldOfView && leftAngleDiff < Settings.FieldOfView;
-            bool isFacing = Math.Abs(rightAngleDiff) < Settings.FieldOfView || Math.Abs(leftAngleDiff) < Settings.FieldOfView;
+            bool isInHorizontalFieldOfView = Math.Abs(centerAngleDiff) < _settings.FieldOfView / 2;
+            bool isFacing = normalizedPoint.Y > 0;
 
-            // VERTICAL CALCULATIONS 
-
-            // Very simplified bc im lazy. We can redo this later if someone wants to figure out the headache of Vector3 rotation
-            float vertDistance = point.Z - cameraPosition.Z;
+            // VERTICAL CALCULATIONS
+            float vertDistance = point.Z;
             
-            float horizDistance = Vector2.Distance(point.ToVector2(), cameraPosition.ToVector2());
-            float planeDistance = (float)Math.Sqrt(Math.Pow(horizDistance, 2) + Math.Pow(Settings.EyeWidth, 2));
+            float centerDistance = (float)(Math.Cos(centerAngleDiff * MathShortcuts.DegToRad) * distance);
+            float verticalViewAngle = (float)(Math.Atan(vertDistance / centerDistance) * MathShortcuts.RadToDeg);
+            if (point.Z > 0)
+            {
+                verticalViewAngle = Math.Abs(verticalViewAngle);
+            }
+            else
+            {
+                verticalViewAngle = -1 * Math.Abs(verticalViewAngle);
+            }
 
-            float viewAngle = (float)(Math.Atan(vertDistance / planeDistance) * MathShortcuts.RadToDeg);
-            
-            bool isInVerticalView = Math.Abs(viewAngle) < Settings.FieldOfView;
+            bool isInVerticalView = Math.Abs(verticalViewAngle) < _settings.FieldOfView / 2;
 
-            return (isInHorizontalView && isInVerticalView, isFacing, leftAngleDiff, (Settings.FieldOfView / 2) - viewAngle);
+            return (isInHorizontalFieldOfView && isInVerticalView, isFacing, centerAngleDiff, verticalViewAngle);
 
         }
         public (bool shouldDraw, Point p1) ConvertWorldPointToScreenPoint(
@@ -82,57 +79,52 @@ namespace SectorDirector.Engine.Renderers.FirstPerson
             Vector2 cameraDirection,
             Vector3 point)
         {
-            var (isInView, isFacing, horizontalDegrees, verticalDegrees) = ConvertWorldPointToScreenDegrees(cameraPosition, cameraDirection, point);
+            var (isInView, isFacing, horizontalDegrees, verticalDegrees) = ConvertWorldPointToScreenDegrees(point);
             return (isInView, new Point(
-                (int)((horizontalDegrees / Settings.FieldOfView) * buffer.Width), 
-                (int)((verticalDegrees / Settings.FieldOfView) * buffer.Height)));
+                (int)(((horizontalDegrees / _settings.FieldOfView) + 0.5f) * buffer.Width),
+                (int)(((-verticalDegrees / _settings.FieldOfView) + 0.5f) * buffer.Height)));
         }
 
         public (bool shouldDraw, Point p1, Point p2) ConvertWorldLineToScreenPoints(
             IScreenBuffer buffer, 
-            Vector3 cameraPosition,
-            Vector2 cameraDirection,
             Vector3 vector1, 
             Vector3 vector2)
         {
-            var point1Result = ConvertWorldPointToScreenDegrees(cameraPosition, cameraDirection, vector1);
-            var point2Result = ConvertWorldPointToScreenDegrees(cameraPosition, cameraDirection, vector2);
+            var point1Result = ConvertWorldPointToScreenDegrees(vector1);
+            var point2Result = ConvertWorldPointToScreenDegrees(vector2);
 
             var point1HorizontalDegrees = point1Result.horizontalDegrees;
             var point1VerticalDegrees = point1Result.verticalDegrees;
             var point2HorizontalDegrees = point2Result.horizontalDegrees;
             var point2VerticalDegrees = point2Result.verticalDegrees;
 
-            // This is some bullshit where we can be not facing a point offscreen, 
-            // Causing the angle to go around our backs and connect the opposite direction.
-            bool leftToRightHorizontal = ((vector2.X - vector1.X) * (cameraPosition.Y - vector1.Y) - (vector2.Y - vector1.Y) * (cameraPosition.X - vector1.X) < 0);
-            if (leftToRightHorizontal && point1Result.isInView && point1Result.isFacing && !point2Result.isFacing && !point2Result.isInView)
+            if (point1Result.isFacing && point1Result.isInView && !point2Result.isInView && !point2Result.isFacing && vector2.X < 0)
             {
-                point2HorizontalDegrees *= -1;
+                point2HorizontalDegrees += 360;
             }
-            if (!leftToRightHorizontal && point2Result.isInView && point2Result.isFacing && !point1Result.isFacing && !point1Result.isInView)
+            if (point2Result.isFacing && point2Result.isInView && !point1Result.isInView && !point1Result.isFacing && vector1.X > 0)
             {
-                point1HorizontalDegrees *= -1;
+                point1HorizontalDegrees -= 360;
             }
+            
 
             var point1 = new Point(
-                (int)((point1HorizontalDegrees / Settings.FieldOfView) * buffer.Width), 
-                (int)((point1VerticalDegrees / Settings.FieldOfView) * buffer.Height));
+                (int)(((point1HorizontalDegrees / _settings.FieldOfView) + 0.5f) * buffer.Width), 
+                (int)(((-point1VerticalDegrees / _settings.FieldOfView) + 0.5f) * buffer.Height));
             var point2 = new Point(
-                (int)((point2HorizontalDegrees / Settings.FieldOfView) * buffer.Width), 
-                (int)((point2VerticalDegrees / Settings.FieldOfView) * buffer.Height));
+                (int)(((point2HorizontalDegrees / _settings.FieldOfView) + 0.5f) * buffer.Width),
+                (int)(((-point2VerticalDegrees / _settings.FieldOfView) + 0.5f) * buffer.Height));
 
 
-            float cameraDistanceTo1 = Vector3.Distance(cameraPosition, vector1);
-            float cameraDistanceTo2 = Vector3.Distance(cameraPosition, vector2);
+            float cameraDistanceTo1 = vector1.Length();
+            float cameraDistanceTo2 = vector2.Length();
 
-            bool isCloseEnough = Math.Min(cameraDistanceTo1, cameraDistanceTo2) < Settings.MaxClippingDistance;
-            bool isFarEnough = Math.Min(cameraDistanceTo1, cameraDistanceTo2) > Settings.MinClippingDistance;
+            bool isCloseEnough = Math.Min(cameraDistanceTo1, cameraDistanceTo2) < _settings.MaxClippingDistance;
+            bool isFarEnough = Math.Min(cameraDistanceTo1, cameraDistanceTo2) > _settings.MinClippingDistance;
 
             var showBoth = isCloseEnough && isFarEnough && (
                 point1Result.isInView ||
-                point2Result.isInView ||
-                MathShortcuts.Intersects(cameraPosition.ToVector2(), cameraPosition.ToVector2() + (cameraDirection * Settings.MaxClippingDistance), vector1.ToVector2(), vector2.ToVector2()));
+                point2Result.isInView || (point1Result.isFacing && point2Result.isFacing));
 
             return (showBoth, point1, point2);
         }

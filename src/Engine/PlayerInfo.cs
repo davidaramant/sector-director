@@ -21,8 +21,7 @@ namespace SectorDirector.Engine
         {
             FieldOfView = 60,
             MinClippingDistance = 1,
-            MaxClippingDistance = 1000,
-            EyeWidth = 100
+            MaxClippingDistance = 1000
         };
 
         public PlayerInfo(
