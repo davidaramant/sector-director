@@ -1,13 +1,13 @@
 // Copyright (c) 2019, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
-using GeoAPI.Geometries;
 using Microsoft.Xna.Framework;
 using NetTopologySuite.Index.Strtree;
 using SectorDirector.Core.FormatModels.Udmf;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using NetTopologySuite.Geometries;
 using static System.Math;
 
 namespace SectorDirector.Engine

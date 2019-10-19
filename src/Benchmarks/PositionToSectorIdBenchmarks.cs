@@ -2,13 +2,13 @@
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using BenchmarkDotNet.Attributes;
-using GeoAPI.Geometries;
 using NetTopologySuite.Index.Strtree;
 using SectorDirector.Core.FormatModels.Udmf;
 using SectorDirector.Core.FormatModels.Wad;
 using SectorDirector.Engine;
 using System.Collections.Generic;
 using System.Linq;
+using NetTopologySuite.Geometries;
 
 namespace Benchmarks
 {
