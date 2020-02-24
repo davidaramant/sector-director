@@ -25,13 +25,30 @@ namespace SectorDirector.Core.FormatModels.Svg
 
             double FlipY(double y) => height - (y - minY);
 
-            w.WriteLine($"<svg viewBox=\"{mapData.MinX - Padding} {FlipY(mapData.MaxY) - Padding} {mapData.Width + 2 * Padding} {mapData.Height + 2 * Padding}\" xmlns=\"http://www.w3.org/2000/svg\">");
+            w.WriteLine($"<svg viewBox=\"{mapData.MinX - Padding} " +
+                        $"{FlipY(mapData.MaxY) - Padding} " +
+                        $"{mapData.Width + 2 * Padding} " +
+                        $"{mapData.Height + 2 * Padding}\" " +
+                        $"xmlns=\"http://www.w3.org/2000/svg\">");
+            
+            w.WriteLine("\t<style>");
+            w.WriteLine("\t\t.sector {fill:#202020;}");
+            w.WriteLine("\t\t.sector:hover {fill:#404040;}");
+            w.WriteLine("\t\t.two-sided {stroke:yellow;}");
+            w.WriteLine("\t\t.one-sided {stroke:red;}");
+            w.WriteLine("\t</style>");
 
-            w.WriteLine($"<rect x=\"{mapData.MinX - Padding}\" y=\"{FlipY(mapData.MaxY) - Padding}\" width=\"{mapData.Width + 2 * Padding}\" height=\"{mapData.Height + 2 * Padding}\" fill=\"black\"/>");
+            w.WriteLine($"\t<rect " +
+                        $"x=\"{mapData.MinX - Padding}\" " +
+                        $"y=\"{FlipY(mapData.MaxY) - Padding}\" " +
+                        $"width=\"{mapData.Width + 2 * Padding}\" " +
+                        $"height=\"{mapData.Height + 2 * Padding}\" " +
+                        $"fill=\"black\"/>");
 
             foreach (var sectorIndex in Enumerable.Range(0, mapData.Sectors.Count))
             {
-                w.WriteLine($"<g id=\"{sectorIndex}\">");
+                w.WriteLine($"\t<g id=\"{sectorIndex}\" class=\"sector\">");
+                w.WriteLine($"\t\t<title>Sector {sectorIndex}</title>");
 
                 foreach (var subSector in sectorGraph.SubSectors.Where(ss => ss.SectorIndex == sectorIndex))
                 {
@@ -41,20 +58,24 @@ namespace SectorDirector.Core.FormatModels.Svg
                             return $"{v.X},{FlipY(v.Y)}";
                         }));
 
-                    w.WriteLine($"<polygon points=\"{pointString}\" stroke=\"none\" fill=\"#181818\"/>");
+                    w.WriteLine($"\t\t<polygon points=\"{pointString}\" stroke=\"none\"/>");
 
                     foreach (var line in subSector.Lines)
                     {
-                        w.WriteLine($"<line x1=\"{line.Start.X}\" y1=\"{FlipY(line.Start.Y)}\" x2=\"{line.End.X}\" y2=\"{FlipY(line.End.Y)}\" stroke=\"{(line.Definition.TwoSided ? "yellow" : "red")}\"/>");
+                        w.WriteLine($"\t\t<line " +
+                                    $"x1=\"{line.Start.X}\" " +
+                                    $"y1=\"{FlipY(line.Start.Y)}\" " +
+                                    $"x2=\"{line.End.X}\" " +
+                                    $"y2=\"{FlipY(line.End.Y)}\" " +
+                                    $"class=\"{(line.Definition.TwoSided ? "two-sided" : "one-sided")}\"/>");
                     }
                 }
-
-
-
-                w.WriteLine("</g>");
+                
+                w.WriteLine("\t</g>");
             }
 
             w.WriteLine("</svg>");
         }
+
     }
 }
