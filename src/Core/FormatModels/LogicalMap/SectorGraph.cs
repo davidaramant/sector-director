@@ -12,10 +12,12 @@ namespace SectorDirector.Core.FormatModels.LogicalMap
     {
         public MapData Map { get; }
         public List<SubSector> SubSectors { get; } = new List<SubSector>();
+        public List<LogicalSector> LogicalSectors { get; } = new List<LogicalSector>();
 
-        public SectorGraph(MapData map, IEnumerable<SubSector> subSectors)
+        public SectorGraph(MapData map, IEnumerable<LogicalSector> logicalSectors, IEnumerable<SubSector> subSectors)
         {
             Map = map;
+            LogicalSectors.AddRange(logicalSectors);
             SubSectors.AddRange(subSectors);
         }
 
@@ -51,7 +53,7 @@ namespace SectorDirector.Core.FormatModels.LogicalMap
                         start: map.Vertices[lineDef.V1],
                         end: map.Vertices[lineDef.V2],
                         side: map.SideDefs[lineDef.SideFront],
-                        frontSide: true,
+                        isFrontSide: true,
                         definition: lineDef),
                     lineDef.V1,
                     lineDef.V2));
@@ -64,7 +66,7 @@ namespace SectorDirector.Core.FormatModels.LogicalMap
                             start: map.Vertices[lineDef.V2],
                             end: map.Vertices[lineDef.V1],
                             side: map.SideDefs[lineDef.SideBack],
-                            frontSide: false,
+                            isFrontSide: false,
                             definition: lineDef),
                         lineDef.V2,
                         lineDef.V1));
@@ -78,11 +80,13 @@ namespace SectorDirector.Core.FormatModels.LogicalMap
         {
             var vertexAndlines = BuildLinesWithStartingVertex(map);
 
+            List<LogicalSector> logicalSectors = new List<LogicalSector>();
             List<SubSector> subSectors = new List<SubSector>();
 
-            foreach (var lineGroup in vertexAndlines.GroupBy(pair => pair.Line.Side.Sector))
+            foreach (var lineGroup in vertexAndlines.GroupBy(pair => pair.Line.Side.Sector).OrderBy(g => g.Key))
             {
                 var sector = map.Sectors[lineGroup.Key];
+                var logicalSector = new LogicalSector(lineGroup.Key, sector);
 
                 var sectorLines = new LinkedList<LineAndVertices>(lineGroup);
 
@@ -99,11 +103,14 @@ namespace SectorDirector.Core.FormatModels.LogicalMap
                         subSectorLines.Add(line);
                     }
 
-                    subSectors.Add(new SubSector(lineGroup.Key, sector, subSectorLines));
+                    var ss = new SubSector(lineGroup.Key, logicalSector, subSectorLines);
+                    logicalSector.Add(ss);
+                    subSectors.Add(ss);
                 }
+                logicalSectors.Add(logicalSector);
             }
 
-            return new SectorGraph(map, subSectors);
+            return new SectorGraph(map, logicalSectors, subSectors);
         }
     }
 }

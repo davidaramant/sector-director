@@ -10,15 +10,15 @@ namespace SectorDirector.Core.FormatModels.LogicalMap
         public Vertex Start { get; }
         public Vertex End { get; }
         public SideDef Side { get; }
-        public bool FrontSide { get; }
+        public bool IsFrontSide { get; }
         public LineDef Definition { get; }
 
-        public Line(Vertex start, Vertex end, SideDef side, bool frontSide, LineDef definition)
+        public Line(Vertex start, Vertex end, SideDef side, bool isFrontSide, LineDef definition)
         {
             Start = start;
             End = end;
             Side = side;
-            FrontSide = frontSide;
+            IsFrontSide = isFrontSide;
             Definition = definition;
         }
     }

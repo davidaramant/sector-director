@@ -30,7 +30,7 @@ namespace SectorDirector.Core.FormatModels.Svg
                         $"{mapData.Width + 2 * Padding} " +
                         $"{mapData.Height + 2 * Padding}\" " +
                         $"xmlns=\"http://www.w3.org/2000/svg\">");
-            
+
             w.WriteLine("\t<style>");
             w.WriteLine("\t\t.sector {fill:#202020;}");
             w.WriteLine("\t\t.sector:hover {fill:#404040;}");
@@ -45,12 +45,12 @@ namespace SectorDirector.Core.FormatModels.Svg
                         $"height=\"{mapData.Height + 2 * Padding}\" " +
                         $"fill=\"black\"/>");
 
-            foreach (var sectorIndex in Enumerable.Range(0, mapData.Sectors.Count))
+            foreach (var logicalSector in sectorGraph.LogicalSectors)
             {
-                w.WriteLine($"\t<g id=\"{sectorIndex}\" class=\"sector\">");
-                w.WriteLine($"\t\t<title>Sector {sectorIndex}</title>");
+                w.WriteLine($"\t<g id=\"{logicalSector.SectorId}\" class=\"sector\">");
+                w.WriteLine($"\t\t<title>Sector {logicalSector.SectorId}</title>");
 
-                foreach (var subSector in sectorGraph.SubSectors.Where(ss => ss.SectorIndex == sectorIndex))
+                foreach (var subSector in logicalSector)
                 {
                     var pointString = string.Join(" ", subSector.Lines.Select(line =>
                         {
@@ -70,7 +70,7 @@ namespace SectorDirector.Core.FormatModels.Svg
                                     $"class=\"{(line.Definition.TwoSided ? "two-sided" : "one-sided")}\"/>");
                     }
                 }
-                
+
                 w.WriteLine("\t</g>");
             }
 
