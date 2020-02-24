@@ -1,16 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Platforms>x64</Platforms>
     <RootNamespace>SectorDirector.MapGeneration</RootNamespace>
     <AssemblyName>SectorDirector.MapGeneration</AssemblyName>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="com.angusj.Clipper" Version="6.4.2" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />

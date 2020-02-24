@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Platforms>x64</Platforms>
     <IsPackable>false</IsPackable>
     <AssemblyName>SectorDirector.Core.Tests</AssemblyName>
