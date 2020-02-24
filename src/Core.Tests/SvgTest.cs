@@ -11,6 +11,7 @@ namespace SectorDirector.Core.Tests
     public class SvgTest
     {
         [Test]
+        [Explicit]
         public void ExportDemoMap()
         {
             var maps = WadLoader.Load(@"C:\Games\Doom\iwads\doom.wad");
