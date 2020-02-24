@@ -1,14 +1,16 @@
-﻿using NUnit.Framework;
+﻿// Copyright (c) 2017, David Aramant
+// Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
+
+using NUnit.Framework;
+using SectorDirector.Core.CollectionExtensions;
 using SectorDirector.Core.FormatModels.Svg;
 using SectorDirector.Core.FormatModels.Wad;
 using System;
 using System.IO;
-using System.Linq;
-using SectorDirector.Core.CollectionExtensions;
 
 namespace SectorDirector.Core.Tests.FormatModels.Svg
 {
-    [TestFixture]
+    [TestFixture, Parallelizable]
     public class SvgExporterTest
     {
         [Test]

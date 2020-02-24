@@ -9,7 +9,7 @@ namespace SectorDirector.Engine.Tests
     /// <summary>
     /// Tests to verify various math things
     /// </summary>
-    [TestFixture]
+    [TestFixture, Parallelizable]
     public sealed class MathPlayground
     {
         [TestCase(-10, 10, 10, 10, 0, 0, false)]

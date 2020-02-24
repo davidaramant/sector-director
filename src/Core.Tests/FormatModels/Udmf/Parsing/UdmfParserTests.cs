@@ -10,7 +10,7 @@ using System.Text;
 
 namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
 {
-    [TestFixture]
+    [TestFixture, Parallelizable]
     public sealed class UdmfParserTests
     {
         [Test]

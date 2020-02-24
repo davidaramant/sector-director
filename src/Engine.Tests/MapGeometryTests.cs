@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework;
 
 namespace SectorDirector.Engine.Tests
 {
-    [TestFixture]
+    [TestFixture, Parallelizable]
     public sealed class MapGeometryTests
     {
         ImmutableList<MapGeometry> ConcaveMaps;

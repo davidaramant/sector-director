@@ -8,7 +8,7 @@ using SectorDirector.Core.FormatModels.Wad.StreamExtensions;
 
 namespace SectorDirector.Core.Tests.FormatModels.Wad.StreamExtensions
 {
-    [TestFixture]
+    [TestFixture, Parallelizable]
     public sealed class ReadOnlySubStreamTests
     {
         [Test]

@@ -11,7 +11,7 @@ using Is = NUnit.DeepObjectCompare.Is;
 
 namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
 {
-    [TestFixture]
+    [TestFixture, Parallelizable]
     public sealed class UdmfSemanticAnalyzerTests
     {
         [TestCase("boring")]

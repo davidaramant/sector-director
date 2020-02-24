@@ -7,7 +7,7 @@ using SectorDirector.Core.FormatModels.Wad;
 
 namespace SectorDirector.Core.Tests.FormatModels.Wad
 {
-    [TestFixture]
+    [TestFixture, Parallelizable]
     public sealed class LumpNameTests
     {
         [TestCase("")]

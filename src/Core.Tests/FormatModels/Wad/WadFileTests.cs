@@ -10,7 +10,7 @@ using Is = NUnit.DeepObjectCompare.Is;
 
 namespace SectorDirector.Core.Tests.FormatModels.Wad
 {
-    [TestFixture]
+    [TestFixture, Parallelizable]
     public sealed class WadFileTests
     {
         [Test]

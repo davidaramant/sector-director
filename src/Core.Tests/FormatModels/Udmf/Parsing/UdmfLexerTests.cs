@@ -8,7 +8,7 @@ using SectorDirector.Core.FormatModels.Udmf.Parsing;
 
 namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
 {
-    [TestFixture]
+    [TestFixture, Parallelizable]
     public sealed class UdmfLexerTests
     {
         [TestCase("0", 0)]
@@ -113,11 +113,6 @@ namespace SectorDirector.Core.Tests.FormatModels.Udmf.Parsing
         public void ShouldHandleLexingDemoMap()
         {
             var map = DemoMap.Create();
-
-            using (var fs = File.OpenWrite(Path.Combine(TestContext.CurrentContext.TestDirectory, "text.udmf")))
-            {
-                map.WriteTo(fs);
-            }
 
             using (var stream = new MemoryStream())
             {

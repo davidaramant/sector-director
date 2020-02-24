@@ -7,7 +7,7 @@ using SectorDirector.Engine.Renderers;
 
 namespace SectorDirector.Engine.Tests.Renderers
 {
-    [TestFixture]
+    [TestFixture, Parallelizable]
     public sealed class Camera2DTests
     {
         private const int ScreenWidth = 1920;
