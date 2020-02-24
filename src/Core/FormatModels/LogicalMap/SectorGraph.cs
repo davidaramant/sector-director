@@ -78,12 +78,12 @@ namespace SectorDirector.Core.FormatModels.LogicalMap
 
         public static SectorGraph BuildFrom(MapData map)
         {
-            var vertexAndlines = BuildLinesWithStartingVertex(map);
+            var vertexAndLines = BuildLinesWithStartingVertex(map);
 
             List<LogicalSector> logicalSectors = new List<LogicalSector>();
             List<SubSector> subSectors = new List<SubSector>();
 
-            foreach (var lineGroup in vertexAndlines.GroupBy(pair => pair.Line.Side.Sector).OrderBy(g => g.Key))
+            foreach (var lineGroup in vertexAndLines.GroupBy(pair => pair.Line.Side.Sector).OrderBy(g => g.Key))
             {
                 var sector = map.Sectors[lineGroup.Key];
                 var logicalSector = new LogicalSector(lineGroup.Key, sector);

@@ -11,6 +11,7 @@ namespace SectorDirector.Core.FormatModels.LogicalMap
     {
         public int SectorId { get; }
         public Sector ActualSector { get; }
+        public int Count => _subSectors.Count;
 
         private readonly List<SubSector> _subSectors = new List<SubSector>();
 
