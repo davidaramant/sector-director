@@ -52,7 +52,7 @@ namespace SectorDirector.Core.FormatModels.Svg
 
                 foreach (var subSector in logicalSector)
                 {
-                    var pointString = string.Join(" ", subSector.Lines.Select(line =>
+                    var pointString = string.Join(" ", subSector.Select(line =>
                         {
                             var v = line.Start;
                             return $"{v.X},{FlipY(v.Y)}";
@@ -60,7 +60,7 @@ namespace SectorDirector.Core.FormatModels.Svg
 
                     w.WriteLine($"\t\t<polygon points=\"{pointString}\" stroke=\"none\"/>");
 
-                    foreach (var line in subSector.Lines)
+                    foreach (var line in subSector)
                     {
                         w.WriteLine($"\t\t<line " +
                                     $"x1=\"{line.Start.X}\" " +
