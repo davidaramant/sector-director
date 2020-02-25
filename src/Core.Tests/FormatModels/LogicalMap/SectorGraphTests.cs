@@ -166,9 +166,18 @@ namespace SectorDirector.Core.Tests.FormatModels.LogicalMap
         }
 
         [Test]
+        [Explicit("Failing test!")]
         public void ShouldGenerateMultipleSubSectorsWhenSectorHasTwoConnectedAreas()
         {
-            // This map has one sector composed of two squares that are connected
+            // This map has one sector composed of two squares that are connected, and the inside connections have multiple lines
+            // ASCII ART
+            //
+            // *----*----*
+            // |    |    |
+            // |    *    |
+            // |    |    |
+            // *----*----*
+
             var map = new MapData
             {
                 NameSpace = "Doom",
@@ -203,6 +212,11 @@ namespace SectorDirector.Core.Tests.FormatModels.LogicalMap
                     {
                         X = 0,
                         Y = 100,
+                    },
+                    new Vertex // 6
+                    {
+                        X = 100,
+                        Y = 50,
                     },
                 },
                 LineDefs =
@@ -252,6 +266,14 @@ namespace SectorDirector.Core.Tests.FormatModels.LogicalMap
                     new LineDef // 6
                     {
                         V1 = 1,
+                        V2 = 6,
+                        SideFront = 1,
+                        SideBack = 1,
+                        TwoSided = true,
+                    },
+                    new LineDef // 7
+                    {
+                        V1 = 6,
                         V2 = 4,
                         SideFront = 1,
                         SideBack = 1,
