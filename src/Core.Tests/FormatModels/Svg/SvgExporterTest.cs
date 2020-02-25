@@ -17,12 +17,10 @@ namespace SectorDirector.Core.Tests.FormatModels.Svg
         [Explicit]
         public void ExportDemoMap()
         {
-            //var maps = WadLoader.Load(@"C:\Games\Doom\iwads\doom.wad");
-
-//            var inputWad = @"C:\Users\aramant\Desktop\Doom\freedoom1-udmf.wad";
-            var inputWad = @"C:\Users\aramant\Desktop\Doom\10sector-udmf.wad";
-
-            var maps = WadLoader.Load(inputWad);
+            //var inputWad = @"C:\Games\Doom\IWADS\doom.wad";
+            var inputWad = @"C:\Games\Doom\levels\10sector.wad";
+            //var inputWad = @"C:\Users\aramant\Desktop\Doom\freedoom1-udmf.wad";
+            //var inputWad = @"C:\Users\aramant\Desktop\Doom\10sector-udmf.wad";
 
             var baseOutputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Doom", "SVGs");
             if (!Directory.Exists(baseOutputPath))
@@ -32,10 +30,17 @@ namespace SectorDirector.Core.Tests.FormatModels.Svg
 
             var wadName = Path.GetFileNameWithoutExtension(inputWad);
 
-            foreach (var map in maps.Indexed())
+            foreach (var (name,map) in WadLoader.Load(inputWad))
             {
-                SvgExporter.Export(map.Value,
-                    Path.Combine(baseOutputPath, $"{wadName}.{map.Index}.svg"));
+                try
+                {
+                    SvgExporter.Export(map,
+                        Path.Combine(baseOutputPath, $"{wadName}.{name}.svg"));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(name + ": " + e);
+                }
             }
         }
     }

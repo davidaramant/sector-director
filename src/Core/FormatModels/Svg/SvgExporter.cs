@@ -6,6 +6,7 @@ using SectorDirector.Core.FormatModels.Udmf;
 using System.IO;
 using System.Linq;
 using System.Text;
+using SectorDirector.Core.CollectionExtensions;
 
 namespace SectorDirector.Core.FormatModels.Svg
 {
@@ -34,6 +35,7 @@ namespace SectorDirector.Core.FormatModels.Svg
             w.WriteLine("\t<style>");
             w.WriteLine("\t\t.sector {fill:#202020;}");
             w.WriteLine("\t\t.sector:hover {fill:#404040;}");
+            w.WriteLine("\t\t.sub-sector {}");
             w.WriteLine("\t\t.two-sided {stroke:yellow;}");
             w.WriteLine("\t\t.one-sided {stroke:red;}");
             w.WriteLine("\t</style>");
@@ -48,9 +50,8 @@ namespace SectorDirector.Core.FormatModels.Svg
             foreach (var logicalSector in sectorGraph.LogicalSectors)
             {
                 w.WriteLine($"\t<g id=\"{logicalSector.SectorId}\" class=\"sector\">");
-                w.WriteLine($"\t\t<title>Sector {logicalSector.SectorId}</title>");
-
-                foreach (var subSector in logicalSector)
+                
+                foreach (var (ssIndex,subSector) in logicalSector.Indexed())
                 {
                     var pointString = string.Join(" ", subSector.Select(line =>
                         {
@@ -58,7 +59,9 @@ namespace SectorDirector.Core.FormatModels.Svg
                             return $"{v.X},{FlipY(v.Y)}";
                         }));
 
-                    w.WriteLine($"\t\t<polygon points=\"{pointString}\" stroke=\"none\"/>");
+                    w.WriteLine($"\t\t<polygon points=\"{pointString}\" class=\"sub-sector\">");
+                    w.WriteLine($"\t\t\t<title>Sector {logicalSector.SectorId} (SS {ssIndex})</title>");
+                    w.WriteLine($"\t\t</polygon>");
 
                     foreach (var line in subSector)
                     {

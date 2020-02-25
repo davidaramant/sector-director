@@ -29,7 +29,7 @@ namespace Benchmarks
             Console.WriteLine("Loading all Freedoom maps...");
             using (new Timed())
             {
-                return WadLoader.Load("freedoom2-udmf.wad");
+                return WadLoader.Load("freedoom2-udmf.wad").Select(pair=>pair.Map);
             }
         }
 

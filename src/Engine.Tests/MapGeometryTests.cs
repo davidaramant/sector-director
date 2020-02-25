@@ -24,7 +24,7 @@ namespace SectorDirector.Engine.Tests
             // - Sector 1 - a jagged concave sector in the middle
             ConcaveMaps =
                 WadLoader.Load(Path.Combine(TestContext.CurrentContext.TestDirectory, "ConcaveSectors.wad")).
-                Select(m => new MapGeometry(m)).
+                Select(m => new MapGeometry(m.Map)).
                 ToImmutableList();
         }
 

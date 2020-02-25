@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using SectorDirector.Core.FormatModels.Udmf;
 using SectorDirector.Engine.Input;
@@ -128,7 +129,7 @@ namespace SectorDirector.Engine
             _screenBuffer = new ScreenBuffer(CurrentScreenSize);
 
             _messageFont = Content.Load<SpriteFont>("Fonts/ScreenMessage");
-            _maps = WadLoader.Load("testmaps.wad");
+            _maps = WadLoader.Load("testmaps.wad").Select(pair=>pair.Map).ToList();
 
             SwitchToMap(0);
         }
