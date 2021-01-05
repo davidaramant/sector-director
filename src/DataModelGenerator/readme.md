@@ -18,6 +18,6 @@ Features of the generated UDMF data model:
 
 Parsing happens in three steps:
 
-1) A custom lexer generates tokens
-2) A [Pidgin](https://github.com/benjamin-hodgson/Pidgin) parser creates an AST from the token stream
-3) A custom generated semantic analyzer maps the AST to the data model.
+1) A lexer generates tokens
+2) A parser generates an abstract syntax tree
+3) The semantic analyzer (which is mostly generated) turns the AST into the generated model
