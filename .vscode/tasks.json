@@ -2,6 +2,16 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"label": "Build Engine",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"build",
+				"src/Engine/Engine.csproj"
+			],
+			"group": "build"
+		},
+		{
 			"label": "Run Engine",
 			"type": "shell",
 			"command": "dotnet",

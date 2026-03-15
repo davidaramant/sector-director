@@ -1,0 +1,15 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Debug Engine",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "Build Engine",
+			"program": "${workspaceFolder}/src/Engine/bin/Debug/net10.0/Engine.dll",
+			"cwd": "${workspaceFolder}/src",
+			"stopAtEntry": false,
+			"console": "internalConsole"
+		}
+	]
+}
