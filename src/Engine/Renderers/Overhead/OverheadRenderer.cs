@@ -193,8 +193,8 @@ namespace SectorDirector.Engine.Renderers
 
             // Draw player field of view
 
-            DrawLineFromWorldCoordinates(player.Position, player.Position + player.Direction.Rotate(-0.5f * player.CameraSettings.FieldOfView * MathShortcuts.DegToRad) * player.CameraSettings.MaxClippingDistance, Color.AntiqueWhite);
-            DrawLineFromWorldCoordinates(player.Position, player.Position + player.Direction.Rotate(0.5f * player.CameraSettings.FieldOfView * MathShortcuts.DegToRad) * player.CameraSettings.MaxClippingDistance, Color.AntiqueWhite);
+            DrawLineFromWorldCoordinates(player.Position, player.Position + GeometryExtensions.Rotate(player.Direction, -0.5f * player.CameraSettings.FieldOfView * MathShortcuts.DegToRad) * player.CameraSettings.MaxClippingDistance, Color.AntiqueWhite);
+            DrawLineFromWorldCoordinates(player.Position, player.Position + GeometryExtensions.Rotate(player.Direction, 0.5f * player.CameraSettings.FieldOfView * MathShortcuts.DegToRad) * player.CameraSettings.MaxClippingDistance, Color.AntiqueWhite);
 
             // Draw player direction arrow
             var playerLineStart = player.Position - (playerHalfWidth / 2 * player.Direction);
