@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Engine",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"run",
+				"--project",
+				"src/Engine/Engine.csproj"
+			],
+			"isBackground": true,
+			"group": "build"
+		}
+	]
+}
