@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <Platforms>x64</Platforms>
     <IsPackable>false</IsPackable>
     <AssemblyName>SectorDirector.Core.Tests</AssemblyName>
     <RootNamespace>SectorDirector.Core.Tests</RootNamespace>

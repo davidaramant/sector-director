@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <Platforms>x64</Platforms>
     <RootNamespace>SectorDirector.MapGeneration</RootNamespace>
     <AssemblyName>SectorDirector.MapGeneration</AssemblyName>
   </PropertyGroup>
