@@ -1,0 +1,38 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path="../azure-pipelines.yml" />
+    <File Path="../README.md" />
+    <File Path="../todo.md" />
+  </Folder>
+  <Folder Name="/TestMaps/">
+    <File Path="TestMaps/ConcaveSectors.wad" />
+    <File Path="TestMaps/testmaps.wad" />
+  </Folder>
+  <Project Path="Benchmarks/Benchmarks.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="Core.Tests/Core.Tests.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="Core/Core.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="DataModelGenerator/DataModelGenerator.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="Engine.Tests/Engine.Tests.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="Engine/Engine.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="MapGeneration.Launcher/MapGeneration.Launcher.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="MapGeneration/MapGeneration.csproj">
+    <Platform Project="x64" />
+  </Project>
+</Solution>

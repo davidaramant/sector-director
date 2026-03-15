@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Functional.Maybe;
+using SharpCompress.Archives;
 using SharpCompress.Archives.Zip;
 using SharpCompress.Readers;
 
@@ -13,11 +14,11 @@ namespace SectorDirector.Core.FormatModels.Pk3
 {
     public sealed class Pk3File : IResourceProvider
     {
-        private readonly ZipArchive _archive;
+        private readonly IArchive _archive;
 
         private Pk3File(string fileName)
         {
-            _archive = ZipArchive.Open(File.OpenRead(fileName), new ReaderOptions { LeaveStreamOpen = false });
+            _archive = ZipArchive.OpenArchive(File.OpenRead(fileName), new ReaderOptions { LeaveStreamOpen = false });
         }
 
         public static Pk3File Open(string fileName)
