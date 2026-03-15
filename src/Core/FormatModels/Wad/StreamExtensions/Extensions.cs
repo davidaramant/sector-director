@@ -59,7 +59,7 @@ namespace SectorDirector.Core.FormatModels.Wad.StreamExtensions
         public static byte[] ReadArray(this Stream stream, int length)
         {
             var data = new byte[length];
-            stream.Read(data, 0, length);
+            stream.ReadExactly(data, 0, length);
             return data;
         }
 
