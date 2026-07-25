@@ -1,5 +1,5 @@
 ﻿// Copyright (c) 2016, David Aramant
-// Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
+// Distributed under the 3-clause BSD license.  For full terms see the file LICENSE.
 
 using System;
 using System.IO;
@@ -8,46 +8,48 @@ namespace SectorDirector.DataModelGenerator.Utilities;
 
 public sealed class IndentedWriter : IDisposable
 {
-    private readonly StreamWriter _writer;
-    public IndentedWriter(StreamWriter writer) => _writer = writer;
+	private readonly StreamWriter _writer;
 
-    public int IndentionLevel { get; private set; }
-    public string CurrentIndent => new string(' ', IndentionLevel*4);
+	public IndentedWriter(StreamWriter writer) => _writer = writer;
 
-    public IndentedWriter IncreaseIndent()
-    {
-        IndentionLevel++;
-        return this;
-    }
+	public int IndentionLevel { get; private set; }
+	public string CurrentIndent => new string(' ', IndentionLevel * 4);
 
-    public IndentedWriter DecreaseIndent()
-    {
-        if (IndentionLevel == 0)
-            throw new InvalidOperationException();
-        IndentionLevel--;
-        return this;
-    }
+	public IndentedWriter IncreaseIndent()
+	{
+		IndentionLevel++;
+		return this;
+	}
 
-    public IndentedWriter OpenParen() => Line("{").IncreaseIndent();
-    public IndentedWriter CloseParen()=> DecreaseIndent().Line("}");
+	public IndentedWriter DecreaseIndent()
+	{
+		if (IndentionLevel == 0)
+			throw new InvalidOperationException();
+		IndentionLevel--;
+		return this;
+	}
 
-    public IndentedWriter Line(string line)
-    {
-        _writer.WriteLine(CurrentIndent + line);
-        return this;
-    }
+	public IndentedWriter OpenParen() => Line("{").IncreaseIndent();
 
-    public IndentedWriter Line()
-    {
-        _writer.WriteLine();
-        return this;
-    }
+	public IndentedWriter CloseParen() => DecreaseIndent().Line("}");
 
-    public void Dispose()
-    {
-        if (IndentionLevel != 0)
-        {
-            throw new InvalidOperationException("Indention level is screwed up.");
-        }
-    }
+	public IndentedWriter Line(string line)
+	{
+		_writer.WriteLine(CurrentIndent + line);
+		return this;
+	}
+
+	public IndentedWriter Line()
+	{
+		_writer.WriteLine();
+		return this;
+	}
+
+	public void Dispose()
+	{
+		if (IndentionLevel != 0)
+		{
+			throw new InvalidOperationException("Indention level is screwed up.");
+		}
+	}
 }

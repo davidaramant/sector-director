@@ -1,61 +1,70 @@
 ﻿// Copyright (c) 2019, David Aramant
-// Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
+// Distributed under the 3-clause BSD license.  For full terms see the file LICENSE.
 
-using SectorDirector.Core.FormatModels.Common;
-using SectorDirector.Core.FormatModels.Udmf.Parsing.AbstractSyntaxTree;
 using System.Collections.Generic;
 using System.Linq;
+using SectorDirector.Core.FormatModels.Common;
+using SectorDirector.Core.FormatModels.Udmf.Parsing.AbstractSyntaxTree;
 
 namespace SectorDirector.Core.FormatModels.Udmf.Parsing;
 
 public static partial class UdmfSemanticAnalyzer
 {
-    public static MapData Process(IEnumerable<IGlobalExpression> result)
-    {
-        var map = new MapData();
+	public static MapData Process(IEnumerable<IGlobalExpression> result)
+	{
+		var map = new MapData();
 
-        foreach (var globalExpression in result)
-        {
-            switch (globalExpression)
-            {
-                case Assignment assignment:
-                    ProcessGlobalAssignment(map, assignment);
-                    break;
+		foreach (var globalExpression in result)
+		{
+			switch (globalExpression)
+			{
+				case Assignment assignment:
+					ProcessGlobalAssignment(map, assignment);
+					break;
 
-                case Block block:
-                    ProcessBlock(map, block);
-                    break;
-            }
-        }
+				case Block block:
+					ProcessBlock(map, block);
+					break;
+			}
+		}
 
-        return map;
-    }
+		return map;
+	}
 
-    static partial void ProcessGlobalAssignment(MapData map, Assignment assignment);
-    static partial void ProcessBlock(MapData map, Block block);
+	static partial void ProcessGlobalAssignment(MapData map, Assignment assignment);
 
+	static partial void ProcessBlock(MapData map, Block block);
 
-    static UnknownBlock ProcessUnknownBlock(Block block)
-    {
-        var unknownBlock = new UnknownBlock(block.Name);
+	static UnknownBlock ProcessUnknownBlock(Block block)
+	{
+		var unknownBlock = new UnknownBlock(block.Name);
 
-        unknownBlock.Properties.AddRange(block.Fields.Select(a => new UnknownProperty(a.Name, a.ValueAsString())));
+		unknownBlock.Properties.AddRange(block.Fields.Select(a => new UnknownProperty(a.Name, a.ValueAsString())));
 
-        return unknownBlock;
-    }
+		return unknownBlock;
+	}
 
-    static int ReadIntValue(Assignment assignment, string context) => ReadValue<int, IntegerToken>(assignment, context);
-    static double ReadDoubleValue(Assignment assignment, string context) => ReadValue<double, FloatToken>(assignment, context);
-    static bool ReadBoolValue(Assignment assignment, string context) => ReadValue<bool, BooleanToken>(assignment, context);
-    static string ReadStringValue(Assignment assignment, string context) => ReadValue<string, StringToken>(assignment, context);
+	static int ReadIntValue(Assignment assignment, string context) => ReadValue<int, IntegerToken>(assignment, context);
 
-    static T ReadValue<T, TToken>(Assignment assignment, string context) where TToken : ValueToken<T>
-    {
-        if (assignment.Value is TToken t)
-        {
-            return t.Value;
-        }
+	static double ReadDoubleValue(Assignment assignment, string context) =>
+		ReadValue<double, FloatToken>(assignment, context);
 
-        throw new ParsingException($"Expected {typeof(T)} for {context} but got {assignment.Value} ({assignment.Value.Location}).");
-    }
+	static bool ReadBoolValue(Assignment assignment, string context) =>
+		ReadValue<bool, BooleanToken>(assignment, context);
+
+	static string ReadStringValue(Assignment assignment, string context) =>
+		ReadValue<string, StringToken>(assignment, context);
+
+	static T ReadValue<T, TToken>(Assignment assignment, string context)
+		where TToken : ValueToken<T>
+	{
+		if (assignment.Value is TToken t)
+		{
+			return t.Value;
+		}
+
+		throw new ParsingException(
+			$"Expected {typeof(T)} for {context} but got {assignment.Value} ({assignment.Value.Location})."
+		);
+	}
 }

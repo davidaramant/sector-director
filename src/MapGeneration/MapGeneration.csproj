@@ -1,14 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<RootNamespace>SectorDirector.MapGeneration</RootNamespace>
+		<AssemblyName>SectorDirector.MapGeneration</AssemblyName>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <RootNamespace>SectorDirector.MapGeneration</RootNamespace>
-    <AssemblyName>SectorDirector.MapGeneration</AssemblyName>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj" />
-  </ItemGroup>
-
+	<ItemGroup>
+		<ProjectReference Include="..\Core\Core.csproj" />
+	</ItemGroup>
 </Project>

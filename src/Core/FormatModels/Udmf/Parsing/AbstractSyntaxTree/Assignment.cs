@@ -1,80 +1,84 @@
 ﻿// Copyright (c) 2019, David Aramant
-// Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
+// Distributed under the 3-clause BSD license.  For full terms see the file LICENSE.
 
-using SectorDirector.Core.FormatModels.Common;
-using SectorDirector.Core.FormatModels.Udmf.WritingExtensions;
 using System;
 using System.Diagnostics;
+using SectorDirector.Core.FormatModels.Common;
+using SectorDirector.Core.FormatModels.Udmf.WritingExtensions;
 
 namespace SectorDirector.Core.FormatModels.Udmf.Parsing.AbstractSyntaxTree;
 
 [DebuggerDisplay("{ToString()}")]
 public sealed class Assignment : IGlobalExpression, IEquatable<Assignment>
 {
-    public readonly Identifier Name;
-    public readonly Token Value;
+	public readonly Identifier Name;
+	public readonly Token Value;
 
-    public Assignment(Identifier name, Token value)
-    {
-        Name = name;
-        Value = value;
-    }
+	public Assignment(Identifier name, Token value)
+	{
+		Name = name;
+		Value = value;
+	}
 
-    public string ValueAsString()
-    {
-        switch (Value)
-        {
-            case IntegerToken i:
-                return i.Value.ToString();
-                
-            case FloatToken f:
-                return f.Value.ToStringWithDecimal();
-                
-            case BooleanToken b:
-                return b.Value.ToString().ToLowerInvariant();
+	public string ValueAsString()
+	{
+		switch (Value)
+		{
+			case IntegerToken i:
+				return i.Value.ToString();
 
-            case StringToken s:
-                return '"' + s.Value + '"';
+			case FloatToken f:
+				return f.Value.ToStringWithDecimal();
 
-            default:
-                return Value.ToString();
-        }
-    }
+			case BooleanToken b:
+				return b.Value.ToString().ToLowerInvariant();
 
-    public override string ToString() => $"{Name}: {ValueAsString()} ({Value.GetType()})";
+			case StringToken s:
+				return '"' + s.Value + '"';
 
-    #region Equality
-    public bool Equals(Assignment other)
-    {
-        if (ReferenceEquals(null, other)) return false;
-        if (ReferenceEquals(this, other)) return true;
-        return Name.Equals(other.Name) && Value.Equals(other.Value);
-    }
+			default:
+				return Value.ToString();
+		}
+	}
 
-    public override bool Equals(object obj)
-    {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        return obj is Assignment other && Equals(other);
-    }
+	public override string ToString() => $"{Name}: {ValueAsString()} ({Value.GetType()})";
 
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            return (Name.GetHashCode() * 397) ^ Value.GetHashCode();
-        }
-    }
+	#region Equality
+	public bool Equals(Assignment other)
+	{
+		if (ReferenceEquals(null, other))
+			return false;
+		if (ReferenceEquals(this, other))
+			return true;
+		return Name.Equals(other.Name) && Value.Equals(other.Value);
+	}
 
-    public static bool operator ==(Assignment left, Assignment right)
-    {
-        return Equals(left, right);
-    }
+	public override bool Equals(object obj)
+	{
+		if (ReferenceEquals(null, obj))
+			return false;
+		if (ReferenceEquals(this, obj))
+			return true;
+		return obj is Assignment other && Equals(other);
+	}
 
-    public static bool operator !=(Assignment left, Assignment right)
-    {
-        return !Equals(left, right);
-    }
+	public override int GetHashCode()
+	{
+		unchecked
+		{
+			return (Name.GetHashCode() * 397) ^ Value.GetHashCode();
+		}
+	}
 
-    #endregion
+	public static bool operator ==(Assignment left, Assignment right)
+	{
+		return Equals(left, right);
+	}
+
+	public static bool operator !=(Assignment left, Assignment right)
+	{
+		return !Equals(left, right);
+	}
+
+	#endregion
 }

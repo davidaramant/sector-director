@@ -2,7 +2,7 @@
 
 public struct FirstPersonCameraSettings
 {
-    public float FieldOfView;
-    public float MinClippingDistance;
-    public float MaxClippingDistance; // fog
+	public float FieldOfView;
+	public float MinClippingDistance;
+	public float MaxClippingDistance; // fog
 }

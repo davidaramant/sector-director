@@ -2,7 +2,7 @@
 
 public enum PolygonTypes
 {
-    OnlyCircles,
-    OnlyPolygons,
-    Everything
+	OnlyCircles,
+	OnlyPolygons,
+	Everything,
 }

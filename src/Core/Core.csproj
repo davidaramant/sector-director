@@ -1,15 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<AssemblyName>SectorDirector.Core</AssemblyName>
+		<RootNamespace>SectorDirector.Core</RootNamespace>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <AssemblyName>SectorDirector.Core</AssemblyName>
-    <RootNamespace>SectorDirector.Core</RootNamespace>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Functional.Maybe" />
-    <PackageReference Include="SharpCompress" />
-  </ItemGroup>
-
+	<ItemGroup>
+		<PackageReference Include="Functional.Maybe" />
+		<PackageReference Include="SharpCompress" />
+	</ItemGroup>
 </Project>

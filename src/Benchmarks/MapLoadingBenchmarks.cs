@@ -1,5 +1,5 @@
 // Copyright (c) 2016, David Aramant
-// Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
+// Distributed under the 3-clause BSD license.  For full terms see the file LICENSE.
 
 using System;
 using System.Collections.Generic;
@@ -15,45 +15,45 @@ namespace Benchmarks;
 [SimpleJob(RunStrategy.Monitoring)]
 public class MapLoadingBenchmarks
 {
-    [Benchmark]
-    public MapData LoadLargeMap()
-    {
-        using (var wad = WadReader.Read("freedoom2-udmf.wad"))
-        {
-            return MapData.LoadFrom(wad.GetTextmapStream("MAP28"));
-        }
-    }
+	[Benchmark]
+	public MapData LoadLargeMap()
+	{
+		using (var wad = WadReader.Read("freedoom2-udmf.wad"))
+		{
+			return MapData.LoadFrom(wad.GetTextmapStream("MAP28"));
+		}
+	}
 
-    public static IEnumerable<MapData> LoadAllFreedoomMaps()
-    {
-        Console.WriteLine("Loading all Freedoom maps...");
-        using (new Timed())
-        {
-            return WadLoader.Load("freedoom2-udmf.wad").Select(pair=>pair.Map);
-        }
-    }
+	public static IEnumerable<MapData> LoadAllFreedoomMaps()
+	{
+		Console.WriteLine("Loading all Freedoom maps...");
+		using (new Timed())
+		{
+			return WadLoader.Load("freedoom2-udmf.wad").Select(pair => pair.Map);
+		}
+	}
 
-    public static MapData LoadZDCMP2()
-    {
-        Console.WriteLine("Loading ZDCMP2...");
-        using (var reader = WadReader.Read("zdcmp2.wad"))
-        {
-            var stream = reader.GetLumpStream(reader.Directory.First(l => l.Name == "TEXTMAP"));
-            using (new Timed())
-            {
-                return MapData.LoadFrom(stream);
-            }
-        }
-    }
+	public static MapData LoadZDCMP2()
+	{
+		Console.WriteLine("Loading ZDCMP2...");
+		using (var reader = WadReader.Read("zdcmp2.wad"))
+		{
+			var stream = reader.GetLumpStream(reader.Directory.First(l => l.Name == "TEXTMAP"));
+			using (new Timed())
+			{
+				return MapData.LoadFrom(stream);
+			}
+		}
+	}
 
-    sealed class Timed : IDisposable
-    {
-        private readonly Stopwatch _timer = Stopwatch.StartNew();
+	sealed class Timed : IDisposable
+	{
+		private readonly Stopwatch _timer = Stopwatch.StartNew();
 
-        public void Dispose()
-        {
-            _timer.Stop();
-            Console.WriteLine(_timer.Elapsed);
-        }
-    }
+		public void Dispose()
+		{
+			_timer.Stop();
+			Console.WriteLine(_timer.Elapsed);
+		}
+	}
 }

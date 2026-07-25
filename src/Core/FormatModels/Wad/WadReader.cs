@@ -1,5 +1,5 @@
 // Copyright (c) 2016, David Aramant
-// Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
+// Distributed under the 3-clause BSD license.  For full terms see the file LICENSE.
 
 using System;
 using System.Collections.Generic;
@@ -13,73 +13,77 @@ namespace SectorDirector.Core.FormatModels.Wad;
 
 public sealed class WadReader : IDisposable
 {
-    private readonly Stream _stream;
+	private readonly Stream _stream;
 
-    public ImmutableArray<LumpInfo> Directory { get; }
+	public ImmutableArray<LumpInfo> Directory { get; }
 
-    public IEnumerable<string> GetMapNames() =>
-        from lump in Directory
-        let name = lump.Name.ToString()
-        where Regex.IsMatch(name, @"^(MAP\d{2}|E\dM\d)$")
-        select name;
+	public IEnumerable<string> GetMapNames() =>
+		from lump in Directory
+		let name = lump.Name.ToString()
+		where Regex.IsMatch(name, @"^(MAP\d{2}|E\dM\d)$")
+		select name;
 
-    private WadReader(Stream stream, ImmutableArray<LumpInfo> lumps)
-    {
-        _stream = stream;
-        Directory = lumps;
-    }
+	private WadReader(Stream stream, ImmutableArray<LumpInfo> lumps)
+	{
+		_stream = stream;
+		Directory = lumps;
+	}
 
-    public static WadReader Read(string filePath)
-    {
-        var stream = File.OpenRead(filePath);
+	public static WadReader Read(string filePath)
+	{
+		var stream = File.OpenRead(filePath);
 
-        // TODO: More graceful handling of invalid files.
+		// TODO: More graceful handling of invalid files.
 
-        var identification = stream.ReadText(4);
-        var numLumps = stream.ReadInt();
-        var directoryPosition = stream.ReadInt();
+		var identification = stream.ReadText(4);
+		var numLumps = stream.ReadInt();
+		var directoryPosition = stream.ReadInt();
 
-        stream.Position = directoryPosition;
+		stream.Position = directoryPosition;
 
-        var directory =
-            Enumerable.Range(1, numLumps).
-                Select(_ => stream.ReadLumpMetadata())
-                .ToImmutableArray();
+		var directory = Enumerable.Range(1, numLumps).Select(_ => stream.ReadLumpMetadata()).ToImmutableArray();
 
-        return new WadReader(stream, directory);
-    }
+		return new WadReader(stream, directory);
+	}
 
-    public Stream GetLumpStream(LumpInfo info) => new ReadOnlySubStream(_stream, position: info.Position, length: info.Size);
+	public Stream GetLumpStream(LumpInfo info) =>
+		new ReadOnlySubStream(_stream, position: info.Position, length: info.Size);
 
-    public Stream GetTextmapStream(string mapName)
-    {
-        var indexOfMarker = Directory.Select((info, index) => (info, index))
-            .Single(pair => pair.info.Name == mapName).index;
+	public Stream GetTextmapStream(string mapName)
+	{
+		var indexOfMarker = Directory
+			.Select((info, index) => (info, index))
+			.Single(pair => pair.info.Name == mapName)
+			.index;
 
-        return GetLumpStream(Directory[indexOfMarker + 1]);
-    }
+		return GetLumpStream(Directory[indexOfMarker + 1]);
+	}
 
-    public Stream GetNextLumpStreamOfName(string mapName, string lumpName)
-    {
-        var indexOfMarker = Directory.Select((info, index) => (info, index))
-            .Single(pair => pair.info.Name == mapName).index;
+	public Stream GetNextLumpStreamOfName(string mapName, string lumpName)
+	{
+		var indexOfMarker = Directory
+			.Select((info, index) => (info, index))
+			.Single(pair => pair.info.Name == mapName)
+			.index;
 
-        int indexToCheck = indexOfMarker + 1;
-        while (Directory[indexToCheck].Name != lumpName)
-        {
-            indexToCheck++;
-        }
-            
-        return GetLumpStream(Directory[indexToCheck]);
-    }
+		int indexToCheck = indexOfMarker + 1;
+		while (Directory[indexToCheck].Name != lumpName)
+		{
+			indexToCheck++;
+		}
 
-    public bool IsMapUDMF(string mapName)
-    {
-        var indexOfMarker = Directory.Select((info, index) => (info, index))
-            .Single(pair => pair.info.Name == mapName).index;
+		return GetLumpStream(Directory[indexToCheck]);
+	}
 
-        return Directory[indexOfMarker + 1].Name == "TEXTMAP";
-    }
+	public bool IsMapUDMF(string mapName)
+	{
+		var indexOfMarker = Directory
+			.Select((info, index) => (info, index))
+			.Single(pair => pair.info.Name == mapName)
+			.index;
 
-    public void Dispose() => _stream.Dispose();
+		return Directory[indexOfMarker + 1].Name == "TEXTMAP";
+	}
+
+	public void Dispose() => _stream.Dispose();
 }

@@ -1,5 +1,5 @@
 ﻿//// Copyright (c) 2018, Aaron Alexander and Matt Moseng
-//// Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
+//// Distributed under the 3-clause BSD license.  For full terms see the file LICENSE.
 
 //using System;
 //using System.Collections.Generic;
@@ -315,7 +315,6 @@
 
 //            return lines.SingleOrDefault(line => (line.V1 == leftIndex && line.V2 == rightIndex) || (line.V1 == rightIndex && line.V2 == leftIndex));
 //        }
-
 
 //        const double Epsilon = 0.1;
 
