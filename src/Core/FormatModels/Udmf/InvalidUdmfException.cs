@@ -3,12 +3,11 @@
 
 using System;
 
-namespace SectorDirector.Core.FormatModels.Udmf
+namespace SectorDirector.Core.FormatModels.Udmf;
+
+public sealed class InvalidUdmfException : Exception
 {
-    public sealed class InvalidUdmfException : Exception
+    public InvalidUdmfException(string message) : base(message)
     {
-        public InvalidUdmfException(string message) : base(message)
-        {
-        }
     }
 }

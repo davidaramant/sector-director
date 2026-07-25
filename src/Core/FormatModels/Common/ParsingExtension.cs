@@ -3,12 +3,11 @@
 
 using System;
 
-namespace SectorDirector.Core.FormatModels.Common
+namespace SectorDirector.Core.FormatModels.Common;
+
+public sealed class ParsingException : Exception
 {
-    public sealed class ParsingException : Exception
-    {
-        public ParsingException(string message) : base(message)
-        {            
-        }
+    public ParsingException(string message) : base(message)
+    {            
     }
 }

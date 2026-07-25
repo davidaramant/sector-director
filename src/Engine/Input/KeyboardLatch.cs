@@ -3,40 +3,39 @@
 using System;
 using Microsoft.Xna.Framework.Input;
 
-namespace SectorDirector.Engine.Input
+namespace SectorDirector.Engine.Input;
+
+public sealed class KeyboardLatch
 {
-    public sealed class KeyboardLatch
+    readonly Func<KeyboardState, bool> _keyMatcher;
+    bool _pressing = false;
+
+    public KeyboardLatch(Func<KeyboardState, bool> keyMatcher)
     {
-        readonly Func<KeyboardState, bool> _keyMatcher;
-        bool _pressing = false;
+        _keyMatcher = keyMatcher;
+    }
 
-        public KeyboardLatch(Func<KeyboardState, bool> keyMatcher)
+    public KeyboardLatch(Keys key) : this(kb => kb.IsKeyDown(key))
+    {
+    }
+
+    public event EventHandler Triggered;
+
+    public bool IsTriggered(KeyboardState state)
+    {
+        if (_keyMatcher(state))
         {
-            _keyMatcher = keyMatcher;
-        }
-
-        public KeyboardLatch(Keys key) : this(kb => kb.IsKeyDown(key))
-        {
-        }
-
-        public event EventHandler Triggered;
-
-        public bool IsTriggered(KeyboardState state)
-        {
-            if (_keyMatcher(state))
+            if (!_pressing)
             {
-                if (!_pressing)
-                {
-                    _pressing = true;
-                    Triggered?.Invoke(this, EventArgs.Empty);
-                    return true;
-                }
+                _pressing = true;
+                Triggered?.Invoke(this, EventArgs.Empty);
+                return true;
             }
-            else
-            {
-                _pressing = false;
-            }
-            return false;
         }
+        else
+        {
+            _pressing = false;
+        }
+        return false;
     }
 }

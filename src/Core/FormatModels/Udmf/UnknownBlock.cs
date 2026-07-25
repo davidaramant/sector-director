@@ -7,37 +7,36 @@ using System.Linq;
 using SectorDirector.Core.FormatModels.Common;
 using SectorDirector.Core.FormatModels.Udmf.WritingExtensions;
 
-namespace SectorDirector.Core.FormatModels.Udmf
+namespace SectorDirector.Core.FormatModels.Udmf;
+
+public sealed class UnknownBlock
 {
-    public sealed class UnknownBlock
+    public Identifier Name { get; }
+    public List<UnknownProperty> Properties { get; } = new List<UnknownProperty>();
+
+    public UnknownBlock(Identifier name)
     {
-        public Identifier Name { get; }
-        public List<UnknownProperty> Properties { get; } = new List<UnknownProperty>();
+        Name = name;
+    }
 
-        public UnknownBlock(Identifier name)
+    public Stream WriteTo(Stream stream)
+    {
+        stream.WriteLine((string)Name);
+        stream.WriteLine("{");
+        foreach (var property in Properties)
         {
-            Name = name;
+            stream.WritePropertyVerbatim((string)property.Name, property.Value, indent: true);
         }
+        stream.WriteLine("}");
 
-        public Stream WriteTo(Stream stream)
-        {
-            stream.WriteLine((string)Name);
-            stream.WriteLine("{");
-            foreach (var property in Properties)
-            {
-                stream.WritePropertyVerbatim((string)property.Name, property.Value, indent: true);
-            }
-            stream.WriteLine("}");
+        return stream;
+    }
 
-            return stream;
-        }
+    public UnknownBlock Clone()
+    {
+        var block = new UnknownBlock(Name);
+        block.Properties.AddRange(Properties.Select(p => p.Clone()));
 
-        public UnknownBlock Clone()
-        {
-            var block = new UnknownBlock(Name);
-            block.Properties.AddRange(Properties.Select(p => p.Clone()));
-
-            return block;
-        }
+        return block;
     }
 }

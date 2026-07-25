@@ -4,27 +4,26 @@ using System;
 using Microsoft.Xna.Framework;
 using SectorDirector.Engine.Input;
 
-namespace SectorDirector.Engine.Renderers
+namespace SectorDirector.Engine.Renderers;
+
+public enum RendererType
 {
-    public enum RendererType
-    {
-        FirstPerson,
-        Overhead,
-        LineTest,
-        Fire,
-        MapHistory,
-    }
+    FirstPerson,
+    Overhead,
+    LineTest,
+    Fire,
+    MapHistory,
+}
 
-    public static class RendererTypeExtensions
-    {
-        public static RendererType Next(this RendererType type) =>
-            (RendererType)(((int)type + 1) % Enum.GetValues(typeof(RendererType)).Length);
-    }
+public static class RendererTypeExtensions
+{
+    public static RendererType Next(this RendererType type) =>
+        (RendererType)(((int)type + 1) % Enum.GetValues(typeof(RendererType)).Length);
+}
 
-    public interface IRenderer
-    {
-        void Update(ContinuousInputs inputs, GameTime gameTime);
+public interface IRenderer
+{
+    void Update(ContinuousInputs inputs, GameTime gameTime);
 
-        void Render(IScreenBuffer screen, PlayerInfo player);
-    }
+    void Render(IScreenBuffer screen, PlayerInfo player);
 }

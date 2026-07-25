@@ -4,65 +4,64 @@
 using Microsoft.Xna.Framework;
 using NUnit.Framework;
 
-namespace SectorDirector.Engine.Tests
+namespace SectorDirector.Engine.Tests;
+
+/// <summary>
+/// Tests to verify various math things
+/// </summary>
+[TestFixture, Parallelizable]
+public sealed class MathPlayground
 {
-    /// <summary>
-    /// Tests to verify various math things
-    /// </summary>
-    [TestFixture, Parallelizable]
-    public sealed class MathPlayground
+    [TestCase(-10, 10, 10, 10, 0, 0, false)]
+    [TestCase(-10, 10, 10, 10, 0, 15, true)]
+
+    [TestCase(10, -10, -10, -10, 0, 0, false)]
+    [TestCase(10, -10, -10, -10, 0, -15, true)]
+
+    [TestCase(10, 10, 10, -10, 0, 0, false)]
+    [TestCase(10, 10, 10, -10, 15, 0, true)]
+
+    [TestCase(-10, -10, -10, 10, 0, 0, false)]
+    [TestCase(-10, -10, -10, 10, -15, 0, true)]
+    public void ShouldDetermineThatPointHasNotCrossedLine(
+        float v1x, float v1y,
+        float v2x, float v2y,
+        float px, float py,
+        bool hasCrossed)
     {
-        [TestCase(-10, 10, 10, 10, 0, 0, false)]
-        [TestCase(-10, 10, 10, 10, 0, 15, true)]
+        var v1 = new Vector2(v1x, v1y);
+        var v2 = new Vector2(v2x, v2y);
 
-        [TestCase(10, -10, -10, -10, 0, 0, false)]
-        [TestCase(10, -10, -10, -10, 0, -15, true)]
+        var pos = new Vector2(px, py);
 
-        [TestCase(10, 10, 10, -10, 0, 0, false)]
-        [TestCase(10, 10, 10, -10, 15, 0, true)]
+        Assert.That(Line.HasCrossed(ref v1, ref v2, ref pos), Is.EqualTo(hasCrossed));
+    }
 
-        [TestCase(-10, -10, -10, 10, 0, 0, false)]
-        [TestCase(-10, -10, -10, 10, -15, 0, true)]
-        public void ShouldDetermineThatPointHasNotCrossedLine(
-            float v1x, float v1y,
-            float v2x, float v2y,
-            float px, float py,
-            bool hasCrossed)
-        {
-            var v1 = new Vector2(v1x, v1y);
-            var v2 = new Vector2(v2x, v2y);
+    [Test]
+    public void ShouldComputeIntersection()
+    {
+        var v1 = new Vector2(-10, 0);
+        var v2 = new Vector2(10, 0);
 
-            var pos = new Vector2(px, py);
+        var p1 = new Vector2(5, -10);
+        var p2 = new Vector2(5, 10);
 
-            Assert.That(Line.HasCrossed(ref v1, ref v2, ref pos), Is.EqualTo(hasCrossed));
-        }
+        var intersection = Line.Intersection(ref v1, ref v2, ref p1, ref p2);
 
-        [Test]
-        public void ShouldComputeIntersection()
-        {
-            var v1 = new Vector2(-10, 0);
-            var v2 = new Vector2(10, 0);
+        Assert.That(intersection, Is.EqualTo(new Vector2(5, 0)));
+    }
 
-            var p1 = new Vector2(5, -10);
-            var p2 = new Vector2(5, 10);
+    [Test]
+    public void WhatIsTheIntersectionIfItDoesNotIntersect()
+    {
+        var v1 = new Vector2(-10, 0);
+        var v2 = new Vector2(10, 0);
 
-            var intersection = Line.Intersection(ref v1, ref v2, ref p1, ref p2);
+        var p1 = new Vector2(15, -10);
+        var p2 = new Vector2(15, 10);
 
-            Assert.That(intersection, Is.EqualTo(new Vector2(5, 0)));
-        }
+        var intersection = Line.Intersection(ref v1, ref v2, ref p1, ref p2);
 
-        [Test]
-        public void WhatIsTheIntersectionIfItDoesNotIntersect()
-        {
-            var v1 = new Vector2(-10, 0);
-            var v2 = new Vector2(10, 0);
-
-            var p1 = new Vector2(15, -10);
-            var p2 = new Vector2(15, 10);
-
-            var intersection = Line.Intersection(ref v1, ref v2, ref p1, ref p2);
-
-            Assert.That(intersection, Is.EqualTo(new Vector2(15, 0)));
-        }
+        Assert.That(intersection, Is.EqualTo(new Vector2(15, 0)));
     }
 }

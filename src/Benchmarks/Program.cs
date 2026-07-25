@@ -3,13 +3,12 @@
 
 using BenchmarkDotNet.Running;
 
-namespace Benchmarks
+namespace Benchmarks;
+
+class Program
 {
-    class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            var summary = BenchmarkRunner.Run<PositionToSectorIdBenchmarks>();
-        }
+        var summary = BenchmarkRunner.Run<PositionToSectorIdBenchmarks>();
     }
 }

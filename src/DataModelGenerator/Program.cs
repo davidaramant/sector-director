@@ -4,23 +4,22 @@
 using System.IO;
 using System.Linq;
 
-namespace SectorDirector.DataModelGenerator
+namespace SectorDirector.DataModelGenerator;
+
+class Program
 {
-    class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
+        var solutionBasePath = Path.Combine(Enumerable.Repeat("..", 5).ToArray());
+        var corePath = Path.Combine(solutionBasePath, "Core");
+        var udmfPath = Path.Combine(corePath, "FormatModels", "Udmf");
+        var udmfParsingPath = Path.Combine(udmfPath, "Parsing");
+
+        UdmfModelGenerator.WriteToPath(udmfPath);
+
+        using (var analyzerStream = File.CreateText(Path.Combine(udmfParsingPath, "UdmfSemanticAnalyzer.Generated.cs")))
         {
-            var solutionBasePath = Path.Combine(Enumerable.Repeat("..", 5).ToArray());
-            var corePath = Path.Combine(solutionBasePath, "Core");
-            var udmfPath = Path.Combine(corePath, "FormatModels", "Udmf");
-            var udmfParsingPath = Path.Combine(udmfPath, "Parsing");
-
-            UdmfModelGenerator.WriteToPath(udmfPath);
-
-            using (var analyzerStream = File.CreateText(Path.Combine(udmfParsingPath, "UdmfSemanticAnalyzer.Generated.cs")))
-            {
-                UdmfSemanticAnalyzerGenerator.WriteTo(analyzerStream);
-            }
+            UdmfSemanticAnalyzerGenerator.WriteTo(analyzerStream);
         }
     }
 }

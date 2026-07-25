@@ -6,57 +6,56 @@ using SectorDirector.Core.FormatModels.Udmf.Parsing.AbstractSyntaxTree;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SectorDirector.Core.FormatModels.Udmf.Parsing
+namespace SectorDirector.Core.FormatModels.Udmf.Parsing;
+
+public static partial class UdmfSemanticAnalyzer
 {
-    public static partial class UdmfSemanticAnalyzer
+    public static MapData Process(IEnumerable<IGlobalExpression> result)
     {
-        public static MapData Process(IEnumerable<IGlobalExpression> result)
-        {
-            var map = new MapData();
+        var map = new MapData();
 
-            foreach (var globalExpression in result)
+        foreach (var globalExpression in result)
+        {
+            switch (globalExpression)
             {
-                switch (globalExpression)
-                {
-                    case Assignment assignment:
-                        ProcessGlobalAssignment(map, assignment);
-                        break;
+                case Assignment assignment:
+                    ProcessGlobalAssignment(map, assignment);
+                    break;
 
-                    case Block block:
-                        ProcessBlock(map, block);
-                        break;
-                }
+                case Block block:
+                    ProcessBlock(map, block);
+                    break;
             }
-
-            return map;
         }
 
-        static partial void ProcessGlobalAssignment(MapData map, Assignment assignment);
-        static partial void ProcessBlock(MapData map, Block block);
+        return map;
+    }
+
+    static partial void ProcessGlobalAssignment(MapData map, Assignment assignment);
+    static partial void ProcessBlock(MapData map, Block block);
 
 
-        static UnknownBlock ProcessUnknownBlock(Block block)
+    static UnknownBlock ProcessUnknownBlock(Block block)
+    {
+        var unknownBlock = new UnknownBlock(block.Name);
+
+        unknownBlock.Properties.AddRange(block.Fields.Select(a => new UnknownProperty(a.Name, a.ValueAsString())));
+
+        return unknownBlock;
+    }
+
+    static int ReadIntValue(Assignment assignment, string context) => ReadValue<int, IntegerToken>(assignment, context);
+    static double ReadDoubleValue(Assignment assignment, string context) => ReadValue<double, FloatToken>(assignment, context);
+    static bool ReadBoolValue(Assignment assignment, string context) => ReadValue<bool, BooleanToken>(assignment, context);
+    static string ReadStringValue(Assignment assignment, string context) => ReadValue<string, StringToken>(assignment, context);
+
+    static T ReadValue<T, TToken>(Assignment assignment, string context) where TToken : ValueToken<T>
+    {
+        if (assignment.Value is TToken t)
         {
-            var unknownBlock = new UnknownBlock(block.Name);
-
-            unknownBlock.Properties.AddRange(block.Fields.Select(a => new UnknownProperty(a.Name, a.ValueAsString())));
-
-            return unknownBlock;
+            return t.Value;
         }
 
-        static int ReadIntValue(Assignment assignment, string context) => ReadValue<int, IntegerToken>(assignment, context);
-        static double ReadDoubleValue(Assignment assignment, string context) => ReadValue<double, FloatToken>(assignment, context);
-        static bool ReadBoolValue(Assignment assignment, string context) => ReadValue<bool, BooleanToken>(assignment, context);
-        static string ReadStringValue(Assignment assignment, string context) => ReadValue<string, StringToken>(assignment, context);
-
-        static T ReadValue<T, TToken>(Assignment assignment, string context) where TToken : ValueToken<T>
-        {
-            if (assignment.Value is TToken t)
-            {
-                return t.Value;
-            }
-
-            throw new ParsingException($"Expected {typeof(T)} for {context} but got {assignment.Value} ({assignment.Value.Location}).");
-        }
+        throw new ParsingException($"Expected {typeof(T)} for {context} but got {assignment.Value} ({assignment.Value.Location}).");
     }
 }

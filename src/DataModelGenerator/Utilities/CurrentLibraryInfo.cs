@@ -4,19 +4,18 @@
 using System;
 using System.Reflection;
 
-namespace SectorDirector.DataModelGenerator.Utilities
+namespace SectorDirector.DataModelGenerator.Utilities;
+
+public static class CurrentLibraryInfo
 {
-    public static class CurrentLibraryInfo
-    {
-        private static readonly Lazy<(string Name, Version Version)> _info = 
-            new Lazy<(string Name, Version Version)>(() =>
-            {
-                var assemblyName = Assembly.GetAssembly(typeof(CurrentLibraryInfo)).GetName();
+    private static readonly Lazy<(string Name, Version Version)> _info = 
+        new Lazy<(string Name, Version Version)>(() =>
+        {
+            var assemblyName = Assembly.GetAssembly(typeof(CurrentLibraryInfo)).GetName();
 
-                return (Name: assemblyName.Name, Version: assemblyName.Version);
-            });
+            return (Name: assemblyName.Name, Version: assemblyName.Version);
+        });
 
-        public static string Name => _info.Value.Name;
-        public static Version Version => _info.Value.Version;
-    }
+    public static string Name => _info.Value.Name;
+    public static Version Version => _info.Value.Version;
 }

@@ -2,45 +2,43 @@
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using NUnit.Framework;
-using SectorDirector.Core.CollectionExtensions;
 using SectorDirector.Core.FormatModels.Svg;
 using SectorDirector.Core.FormatModels.Wad;
 using System;
 using System.IO;
 
-namespace SectorDirector.Core.Tests.FormatModels.Svg
+namespace SectorDirector.Core.Tests.FormatModels.Svg;
+
+[TestFixture, Parallelizable]
+public class SvgExporterTest
 {
-    [TestFixture, Parallelizable]
-    public class SvgExporterTest
+    [Test]
+    [Explicit]
+    public void ExportDemoMap()
     {
-        [Test]
-        [Explicit]
-        public void ExportDemoMap()
+        //var inputWad = @"C:\Games\Doom\IWADS\doom.wad";
+        var inputWad = @"C:\Games\Doom\levels\10sector.wad";
+        //var inputWad = @"C:\Users\aramant\Desktop\Doom\freedoom1-udmf.wad";
+        //var inputWad = @"C:\Users\aramant\Desktop\Doom\10sector-udmf.wad";
+
+        var baseOutputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Doom", "SVGs");
+        if (!Directory.Exists(baseOutputPath))
         {
-            //var inputWad = @"C:\Games\Doom\IWADS\doom.wad";
-            var inputWad = @"C:\Games\Doom\levels\10sector.wad";
-            //var inputWad = @"C:\Users\aramant\Desktop\Doom\freedoom1-udmf.wad";
-            //var inputWad = @"C:\Users\aramant\Desktop\Doom\10sector-udmf.wad";
+            Directory.CreateDirectory(baseOutputPath);
+        }
 
-            var baseOutputPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Doom", "SVGs");
-            if (!Directory.Exists(baseOutputPath))
+        var wadName = Path.GetFileNameWithoutExtension(inputWad);
+
+        foreach (var (name,map) in WadLoader.Load(inputWad))
+        {
+            try
             {
-                Directory.CreateDirectory(baseOutputPath);
+                SvgExporter.Export(map,
+                    Path.Combine(baseOutputPath, $"{wadName}.{name}.svg"));
             }
-
-            var wadName = Path.GetFileNameWithoutExtension(inputWad);
-
-            foreach (var (name,map) in WadLoader.Load(inputWad))
+            catch (Exception e)
             {
-                try
-                {
-                    SvgExporter.Export(map,
-                        Path.Combine(baseOutputPath, $"{wadName}.{name}.svg"));
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(name + ": " + e);
-                }
+                Console.WriteLine(name + ": " + e);
             }
         }
     }

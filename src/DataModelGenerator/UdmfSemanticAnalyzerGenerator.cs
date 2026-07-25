@@ -7,130 +7,129 @@ using System.Linq;
 using SectorDirector.DataModelGenerator.DefinitionModel;
 using SectorDirector.DataModelGenerator.Utilities;
 
-namespace SectorDirector.DataModelGenerator
+namespace SectorDirector.DataModelGenerator;
+
+public static class UdmfSemanticAnalyzerGenerator
 {
-    public static class UdmfSemanticAnalyzerGenerator
+    public static void WriteTo(StreamWriter stream)
     {
-        public static void WriteTo(StreamWriter stream)
+        using (var output = new IndentedWriter(stream))
         {
-            using (var output = new IndentedWriter(stream))
-            {
-                output.Line(
-                        $@"// Copyright (c) {DateTime.Today.Year}, David Aramant
+            output.Line(
+                    $@"// Copyright (c) {DateTime.Today.Year}, David Aramant
 // Distributed under the 3-clause BSD license.  For full terms see the file LICENSE. 
 
 using SectorDirector.Core.FormatModels.Udmf.Parsing.AbstractSyntaxTree;
 using System.CodeDom.Compiler;
 
 namespace SectorDirector.Core.FormatModels.Udmf.Parsing").OpenParen()
-                    .Line($"[GeneratedCode(\"{CurrentLibraryInfo.Name}\", \"{CurrentLibraryInfo.Version}\")]")
-                    .Line("public static partial class UdmfSemanticAnalyzer").OpenParen();
+                .Line($"[GeneratedCode(\"{CurrentLibraryInfo.Name}\", \"{CurrentLibraryInfo.Version}\")]")
+                .Line("public static partial class UdmfSemanticAnalyzer").OpenParen();
 
-                WriteGlobalFieldParsing(output);
+            WriteGlobalFieldParsing(output);
 
-                output.Line();
+            output.Line();
 
-                WriteBlockParsing(output);
+            WriteBlockParsing(output);
 
-                output.Line();
+            output.Line();
 
-                foreach (var block in UdmfDefinitions.Blocks.Where(b => b.IsSubBlock))
-                {
-                    WriteBlockParser(block, output);
-                }
-
-                output.CloseParen();
-                output.CloseParen();
-            }
-        }
-
-        private static void WriteGlobalFieldParsing(IndentedWriter output)
-        {
-            output.
-                Line("static partial void ProcessGlobalAssignment(MapData map, Assignment assignment)").
-                OpenParen();
-
-            var block = UdmfDefinitions.Blocks.Single(b => b.CodeName.ToPascalCase() == "MapData");
-
-            WriteFieldSwitch(output, block, "map");
-
-            output.
-                CloseParen();
-        }
-
-        private static void WriteBlockParsing(IndentedWriter output)
-        {
-            output.
-                Line("static partial void ProcessBlock(MapData map, Block block)").
-                OpenParen().
-                Line("switch (block.Name.ToLower())").
-                OpenParen();
-
-            foreach (var block in UdmfDefinitions.Blocks.Single(b => b.CodeName.ToPascalCase() == "MapData").SubBlocks
-                .Where(b => b.IsRequired))
+            foreach (var block in UdmfDefinitions.Blocks.Where(b => b.IsSubBlock))
             {
-                output.
-                    Line($"case \"{block.FormatName.ToLowerInvariant()}\":").
-                    IncreaseIndent().
-                    Line($"map.{block.PropertyName}.Add(Process{block.FormatName.ToPascalCase()}(block));").
-                    Line("break;").
-                    DecreaseIndent();
+                WriteBlockParser(block, output);
             }
 
+            output.CloseParen();
+            output.CloseParen();
+        }
+    }
+
+    private static void WriteGlobalFieldParsing(IndentedWriter output)
+    {
+        output.
+            Line("static partial void ProcessGlobalAssignment(MapData map, Assignment assignment)").
+            OpenParen();
+
+        var block = UdmfDefinitions.Blocks.Single(b => b.CodeName.ToPascalCase() == "MapData");
+
+        WriteFieldSwitch(output, block, "map");
+
+        output.
+            CloseParen();
+    }
+
+    private static void WriteBlockParsing(IndentedWriter output)
+    {
+        output.
+            Line("static partial void ProcessBlock(MapData map, Block block)").
+            OpenParen().
+            Line("switch (block.Name.ToLower())").
+            OpenParen();
+
+        foreach (var block in UdmfDefinitions.Blocks.Single(b => b.CodeName.ToPascalCase() == "MapData").SubBlocks
+                     .Where(b => b.IsRequired))
+        {
             output.
-                Line("default:").
+                Line($"case \"{block.FormatName.ToLowerInvariant()}\":").
                 IncreaseIndent().
-                Line($"map.UnknownBlocks.Add(ProcessUnknownBlock(block));").
+                Line($"map.{block.PropertyName}.Add(Process{block.FormatName.ToPascalCase()}(block));").
                 Line("break;").
-                DecreaseIndent().
-                CloseParen().
-                CloseParen();
+                DecreaseIndent();
         }
 
-        private static void WriteBlockParser(Block block, IndentedWriter output)
-        {
-            var variable = block.CodeName.ToCamelCase();
+        output.
+            Line("default:").
+            IncreaseIndent().
+            Line($"map.UnknownBlocks.Add(ProcessUnknownBlock(block));").
+            Line("break;").
+            DecreaseIndent().
+            CloseParen().
+            CloseParen();
+    }
 
-            output.
-                Line($"static {block.CodeName} Process{block.CodeName}(Block block)").
-                OpenParen().
-                Line($"var {variable} = new {block.CodeName}();").
-                Line("foreach (var assignment in block.Fields)").
-                OpenParen();
+    private static void WriteBlockParser(Block block, IndentedWriter output)
+    {
+        var variable = block.CodeName.ToCamelCase();
 
-            WriteFieldSwitch(output, block, variable);
+        output.
+            Line($"static {block.CodeName} Process{block.CodeName}(Block block)").
+            OpenParen().
+            Line($"var {variable} = new {block.CodeName}();").
+            Line("foreach (var assignment in block.Fields)").
+            OpenParen();
+
+        WriteFieldSwitch(output, block, variable);
             
-            output.
-                CloseParen().
-                Line($"return {variable};").
-                CloseParen().
-                Line();
-        }
+        output.
+            CloseParen().
+            Line($"return {variable};").
+            CloseParen().
+            Line();
+    }
 
-        private static void WriteFieldSwitch(IndentedWriter output, Block block, string variable)
+    private static void WriteFieldSwitch(IndentedWriter output, Block block, string variable)
+    {
+        output.
+            Line("switch (assignment.Name.ToLower())").
+            OpenParen();
+
+
+        foreach (var field in block.Fields)
         {
             output.
-                Line("switch (assignment.Name.ToLower())").
-                OpenParen();
-
-
-            foreach (var field in block.Fields)
-            {
-                output.
-                    Line($"case \"{field.FormatName.ToLowerInvariant()}\":").
-                    IncreaseIndent().
-                    Line($"{variable}.{field.PropertyName} = Read{field.PropertyType.ToPascalCase()}Value(assignment, \"{block.CodeName}.{field.PropertyName}\");").
-                    Line("break;").
-                    DecreaseIndent();
-            }
-
-            output.
-                Line("default:").
+                Line($"case \"{field.FormatName.ToLowerInvariant()}\":").
                 IncreaseIndent().
-                Line($"{variable}.UnknownProperties.Add(new UnknownProperty(assignment.Name, assignment.ValueAsString()));").
+                Line($"{variable}.{field.PropertyName} = Read{field.PropertyType.ToPascalCase()}Value(assignment, \"{block.CodeName}.{field.PropertyName}\");").
                 Line("break;").
-                DecreaseIndent().
-                CloseParen();
+                DecreaseIndent();
         }
+
+        output.
+            Line("default:").
+            IncreaseIndent().
+            Line($"{variable}.UnknownProperties.Add(new UnknownProperty(assignment.Name, assignment.ValueAsString()));").
+            Line("break;").
+            DecreaseIndent().
+            CloseParen();
     }
 }

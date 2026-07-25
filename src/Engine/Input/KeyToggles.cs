@@ -5,77 +5,76 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 
-namespace SectorDirector.Engine.Input
-{
-    public sealed class LoadMapArgs : EventArgs
-    {
-        public int MapIndex { get; }
+namespace SectorDirector.Engine.Input;
 
-        public LoadMapArgs(int index) => MapIndex = index;
+public sealed class LoadMapArgs : EventArgs
+{
+    public int MapIndex { get; }
+
+    public LoadMapArgs(int index) => MapIndex = index;
+}
+
+public sealed class KeyToggles
+{
+    readonly KeyboardLatch _toggleFullscreenLatch = new KeyboardLatch(kb => (kb.IsKeyDown(Keys.LeftAlt) || kb.IsKeyDown(Keys.RightAlt)) && kb.IsKeyDown(Keys.Enter));
+    readonly KeyboardLatch _loadMap1 = new KeyboardLatch(Keys.D1);
+    readonly KeyboardLatch _loadMap2 = new KeyboardLatch(Keys.D2);
+    readonly KeyboardLatch _loadMap3 = new KeyboardLatch(Keys.D3);
+
+    readonly List<(KeyboardLatch latch, DiscreteInput input)> _simpleToggles = new List<(KeyboardLatch latch, DiscreteInput input)>();
+
+    public KeyToggles()
+    {
+        AddSimpleToggles(
+            (Keys.F, DiscreteInput.ToggleFollowMode),
+            (Keys.R, DiscreteInput.ToggleRotateMode),
+            (Keys.A, DiscreteInput.ToggleShowRenderTime),
+            (Keys.D, DiscreteInput.ToggleLineAntiAliasing),
+            (Keys.T, DiscreteInput.SwitchRenderer),
+            (Keys.Tab, DiscreteInput.ToggleOverheadMap),
+            (Keys.OemOpenBrackets, DiscreteInput.DecreaseRenderFidelity),
+            (Keys.OemCloseBrackets, DiscreteInput.IncreaseRenderFidelity)
+        );
     }
 
-    public sealed class KeyToggles
+    private void AddSimpleToggles(params (Keys key, DiscreteInput input)[] simpleToggles)
     {
-        readonly KeyboardLatch _toggleFullscreenLatch = new KeyboardLatch(kb => (kb.IsKeyDown(Keys.LeftAlt) || kb.IsKeyDown(Keys.RightAlt)) && kb.IsKeyDown(Keys.Enter));
-        readonly KeyboardLatch _loadMap1 = new KeyboardLatch(Keys.D1);
-        readonly KeyboardLatch _loadMap2 = new KeyboardLatch(Keys.D2);
-        readonly KeyboardLatch _loadMap3 = new KeyboardLatch(Keys.D3);
-
-        readonly List<(KeyboardLatch latch, DiscreteInput input)> _simpleToggles = new List<(KeyboardLatch latch, DiscreteInput input)>();
-
-        public KeyToggles()
+        foreach (var simple in simpleToggles)
         {
-            AddSimpleToggles(
-                (Keys.F, DiscreteInput.ToggleFollowMode),
-                (Keys.R, DiscreteInput.ToggleRotateMode),
-                (Keys.A, DiscreteInput.ToggleShowRenderTime),
-                (Keys.D, DiscreteInput.ToggleLineAntiAliasing),
-                (Keys.T, DiscreteInput.SwitchRenderer),
-                (Keys.Tab, DiscreteInput.ToggleOverheadMap),
-                (Keys.OemOpenBrackets, DiscreteInput.DecreaseRenderFidelity),
-                (Keys.OemCloseBrackets, DiscreteInput.IncreaseRenderFidelity)
-            );
+            _simpleToggles.Add((new KeyboardLatch(simple.key), simple.input));
         }
+    }
 
-        private void AddSimpleToggles(params (Keys key, DiscreteInput input)[] simpleToggles)
+    public event EventHandler FullScreen;
+    public event EventHandler<LoadMapArgs> LoadMap;
+
+    public DiscreteInput Update(KeyboardState keyboardState)
+    {
+        foreach (var simpleToggle in _simpleToggles)
         {
-            foreach (var simple in simpleToggles)
+            if (simpleToggle.latch.IsTriggered(keyboardState))
             {
-                _simpleToggles.Add((new KeyboardLatch(simple.key), simple.input));
+                return simpleToggle.input;
             }
         }
 
-        public event EventHandler FullScreen;
-        public event EventHandler<LoadMapArgs> LoadMap;
-
-        public DiscreteInput Update(KeyboardState keyboardState)
+        if (_toggleFullscreenLatch.IsTriggered(keyboardState))
         {
-            foreach (var simpleToggle in _simpleToggles)
-            {
-                if (simpleToggle.latch.IsTriggered(keyboardState))
-                {
-                    return simpleToggle.input;
-                }
-            }
-
-            if (_toggleFullscreenLatch.IsTriggered(keyboardState))
-            {
-                FullScreen?.Invoke(this, EventArgs.Empty);
-            }
-            else if (_loadMap1.IsTriggered(keyboardState))
-            {
-                LoadMap?.Invoke(this, new LoadMapArgs(0));
-            }
-            else if (_loadMap2.IsTriggered(keyboardState))
-            {
-                LoadMap?.Invoke(this, new LoadMapArgs(1));
-            }
-            else if (_loadMap3.IsTriggered(keyboardState))
-            {
-                LoadMap?.Invoke(this, new LoadMapArgs(2));
-            }
-
-            return DiscreteInput.None;
+            FullScreen?.Invoke(this, EventArgs.Empty);
         }
+        else if (_loadMap1.IsTriggered(keyboardState))
+        {
+            LoadMap?.Invoke(this, new LoadMapArgs(0));
+        }
+        else if (_loadMap2.IsTriggered(keyboardState))
+        {
+            LoadMap?.Invoke(this, new LoadMapArgs(1));
+        }
+        else if (_loadMap3.IsTriggered(keyboardState))
+        {
+            LoadMap?.Invoke(this, new LoadMapArgs(2));
+        }
+
+        return DiscreteInput.None;
     }
 }

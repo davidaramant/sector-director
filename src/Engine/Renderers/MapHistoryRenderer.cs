@@ -7,122 +7,121 @@ using Microsoft.Xna.Framework;
 using SectorDirector.Engine.Drawing;
 using SectorDirector.Engine.Input;
 
-namespace SectorDirector.Engine.Renderers
+namespace SectorDirector.Engine.Renderers;
+
+public sealed class MapHistoryRenderer : IRenderer
 {
-    public sealed class MapHistoryRenderer : IRenderer
+    readonly MapGeometry _map;
+    private readonly ScreenMessage _screenMessage;
+    private readonly Point[] _verticesInScreenCoords;
+
+    const float FrontSideMarkerLength = 5f;
+    private const float DefaultMapToScreenRatio = 0.95f;
+
+    private float _linesToDraw = 0;
+    private const float MsToDrawSpeedDelta = 0.0001f;
+    private const float DefaultMsToDrawSpeed = 0.05f;
+    private float _msToDrawSpeed = DefaultMsToDrawSpeed;
+
+    public MapHistoryRenderer(MapGeometry map, ScreenMessage screenMessage)
     {
-        readonly MapGeometry _map;
-        private readonly ScreenMessage _screenMessage;
-        private readonly Point[] _verticesInScreenCoords;
+        _map = map;
+        _screenMessage = screenMessage;
+        _verticesInScreenCoords = new Point[map.Vertices.Length];
+    }
 
-        const float FrontSideMarkerLength = 5f;
-        private const float DefaultMapToScreenRatio = 0.95f;
+    public void Update(ContinuousInputs inputs, GameTime gameTime)
+    {
+        var drawSpeedChangeDelta = gameTime.ElapsedGameTime.Milliseconds * MsToDrawSpeedDelta;
 
-        private float _linesToDraw = 0;
-        private const float MsToDrawSpeedDelta = 0.0001f;
-        private const float DefaultMsToDrawSpeed = 0.05f;
-        private float _msToDrawSpeed = DefaultMsToDrawSpeed;
-
-        public MapHistoryRenderer(MapGeometry map, ScreenMessage screenMessage)
+        if (inputs.ResetZoom)
         {
-            _map = map;
-            _screenMessage = screenMessage;
-            _verticesInScreenCoords = new Point[map.Vertices.Length];
+            _linesToDraw = 0;
+            _msToDrawSpeed = DefaultMsToDrawSpeed;
+            _screenMessage.ShowMessage($"Set speed to {_msToDrawSpeed}");
+        }
+        else if(inputs.ZoomIn)
+        {
+            _msToDrawSpeed += drawSpeedChangeDelta;
+            _screenMessage.ShowMessage($"Set speed to {_msToDrawSpeed}");
+        }
+        else if(inputs.ZoomOut)
+        {
+            _msToDrawSpeed = Math.Max(0, _msToDrawSpeed - drawSpeedChangeDelta);
+            _screenMessage.ShowMessage($"Set speed to {_msToDrawSpeed}");
         }
 
-        public void Update(ContinuousInputs inputs, GameTime gameTime)
+        _linesToDraw = Math.Min(_map.Lines.Length, _linesToDraw + _msToDrawSpeed * gameTime.ElapsedGameTime.Milliseconds);
+    }
+
+    public void Render(IScreenBuffer screen, PlayerInfo player)
+    {
+        screen.Clear();
+
+        // The screen has an origin in the top left.  Positive Y is DOWN
+        // Maps have an origin in the bottom left.  Positive Y is UP
+
+        var screenDimensionsV = screen.Dimensions.ToVector2();
+        var desiredMapScreenBounds = screenDimensionsV * DefaultMapToScreenRatio;
+
+        var gameToScreenFactor = Math.Min( desiredMapScreenBounds.X/_map.Area.X, desiredMapScreenBounds.Y/_map.Area.Y);
+
+        var screenAreaInMapCoords = screenDimensionsV / gameToScreenFactor;
+        var mapCenteringOffset = (screenAreaInMapCoords - _map.Area) / 2 - _map.BottomLeftCorner;
+
+        // Transform all vertices
+        for (int v = 0; v < _map.Vertices.Length; v++)
         {
-            var drawSpeedChangeDelta = gameTime.ElapsedGameTime.Milliseconds * MsToDrawSpeedDelta;
-
-            if (inputs.ResetZoom)
-            {
-                _linesToDraw = 0;
-                _msToDrawSpeed = DefaultMsToDrawSpeed;
-                _screenMessage.ShowMessage($"Set speed to {_msToDrawSpeed}");
-            }
-            else if(inputs.ZoomIn)
-            {
-                _msToDrawSpeed += drawSpeedChangeDelta;
-                _screenMessage.ShowMessage($"Set speed to {_msToDrawSpeed}");
-            }
-            else if(inputs.ZoomOut)
-            {
-                _msToDrawSpeed = Math.Max(0, _msToDrawSpeed - drawSpeedChangeDelta);
-                _screenMessage.ShowMessage($"Set speed to {_msToDrawSpeed}");
-            }
-
-            _linesToDraw = Math.Min(_map.Lines.Length, _linesToDraw + _msToDrawSpeed * gameTime.ElapsedGameTime.Milliseconds);
+            _verticesInScreenCoords[v] = ToScreenCoords(_map.Vertices[v]);
         }
 
-        public void Render(IScreenBuffer screen, PlayerInfo player)
+        Point ToScreenCoords(Vector2 worldCoordinate)
         {
-            screen.Clear();
+            var shiftedWorldCoordinate = worldCoordinate + mapCenteringOffset;
 
-            // The screen has an origin in the top left.  Positive Y is DOWN
-            // Maps have an origin in the bottom left.  Positive Y is UP
+            // This fixes jittering
+            var pixelOffset = new Vector2(0.5f, 0.5f);
 
-            var screenDimensionsV = screen.Dimensions.ToVector2();
-            var desiredMapScreenBounds = screenDimensionsV * DefaultMapToScreenRatio;
+            return ((shiftedWorldCoordinate * gameToScreenFactor) + pixelOffset).ToPoint().InvertY(screen.Height);
+        }
 
-            var gameToScreenFactor = Math.Min( desiredMapScreenBounds.X/_map.Area.X, desiredMapScreenBounds.Y/_map.Area.Y);
+        void DrawLineFromVertices(int v1, int v2, Color c) =>
+            DrawLineFromScreenCoordinates(_verticesInScreenCoords[v1], _verticesInScreenCoords[v2], c);
+        void DrawLineFromWorldCoordinates(Vector2 wc1, Vector2 wc2, Color c)
+        {
+            var sc1 = ToScreenCoords(wc1);
+            var sc2 = ToScreenCoords(wc2);
+            DrawLineFromScreenCoordinates(sc1, sc2, c);
+        }
 
-            var screenAreaInMapCoords = screenDimensionsV / gameToScreenFactor;
-            var mapCenteringOffset = (screenAreaInMapCoords - _map.Area) / 2 - _map.BottomLeftCorner;
-
-            // Transform all vertices
-            for (int v = 0; v < _map.Vertices.Length; v++)
+        void DrawLineFromScreenCoordinates(Point sc1, Point sc2, Color c)
+        {
+            var result = LineClipping.ClipToScreen(screen, sc1, sc2);
+            if (result.shouldDraw)
             {
-                _verticesInScreenCoords[v] = ToScreenCoords(_map.Vertices[v]);
+                screen.PlotLineSmooth(result.p0, result.p1, c);
             }
+        }
 
-            Point ToScreenCoords(Vector2 worldCoordinate)
-            {
-                var shiftedWorldCoordinate = worldCoordinate + mapCenteringOffset;
+        foreach (var lineDef in _map.Map.LineDefs.Take((int)_linesToDraw))
+        {
+            ref Vector2 vertex1 = ref _map.Vertices[lineDef.V1];
+            ref Vector2 vertex2 = ref _map.Vertices[lineDef.V2];
 
-                // This fixes jittering
-                var pixelOffset = new Vector2(0.5f, 0.5f);
+            var lineColor = lineDef.TwoSided ? Color.Gray : Color.Red;
 
-                return ((shiftedWorldCoordinate * gameToScreenFactor) + pixelOffset).ToPoint().InvertY(screen.Height);
-            }
+            DrawLineFromVertices(lineDef.V1, lineDef.V2, lineColor);
 
-            void DrawLineFromVertices(int v1, int v2, Color c) =>
-                DrawLineFromScreenCoordinates(_verticesInScreenCoords[v1], _verticesInScreenCoords[v2], c);
-            void DrawLineFromWorldCoordinates(Vector2 wc1, Vector2 wc2, Color c)
-            {
-                var sc1 = ToScreenCoords(wc1);
-                var sc2 = ToScreenCoords(wc2);
-                DrawLineFromScreenCoordinates(sc1, sc2, c);
-            }
+            // Draw front side indication
+            var lineDirection = vertex2 - vertex1;
+            var lineMidPoint = vertex1 + lineDirection / 2;
 
-            void DrawLineFromScreenCoordinates(Point sc1, Point sc2, Color c)
-            {
-                var result = LineClipping.ClipToScreen(screen, sc1, sc2);
-                if (result.shouldDraw)
-                {
-                    screen.PlotLineSmooth(result.p0, result.p1, c);
-                }
-            }
+            var perpendicularDirection = lineDirection.PerpendicularClockwise();
+            perpendicularDirection.Normalize();
 
-            foreach (var lineDef in _map.Map.LineDefs.Take((int)_linesToDraw))
-            {
-                ref Vector2 vertex1 = ref _map.Vertices[lineDef.V1];
-                ref Vector2 vertex2 = ref _map.Vertices[lineDef.V2];
+            var frontMarkerLineEnd = lineMidPoint + perpendicularDirection * FrontSideMarkerLength;
 
-                var lineColor = lineDef.TwoSided ? Color.Gray : Color.Red;
-
-                DrawLineFromVertices(lineDef.V1, lineDef.V2, lineColor);
-
-                // Draw front side indication
-                var lineDirection = vertex2 - vertex1;
-                var lineMidPoint = vertex1 + lineDirection / 2;
-
-                var perpendicularDirection = lineDirection.PerpendicularClockwise();
-                perpendicularDirection.Normalize();
-
-                var frontMarkerLineEnd = lineMidPoint + perpendicularDirection * FrontSideMarkerLength;
-
-                DrawLineFromWorldCoordinates(lineMidPoint, frontMarkerLineEnd, lineColor);
-            }
+            DrawLineFromWorldCoordinates(lineMidPoint, frontMarkerLineEnd, lineColor);
         }
     }
 }

@@ -3,77 +3,76 @@
 
 using Microsoft.Xna.Framework;
 
-namespace SectorDirector.Engine.Renderers
+namespace SectorDirector.Engine.Renderers;
+
+public sealed class Camera3D
 {
-    public sealed class Camera3D
+    private Matrix _worldToPerspectiveTransformation = Matrix.Identity;
+    private Matrix _perspectiveToWorldTransformation = Matrix.Identity;
+    private Vector3 _center = Vector3.Zero;
+    private float _rotationInRadians = 0;
+    private bool _matrixStale;
+
+    public Matrix WorldToPerspectiveTransformation
     {
-        private Matrix _worldToPerspectiveTransformation = Matrix.Identity;
-        private Matrix _perspectiveToWorldTransformation = Matrix.Identity;
-        private Vector3 _center = Vector3.Zero;
-        private float _rotationInRadians = 0;
-        private bool _matrixStale;
-
-        public Matrix WorldToPerspectiveTransformation
+        get
         {
-            get
+            UpdateMatricesIfStale();
+            return _worldToPerspectiveTransformation;
+        }
+    }
+    public Matrix PerspectiveToWorldTransformation
+    {
+        get
+        {
+            UpdateMatricesIfStale();
+            return _perspectiveToWorldTransformation;
+        }
+    }
+
+    public float RotationInRadians
+    {
+        get => _rotationInRadians;
+        set
+        {
+            if (_rotationInRadians != value)
             {
-                UpdateMatricesIfStale();
-                return _worldToPerspectiveTransformation;
+                _rotationInRadians = value;
+                _matrixStale = true;
             }
         }
-        public Matrix PerspectiveToWorldTransformation
+    }
+
+    public Vector3 Center
+    {
+        get => _center;
+        set
         {
-            get
+            if (_center != value)
             {
-                UpdateMatricesIfStale();
-                return _perspectiveToWorldTransformation;
+                _center = value;
+                _matrixStale = true;
             }
         }
+    }
 
-        public float RotationInRadians
+    public Vector3 PerspectiveToWorld(Vector3 screenCoordinate) => Vector3.Transform(screenCoordinate, PerspectiveToWorldTransformation);
+    public Vector3 WorldToPerspective(Vector3 worldCoordinate) => Vector3.Transform(worldCoordinate, WorldToPerspectiveTransformation);
+
+    private void UpdateMatricesIfStale()
+    {
+        if (_matrixStale)
         {
-            get => _rotationInRadians;
-            set
-            {
-                if (_rotationInRadians != value)
-                {
-                    _rotationInRadians = value;
-                    _matrixStale = true;
-                }
-            }
-        }
+            var centerTranslationMatrix = Matrix.CreateTranslation(-_center.X, -_center.Y, -_center.Z);
+            var rotationMatrix = Matrix.CreateRotationZ(-_rotationInRadians);
 
-        public Vector3 Center
-        {
-            get => _center;
-            set
-            {
-                if (_center != value)
-                {
-                    _center = value;
-                    _matrixStale = true;
-                }
-            }
-        }
+            _worldToPerspectiveTransformation =
+                centerTranslationMatrix *
+                rotationMatrix;
 
-        public Vector3 PerspectiveToWorld(Vector3 screenCoordinate) => Vector3.Transform(screenCoordinate, PerspectiveToWorldTransformation);
-        public Vector3 WorldToPerspective(Vector3 worldCoordinate) => Vector3.Transform(worldCoordinate, WorldToPerspectiveTransformation);
+            _perspectiveToWorldTransformation = Matrix.Invert(_worldToPerspectiveTransformation);
 
-        private void UpdateMatricesIfStale()
-        {
-            if (_matrixStale)
-            {
-                var centerTranslationMatrix = Matrix.CreateTranslation(-_center.X, -_center.Y, -_center.Z);
-                var rotationMatrix = Matrix.CreateRotationZ(-_rotationInRadians);
-
-                _worldToPerspectiveTransformation =
-                    centerTranslationMatrix *
-                    rotationMatrix;
-
-                _perspectiveToWorldTransformation = Matrix.Invert(_worldToPerspectiveTransformation);
-
-                _matrixStale = false;
-            }
+            _matrixStale = false;
         }
     }
 }

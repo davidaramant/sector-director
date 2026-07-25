@@ -3,146 +3,145 @@
 
 using Microsoft.Xna.Framework;
 
-namespace SectorDirector.Engine.Renderers
+namespace SectorDirector.Engine.Renderers;
+
+public sealed class Camera2D
 {
-    public sealed class Camera2D
+    private Matrix _worldToScreenTransformation = Matrix.Identity;
+    private Matrix _screenToWorldTransformation = Matrix.Identity;
+    private Point _screenBounds = Point.Zero;
+    private Vector2 _center = Vector2.Zero;
+    private Vector2 _viewOffset = Vector2.Zero;
+    private float _rotationInRadians = 0;
+    private RenderScale _renderScale = RenderScale.Normal;
+    private float _zoom = 1;
+    private bool _matrixStale;
+
+    public Matrix WorldToScreenTransformation
     {
-        private Matrix _worldToScreenTransformation = Matrix.Identity;
-        private Matrix _screenToWorldTransformation = Matrix.Identity;
-        private Point _screenBounds = Point.Zero;
-        private Vector2 _center = Vector2.Zero;
-        private Vector2 _viewOffset = Vector2.Zero;
-        private float _rotationInRadians = 0;
-        private RenderScale _renderScale = RenderScale.Normal;
-        private float _zoom = 1;
-        private bool _matrixStale;
-
-        public Matrix WorldToScreenTransformation
+        get
         {
-            get
+            UpdateMatricesIfStale();
+            return _worldToScreenTransformation;
+        }
+    }
+    public Matrix ScreenToWorldTransformation
+    {
+        get
+        {
+            UpdateMatricesIfStale();
+            return _screenToWorldTransformation;
+        }
+    }
+
+    public Point ScreenBounds
+    {
+        get => _screenBounds;
+        set
+        {
+            if (_screenBounds != value)
             {
-                UpdateMatricesIfStale();
-                return _worldToScreenTransformation;
+                _screenBounds = value;
+                _matrixStale = true;
             }
         }
-        public Matrix ScreenToWorldTransformation
+    }
+
+    public float RotationInRadians
+    {
+        get => _rotationInRadians;
+        set
         {
-            get
+            if (_rotationInRadians != value)
             {
-                UpdateMatricesIfStale();
-                return _screenToWorldTransformation;
+                _rotationInRadians = value;
+                _matrixStale = true;
             }
         }
+    }
 
-        public Point ScreenBounds
+    public float Zoom
+    {
+        get => _zoom;
+        set
         {
-            get => _screenBounds;
-            set
+            if (_zoom != value)
             {
-                if (_screenBounds != value)
-                {
-                    _screenBounds = value;
-                    _matrixStale = true;
-                }
+                _zoom = value;
+                _matrixStale = true;
             }
         }
+    }
 
-        public float RotationInRadians
+    public float TotalZoom => _zoom / (int) _renderScale;
+
+    public RenderScale RenderScale
+    {
+        get => _renderScale;
+        set
         {
-            get => _rotationInRadians;
-            set
+            if (_renderScale != value)
             {
-                if (_rotationInRadians != value)
-                {
-                    _rotationInRadians = value;
-                    _matrixStale = true;
-                }
+                _renderScale = value;
+                _matrixStale = true;
             }
         }
+    }
 
-        public float Zoom
+    /// <summary>
+    /// What the camera is pointed to (in world coordinates) relative to the center
+    /// </summary>
+    public Vector2 ViewOffset
+    {
+        get => _viewOffset;
+        set
         {
-            get => _zoom;
-            set
+            if (_viewOffset != value)
             {
-                if (_zoom != value)
-                {
-                    _zoom = value;
-                    _matrixStale = true;
-                }
+                _viewOffset = value;
+                _matrixStale = true;
             }
         }
+    }
 
-        public float TotalZoom => _zoom / (int) _renderScale;
-
-        public RenderScale RenderScale
+    public Vector2 Center
+    {
+        get => _center;
+        set
         {
-            get => _renderScale;
-            set
+            if (_center != value)
             {
-                if (_renderScale != value)
-                {
-                    _renderScale = value;
-                    _matrixStale = true;
-                }
+                _center = value;
+                _matrixStale = true;
             }
         }
+    }
 
-        /// <summary>
-        /// What the camera is pointed to (in world coordinates) relative to the center
-        /// </summary>
-        public Vector2 ViewOffset
+    public Vector2 ScreenToWorld(Vector2 screenCoordinate) => Vector2.Transform(screenCoordinate, ScreenToWorldTransformation);
+    public Vector2 WorldToScreen(Vector2 worldCoordinate) => Vector2.Transform(worldCoordinate, WorldToScreenTransformation);
+
+    private void UpdateMatricesIfStale()
+    {
+        if (_matrixStale)
         {
-            get => _viewOffset;
-            set
-            {
-                if (_viewOffset != value)
-                {
-                    _viewOffset = value;
-                    _matrixStale = true;
-                }
-            }
-        }
+            var yAxisFlipMatrix = Matrix.CreateScale(1, -1, 0);
+            var originTranslationMatrix = Matrix.CreateTranslation(_screenBounds.X / 2, _screenBounds.Y / 2, 0);
+            var centerTranslationMatrix = Matrix.CreateTranslation(-_center.X + 0.5f, _center.Y - 0.5f, 0);
+            var centerOffsetTranslationMatrix = Matrix.CreateTranslation(-_viewOffset.X, _viewOffset.Y, 0);
+            var zoomMatrix = Matrix.CreateScale(TotalZoom, TotalZoom, 0);
+            var rotationMatrix = Matrix.CreateRotationZ(_rotationInRadians);
 
-        public Vector2 Center
-        {
-            get => _center;
-            set
-            {
-                if (_center != value)
-                {
-                    _center = value;
-                    _matrixStale = true;
-                }
-            }
-        }
+            _worldToScreenTransformation =
+                yAxisFlipMatrix *
+                centerTranslationMatrix *
+                rotationMatrix *
+                centerOffsetTranslationMatrix *
+                zoomMatrix *
+                originTranslationMatrix;
 
-        public Vector2 ScreenToWorld(Vector2 screenCoordinate) => Vector2.Transform(screenCoordinate, ScreenToWorldTransformation);
-        public Vector2 WorldToScreen(Vector2 worldCoordinate) => Vector2.Transform(worldCoordinate, WorldToScreenTransformation);
+            _screenToWorldTransformation = Matrix.Invert(_worldToScreenTransformation);
 
-        private void UpdateMatricesIfStale()
-        {
-            if (_matrixStale)
-            {
-                var yAxisFlipMatrix = Matrix.CreateScale(1, -1, 0);
-                var originTranslationMatrix = Matrix.CreateTranslation(_screenBounds.X / 2, _screenBounds.Y / 2, 0);
-                var centerTranslationMatrix = Matrix.CreateTranslation(-_center.X + 0.5f, _center.Y - 0.5f, 0);
-                var centerOffsetTranslationMatrix = Matrix.CreateTranslation(-_viewOffset.X, _viewOffset.Y, 0);
-                var zoomMatrix = Matrix.CreateScale(TotalZoom, TotalZoom, 0);
-                var rotationMatrix = Matrix.CreateRotationZ(_rotationInRadians);
-
-                _worldToScreenTransformation =
-                    yAxisFlipMatrix *
-                    centerTranslationMatrix *
-                    rotationMatrix *
-                    centerOffsetTranslationMatrix *
-                    zoomMatrix *
-                    originTranslationMatrix;
-
-                _screenToWorldTransformation = Matrix.Invert(_worldToScreenTransformation);
-
-                _matrixStale = false;
-            }
+            _matrixStale = false;
         }
     }
 }

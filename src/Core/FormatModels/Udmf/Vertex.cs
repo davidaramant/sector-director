@@ -3,11 +3,10 @@
 
 using System.Diagnostics;
 
-namespace SectorDirector.Core.FormatModels.Udmf
-{
-    [DebuggerDisplay("({X}, {Y})")]
-    public sealed partial class Vertex
-    {
+namespace SectorDirector.Core.FormatModels.Udmf;
 
-    }
+[DebuggerDisplay("({X}, {Y})")]
+public sealed partial class Vertex
+{
+
 }

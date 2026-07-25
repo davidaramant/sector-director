@@ -3,13 +3,12 @@
 
 using System;
 
-namespace SectorDirector.Core.FormatModels
+namespace SectorDirector.Core.FormatModels;
+
+public sealed class EntryNotFoundException : Exception
 {
-    public sealed class EntryNotFoundException : Exception
+    public EntryNotFoundException(string path) : base(path)
     {
-        public EntryNotFoundException(string path) : base(path)
-        {
             
-        }
     }
 }

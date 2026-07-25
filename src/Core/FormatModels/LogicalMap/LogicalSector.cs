@@ -5,25 +5,24 @@ using SectorDirector.Core.FormatModels.Udmf;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace SectorDirector.Core.FormatModels.LogicalMap
+namespace SectorDirector.Core.FormatModels.LogicalMap;
+
+public sealed class LogicalSector : IEnumerable<SubSector>
 {
-    public sealed class LogicalSector : IEnumerable<SubSector>
+    public int SectorId { get; }
+    public Sector ActualSector { get; }
+    public int Count => _subSectors.Count;
+
+    private readonly List<SubSector> _subSectors = new List<SubSector>();
+
+    public LogicalSector(int sectorId, Sector actualSector)
     {
-        public int SectorId { get; }
-        public Sector ActualSector { get; }
-        public int Count => _subSectors.Count;
-
-        private readonly List<SubSector> _subSectors = new List<SubSector>();
-
-        public LogicalSector(int sectorId, Sector actualSector)
-        {
-            SectorId = sectorId;
-            ActualSector = actualSector;
-        }
-
-        public void Add(SubSector subSector) => _subSectors.Add(subSector);
-
-        public IEnumerator<SubSector> GetEnumerator() => _subSectors.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        SectorId = sectorId;
+        ActualSector = actualSector;
     }
+
+    public void Add(SubSector subSector) => _subSectors.Add(subSector);
+
+    public IEnumerator<SubSector> GetEnumerator() => _subSectors.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

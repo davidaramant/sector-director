@@ -5,29 +5,28 @@ using System;
 using NUnit.Framework;
 using SectorDirector.Core.FormatModels.Wad;
 
-namespace SectorDirector.Core.Tests.FormatModels.Wad
-{
-    [TestFixture, Parallelizable]
-    public sealed class LumpNameTests
-    {
-        [TestCase("")]
-        [TestCase("lower")]
-        [TestCase("SPACE ")]
-        [TestCase("EXCESSIVE_LENGTH")]
-        public void ShouldRejectInvalidNames(string name)
-        {
-            Assert.Throws<ArgumentException>(() => new LumpName(name));
-        }
+namespace SectorDirector.Core.Tests.FormatModels.Wad;
 
-        [TestCase("NAME")]
-        [TestCase("NAME1")]
-        [TestCase("SPC[")]
-        [TestCase("SPC]")]
-        [TestCase("SPC-")]
-        [TestCase("SPC_")]
-        public void ShouldAcceptValidNames(string name)
-        {
-            Assert.DoesNotThrow(() => new LumpName(name));
-        }
+[TestFixture, Parallelizable]
+public sealed class LumpNameTests
+{
+    [TestCase("")]
+    [TestCase("lower")]
+    [TestCase("SPACE ")]
+    [TestCase("EXCESSIVE_LENGTH")]
+    public void ShouldRejectInvalidNames(string name)
+    {
+        Assert.Throws<ArgumentException>(() => new LumpName(name));
+    }
+
+    [TestCase("NAME")]
+    [TestCase("NAME1")]
+    [TestCase("SPC[")]
+    [TestCase("SPC]")]
+    [TestCase("SPC-")]
+    [TestCase("SPC_")]
+    public void ShouldAcceptValidNames(string name)
+    {
+        Assert.DoesNotThrow(() => new LumpName(name));
     }
 }

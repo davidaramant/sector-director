@@ -6,61 +6,60 @@ using System.IO;
 using SectorDirector.Core.FormatModels.Udmf;
 using SectorDirector.Core.FormatModels.Wad.StreamExtensions;
 
-namespace SectorDirector.Core.FormatModels.Wad
+namespace SectorDirector.Core.FormatModels.Wad;
+
+public sealed class WadWriter
 {
-    public sealed class WadWriter
+    private readonly List<ILump> _lumps = new List<ILump>();
+
+    public void Append(string name, MapData map)
     {
-        private readonly List<ILump> _lumps = new List<ILump>();
+        Append(new Marker(name));
+        Append(new UdmfLump("TEXTMAP", map));
+        Append(new Marker("ENDMAP"));
+    }
+    public void Append(ILump lump) => _lumps.Add(lump);
 
-        public void Append(string name, MapData map)
+    public void SaveTo(Stream stream)
+    {
+        stream.WriteText("PWAD");
+        stream.WriteInt(_lumps.Count);
+
+        // Fill in this position after writing the data
+        int directoryOffsetPosition = (int)stream.Position;
+        stream.Position += 4;
+
+        var metadata = new List<LumpInfo>();
+        foreach (var lump in _lumps)
         {
-            Append(new Marker(name));
-            Append(new UdmfLump("TEXTMAP", map));
-            Append(new Marker("ENDMAP"));
-        }
-        public void Append(ILump lump) => _lumps.Add(lump);
+            int startOfLump = (int)stream.Position;
 
-        public void SaveTo(Stream stream)
-        {
-            stream.WriteText("PWAD");
-            stream.WriteInt(_lumps.Count);
+            lump.WriteTo(stream);
 
-            // Fill in this position after writing the data
-            int directoryOffsetPosition = (int)stream.Position;
-            stream.Position += 4;
-
-            var metadata = new List<LumpInfo>();
-            foreach (var lump in _lumps)
-            {
-                int startOfLump = (int)stream.Position;
-
-                lump.WriteTo(stream);
-
-                metadata.Add(new LumpInfo(
-                    position: startOfLump,
-                    size: (int)stream.Position - startOfLump,
-                    name: lump.Name));
-            }
-
-            int startOfDirectory = (int)stream.Position;
-
-            // Write directory
-            foreach (var lumpMetadata in metadata)
-            {
-                lumpMetadata.WriteTo(stream);
-            }
-
-            // Go back and set the directory position
-            stream.Position = directoryOffsetPosition;
-            stream.WriteInt(startOfDirectory);
+            metadata.Add(new LumpInfo(
+                position: startOfLump,
+                size: (int)stream.Position - startOfLump,
+                name: lump.Name));
         }
 
-        public void SaveTo(string filePath)
+        int startOfDirectory = (int)stream.Position;
+
+        // Write directory
+        foreach (var lumpMetadata in metadata)
         {
-            using (var fs = File.Open(filePath, FileMode.Create))
-            {
-                SaveTo(fs);
-            }
+            lumpMetadata.WriteTo(stream);
+        }
+
+        // Go back and set the directory position
+        stream.Position = directoryOffsetPosition;
+        stream.WriteInt(startOfDirectory);
+    }
+
+    public void SaveTo(string filePath)
+    {
+        using (var fs = File.Open(filePath, FileMode.Create))
+        {
+            SaveTo(fs);
         }
     }
 }

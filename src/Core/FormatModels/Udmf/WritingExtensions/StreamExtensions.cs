@@ -6,43 +6,42 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace SectorDirector.Core.FormatModels.Udmf.WritingExtensions
+namespace SectorDirector.Core.FormatModels.Udmf.WritingExtensions;
+
+public static class StreamExtensions
 {
-    public static class StreamExtensions
+    public static void WriteLine(this Stream stream, string value)
     {
-        public static void WriteLine(this Stream stream, string value)
-        {
-            var textBytes = Encoding.ASCII.GetBytes(value + "\n");
+        var textBytes = Encoding.ASCII.GetBytes(value + "\n");
 
-            stream.Write(textBytes, 0, textBytes.Length);
-        }
-
-        public static void WritePropertyVerbatim(this Stream stream, string name, string value, bool indent)
-        {
-            var indention = indent ? "\t" : String.Empty;
-            WriteLine(stream, $"{indention}{name} = {value};");
-        }
-
-        public static void WriteProperty(this Stream stream, string name, string value, bool indent)
-        {
-            WritePropertyVerbatim(stream, name, $"\"{value}\"", indent);
-        }
-
-        public static void WriteProperty(this Stream stream, string name, int value, bool indent)
-        {
-            WritePropertyVerbatim(stream, name, value.ToString(CultureInfo.InvariantCulture), indent);
-        }
-
-        public static void WriteProperty(this Stream stream, string name, double value, bool indent)
-        {
-            WritePropertyVerbatim(stream, name, value.ToStringWithDecimal(), indent);
-        }
-
-        public static void WriteProperty(this Stream stream, string name, bool value, bool indent)
-        {
-            WritePropertyVerbatim(stream, name, value.ToString().ToLowerInvariant(), indent);
-        }
-
-        public static string ToStringWithDecimal(this double source) => (source % 1) == 0 ? source.ToString("f1") : source.ToString();
+        stream.Write(textBytes, 0, textBytes.Length);
     }
+
+    public static void WritePropertyVerbatim(this Stream stream, string name, string value, bool indent)
+    {
+        var indention = indent ? "\t" : String.Empty;
+        WriteLine(stream, $"{indention}{name} = {value};");
+    }
+
+    public static void WriteProperty(this Stream stream, string name, string value, bool indent)
+    {
+        WritePropertyVerbatim(stream, name, $"\"{value}\"", indent);
+    }
+
+    public static void WriteProperty(this Stream stream, string name, int value, bool indent)
+    {
+        WritePropertyVerbatim(stream, name, value.ToString(CultureInfo.InvariantCulture), indent);
+    }
+
+    public static void WriteProperty(this Stream stream, string name, double value, bool indent)
+    {
+        WritePropertyVerbatim(stream, name, value.ToStringWithDecimal(), indent);
+    }
+
+    public static void WriteProperty(this Stream stream, string name, bool value, bool indent)
+    {
+        WritePropertyVerbatim(stream, name, value.ToString().ToLowerInvariant(), indent);
+    }
+
+    public static string ToStringWithDecimal(this double source) => (source % 1) == 0 ? source.ToString("f1") : source.ToString();
 }

@@ -3,11 +3,10 @@
 
 using Microsoft.Xna.Framework;
 
-namespace SectorDirector.Engine.Collision
+namespace SectorDirector.Engine.Collision;
+
+interface IColliding
 {
-    interface IColliding
-    {
-        void Move(ref Vector2 direction, float distance);
-        void Rotate(float rotationRadians);
-    }
+    void Move(ref Vector2 direction, float distance);
+    void Rotate(float rotationRadians);
 }

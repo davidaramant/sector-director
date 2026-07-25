@@ -3,12 +3,11 @@
 
 using System.IO;
 
-namespace SectorDirector.Core.FormatModels.Wad
-{
-    public interface ILump
-    {
-        LumpName Name { get; }
+namespace SectorDirector.Core.FormatModels.Wad;
 
-        void WriteTo(Stream stream);
-    }
+public interface ILump
+{
+    LumpName Name { get; }
+
+    void WriteTo(Stream stream);
 }

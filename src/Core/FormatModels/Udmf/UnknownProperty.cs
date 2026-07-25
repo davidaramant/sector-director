@@ -3,22 +3,21 @@
 
 using SectorDirector.Core.FormatModels.Common;
 
-namespace SectorDirector.Core.FormatModels.Udmf
+namespace SectorDirector.Core.FormatModels.Udmf;
+
+public sealed class UnknownProperty
 {
-    public sealed class UnknownProperty
+    public Identifier Name { get; }
+    public string Value { get; }
+
+    public UnknownProperty(Identifier name, string value)
     {
-        public Identifier Name { get; }
-        public string Value { get; }
+        Name = name;
+        Value = value;
+    }
 
-        public UnknownProperty(Identifier name, string value)
-        {
-            Name = name;
-            Value = value;
-        }
-
-        public UnknownProperty Clone()
-        {
-            return new UnknownProperty(Name, Value);
-        }
+    public UnknownProperty Clone()
+    {
+        return new UnknownProperty(Name, Value);
     }
 }

@@ -10,51 +10,50 @@ using SharpCompress.Archives;
 using SharpCompress.Archives.Zip;
 using SharpCompress.Readers;
 
-namespace SectorDirector.Core.FormatModels.Pk3
+namespace SectorDirector.Core.FormatModels.Pk3;
+
+public sealed class Pk3File : IResourceProvider
 {
-    public sealed class Pk3File : IResourceProvider
+    private readonly IArchive _archive;
+
+    private Pk3File(string fileName)
     {
-        private readonly IArchive _archive;
+        _archive = ZipArchive.OpenArchive(File.OpenRead(fileName), new ReaderOptions { LeaveStreamOpen = false });
+    }
 
-        private Pk3File(string fileName)
+    public static Pk3File Open(string fileName)
+    {
+        return new Pk3File(fileName);
+    }
+
+    public Stream Lookup(string path)
+    {
+        return TryLookup(path).OrElse(() => new EntryNotFoundException(path));
+    }
+
+    public Maybe<Stream> TryLookup(string path)
+    {
+        var entry = _archive.Entries.SingleOrDefault(e =>
+            !e.IsDirectory && StringComparer.InvariantCultureIgnoreCase.Equals(path, e.Key));
+
+        if (entry == null)
         {
-            _archive = ZipArchive.OpenArchive(File.OpenRead(fileName), new ReaderOptions { LeaveStreamOpen = false });
+            return Maybe<Stream>.Nothing;
         }
 
-        public static Pk3File Open(string fileName)
+        return entry.OpenEntryStream().ToMaybe();
+    }
+
+    public IEnumerable<string> GetAllEntryNames()
+    {
+        foreach (var entry in _archive.Entries.Where(entry => !entry.IsDirectory))
         {
-            return new Pk3File(fileName);
+            yield return entry.Key;
         }
+    }
 
-        public Stream Lookup(string path)
-        {
-            return TryLookup(path).OrElse(() => new EntryNotFoundException(path));
-        }
-
-        public Maybe<Stream> TryLookup(string path)
-        {
-            var entry = _archive.Entries.SingleOrDefault(e =>
-                !e.IsDirectory && StringComparer.InvariantCultureIgnoreCase.Equals(path, e.Key));
-
-            if (entry == null)
-            {
-                return Maybe<Stream>.Nothing;
-            }
-
-            return entry.OpenEntryStream().ToMaybe();
-        }
-
-        public IEnumerable<string> GetAllEntryNames()
-        {
-            foreach (var entry in _archive.Entries.Where(entry => !entry.IsDirectory))
-            {
-                yield return entry.Key;
-            }
-        }
-
-        public void Dispose()
-        {
-            _archive.Dispose();
-        }
+    public void Dispose()
+    {
+        _archive.Dispose();
     }
 }

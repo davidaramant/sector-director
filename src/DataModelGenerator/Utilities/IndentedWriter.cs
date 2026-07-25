@@ -4,51 +4,50 @@
 using System;
 using System.IO;
 
-namespace SectorDirector.DataModelGenerator.Utilities
+namespace SectorDirector.DataModelGenerator.Utilities;
+
+public sealed class IndentedWriter : IDisposable
 {
-    public sealed class IndentedWriter : IDisposable
+    private readonly StreamWriter _writer;
+    public IndentedWriter(StreamWriter writer) => _writer = writer;
+
+    public int IndentionLevel { get; private set; }
+    public string CurrentIndent => new string(' ', IndentionLevel*4);
+
+    public IndentedWriter IncreaseIndent()
     {
-        private readonly StreamWriter _writer;
-        public IndentedWriter(StreamWriter writer) => _writer = writer;
+        IndentionLevel++;
+        return this;
+    }
 
-        public int IndentionLevel { get; private set; }
-        public string CurrentIndent => new string(' ', IndentionLevel*4);
+    public IndentedWriter DecreaseIndent()
+    {
+        if (IndentionLevel == 0)
+            throw new InvalidOperationException();
+        IndentionLevel--;
+        return this;
+    }
 
-        public IndentedWriter IncreaseIndent()
+    public IndentedWriter OpenParen() => Line("{").IncreaseIndent();
+    public IndentedWriter CloseParen()=> DecreaseIndent().Line("}");
+
+    public IndentedWriter Line(string line)
+    {
+        _writer.WriteLine(CurrentIndent + line);
+        return this;
+    }
+
+    public IndentedWriter Line()
+    {
+        _writer.WriteLine();
+        return this;
+    }
+
+    public void Dispose()
+    {
+        if (IndentionLevel != 0)
         {
-            IndentionLevel++;
-            return this;
-        }
-
-        public IndentedWriter DecreaseIndent()
-        {
-            if (IndentionLevel == 0)
-                throw new InvalidOperationException();
-            IndentionLevel--;
-            return this;
-        }
-
-        public IndentedWriter OpenParen() => Line("{").IncreaseIndent();
-        public IndentedWriter CloseParen()=> DecreaseIndent().Line("}");
-
-        public IndentedWriter Line(string line)
-        {
-            _writer.WriteLine(CurrentIndent + line);
-            return this;
-        }
-
-        public IndentedWriter Line()
-        {
-            _writer.WriteLine();
-            return this;
-        }
-
-        public void Dispose()
-        {
-            if (IndentionLevel != 0)
-            {
-                throw new InvalidOperationException("Indention level is screwed up.");
-            }
+            throw new InvalidOperationException("Indention level is screwed up.");
         }
     }
 }
